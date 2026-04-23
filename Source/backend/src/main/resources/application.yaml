@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/DB_Linha_Vital
+    username: postgres
+    password: VINKz28262320?
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
