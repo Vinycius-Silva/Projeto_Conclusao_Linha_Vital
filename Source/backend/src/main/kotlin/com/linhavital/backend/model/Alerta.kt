@@ -13,13 +13,13 @@ data class Alerta(
     val id: Long = 0,
 
     @Column(name = "tipo_alerta")
-    val tipoAlerta: String,
+    val tipo: String,
 
     @Column(name = "data_hora_alerta")
-    val dataHora: LocalDateTime,
+    val dataHora: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "status_alerta")
-    val status: String,
+    val status: String = "PENDENTE",
 
     @ManyToOne
     @JoinColumn(name = "fk_usuario_id_usuario")

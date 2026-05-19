@@ -1,17 +1,18 @@
 package com.linhavital.backend.controller
 
-import com.linhavital.backend.model.Monitoramento
 import com.linhavital.backend.service.MonitoramentoService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/monitoramentos")
-class MonitoramentoController(private val service: MonitoramentoService) {
+@RequestMapping("/monitoramento")
+class MonitoramentoController(
+    val monitoramentoService: MonitoramentoService
+) {
 
-    @GetMapping
-    fun listar() = service.listar()
-
-    @PostMapping
-    fun criar(@RequestBody monitoramento: Monitoramento) =
-        service.salvar(monitoramento)
+    @PostMapping("/atividade/{usuarioId}")
+    fun registrarAtividade(@PathVariable usuarioId: Long): ResponseEntity<String> {
+        monitoramentoService.registrarAtividade(usuarioId)
+        return ResponseEntity.ok("Atividade registrada")
+    }
 }
