@@ -13,7 +13,7 @@ data class Monitoramento(
     val id: Long = 0,
 
     @Column(name = "data_hora_monitoramento")
-    val dataHora: LocalDateTime,
+    val dataHora: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "status_monitoramento")
     val status: String,
