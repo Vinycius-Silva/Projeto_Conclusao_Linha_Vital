@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/ic_ajuda_imediata"
+            android:background="@drawable/circle_background"
+            android:padding="8dp"
+            android:contentDescription="Contato" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:id="@+id/tvNomeContato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome do contato"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:fontFamily="@font/public_sans" />
+
+            <TextView
+                android:id="@+id/tvTelefoneContato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Telefone"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:fontFamily="@font/public_sans"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvTipoContato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo"
+                android:textSize="12sp"
+                android:textColor="#BB0013"
+                android:fontFamily="@font/public_sans"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDeletar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="@drawable/circle_background"
+            android:padding="6dp"
+            android:contentDescription="Deletar" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

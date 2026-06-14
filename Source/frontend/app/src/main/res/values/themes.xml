@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.LinhaVital" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#E53935</item>
+        <item name="colorPrimaryVariant">#B71C1C</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:windowBackground">#FFF5F5</item>
+        <item name="android:statusBarColor">#FFF5F5</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
