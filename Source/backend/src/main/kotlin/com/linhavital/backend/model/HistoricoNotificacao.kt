@@ -4,12 +4,12 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "historiconotificacao_recebe")
+@Table(name = "historiconotificacao")
 data class HistoricoNotificacao(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_notifacacao")
+    @Column(name = "id_notificacao")
     val id: Long = 0,
 
     @Column(name = "status_notificacao")
@@ -19,7 +19,7 @@ data class HistoricoNotificacao(
     val dataHora: LocalDateTime,
 
     @ManyToOne
-    @JoinColumn(name = "fk_contatoemergencia_id_contato")
+    @JoinColumn(name = "fk_contato_id_contato")
     val contato: ContatoEmergencia,
 
     @ManyToOne

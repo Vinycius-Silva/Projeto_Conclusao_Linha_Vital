@@ -12,16 +12,18 @@ class AlertaService(
     val notificacaoService: NotificacaoService
 ) {
 
-    fun criarAlertaPanico(usuarioId: Long) {
-
-        val usuario = usuarioRepository.findById(usuarioId).orElseThrow()
+    fun criarAlertaPanico(usuarioId: Long): Alerta {
+        val usuario = usuarioRepository.findById(usuarioId).orElseThrow {
+            RuntimeException("Usuário não encontrado")
+        }
 
         val alerta = Alerta(
             tipo = "PANICO",
+            status = "ATIVO",
             usuario = usuario
         )
 
-        alertaRepository.save(alerta)
+        val alertaSalvo = alertaRepository.save(alerta)
 
         usuario.fcmToken?.let {
             notificacaoService.enviarNotificacao(
@@ -30,18 +32,22 @@ class AlertaService(
                 "Botão de pânico acionado!"
             )
         }
+
+        return alertaSalvo
     }
 
-    fun criarAlertaInatividade(usuarioId: Long) {
-
-        val usuario = usuarioRepository.findById(usuarioId).orElseThrow()
+    fun criarAlertaInatividade(usuarioId: Long): Alerta {
+        val usuario = usuarioRepository.findById(usuarioId).orElseThrow {
+            RuntimeException("Usuário não encontrado")
+        }
 
         val alerta = Alerta(
             tipo = "INATIVIDADE",
+            status = "ATIVO",
             usuario = usuario
         )
 
-        alertaRepository.save(alerta)
+        val alertaSalvo = alertaRepository.save(alerta)
 
         usuario.fcmToken?.let {
             notificacaoService.enviarNotificacao(
@@ -50,5 +56,7 @@ class AlertaService(
                 "Usuário sem atividade!"
             )
         }
+
+        return alertaSalvo
     }
 }

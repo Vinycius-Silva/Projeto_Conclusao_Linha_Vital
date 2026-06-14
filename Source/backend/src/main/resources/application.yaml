@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/DB_Linha_Vital
-    username: postgres
-    password: VINKz28262320?
+    url: jdbc:postgresql://147.15.70.81:5432/linhavital
+    username: linhavital_user
+    password: ProjetoExtensao_2026_AjNv_Lv#
 
   jpa:
     hibernate:

@@ -19,4 +19,20 @@ class ContatoEmergenciaController(private val service: ContatoEmergenciaService)
 
     @DeleteMapping("/{id}")
     fun deletar(@PathVariable id: Long) = service.deletar(id)
+
+    @GetMapping("/usuario/{usuarioId}")
+    fun listarPorUsuario(@PathVariable usuarioId: Long) =
+        service.listarPorUsuario(usuarioId)
+
+    @PostMapping("/usuario/{usuarioId}")
+    fun criarParaUsuario(
+        @PathVariable usuarioId: Long,
+        @RequestBody contato: ContatoEmergencia
+    ) = service.salvarParaUsuario(usuarioId, contato)
+
+    @DeleteMapping("/usuario/{usuarioId}/{contatoId}")
+    fun deletarDoUsuario(
+        @PathVariable usuarioId: Long,
+        @PathVariable contatoId: Long
+    ) = service.deletarDoUsuario(usuarioId, contatoId)
 }
