@@ -1,0 +1,96 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem[Ahmadi \textit{et al.} 2020]{iothealthcare2020}
+\abntrefinfo{Ahmadi \textit{et al.}}{AHMADI \textit{et al.}}{2020}
+{AHMADI, H. \textit{et al.} The application of internet of things in healthcare: A systematic literature review and classification.
+\textbf{Universal Access in the Information Society}, Springer, v.~19, p. 837--869, 2020.
+Dispon{\'\i}vel em: \url{https://www.researchgate.net/publication/324952186\_The\_application\_of\_internet\_of\_things\_in\_healthcare\_a\_systematic\_literature\_review\_and\_classification}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Australian Institute of Family Studies 2014]{aifs2014}
+\abntrefinfo{Australian Institute of Family Studies}{AUSTRALIAN INSTITUTE OF FAMILY STUDIES}{2014}
+{AUSTRALIAN INSTITUTE OF FAMILY STUDIES. \textbf{Living Alone and Personal Wellbeing}. 2014.
+Dispon{\'\i}vel em: \url{https://aifs.gov.au/all-research/research-reports/living-alone-and-personal-wellbeing}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Chacon \& Straub 2014]{progit2014}
+\abntrefinfo{Chacon \& Straub}{CHACON; STRAUB}{2014}
+{CHACON, S.; STRAUB, B. \textbf{Pro Git}. 2. ed. Berkeley: Apress, 2014. Dispon{\'\i}vel em: \url{https://git-scm.com/book/en/v2}. Acesso em: 29 maio 2026.}
+
+\bibitem[CONTECSI 2019]{automacaoiot2019}
+\abntrefinfo{CONTECSI}{CONTECSI}{2019}
+{CONTECSI. Automação residencial via aplicativo utilizando conceitos de internet das coisas. In:  \textbf{16th International Conference on Information Systems and Technology Management}. 2019. Dispon{\'\i}vel em: \url{https://contecsi.tecsi.org/index.php/contecsi/16CONTECSI/paper/download/6076/3497}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Demiris \& Hensel 2008]{smartliving2018}
+\abntrefinfo{Demiris \& Hensel}{DEMIRIS; HENSEL}{2008}
+{DEMIRIS, G.; HENSEL, B.~K. Technologies for an aging society: A systematic review of smart home applications.
+\textbf{Yearbook of Medical Informatics}, p. 33--40, 2008.
+Dispon{\'\i}vel em: \url{https://www.thieme-connect.de/products/ejournals/pdf/10.1055/s-0038-1638580.pdf}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Erdogan 2024]{erdogan2024}
+\abntrefinfo{Erdogan}{ERDOGAN}{2024}
+{ERDOGAN, B. \textbf{Living alone has become an epidemic!} 2024.
+Dispon{\'\i}vel em: \url{https://uskudar.edu.tr/en/new/living-alone-has-become-an-epidemic/47954}. Acesso em: 02 jun. 2026.}
+
+\bibitem[GitHub 2026]{githubdocs2026}
+\abntrefinfo{GitHub}{GITHUB}{2026}
+{GITHUB. \textbf{GitHub Documentation}. 2026.
+Dispon{\'\i}vel em: \url{https://docs.github.com}. Acesso em: 29 maio 2026.}
+
+\bibitem[Kandler \textit{et al.} 2017]{kandler2017}
+\abntrefinfo{Kandler \textit{et al.}}{KANDLER \textit{et al.}}{2017}
+{KANDLER, U. \textit{et al.} Living alone and emergency hospitalizations.
+\textbf{European Journal of Public Health}, v.~27, n.~2, p. 251--257, 2017.
+Dispon{\'\i}vel em: \url{https://academic.oup.com/eurpub/article/27/2/251/2418058}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Liu \textit{et al.} 2016]{ambientassistedliving2016}
+\abntrefinfo{Liu \textit{et al.}}{LIU \textit{et al.}}{2016}
+{LIU, L. \textit{et al.} Smart homes and home health monitoring technologies for older adults: A systematic review.
+\textbf{International Journal of Medical Informatics}, v.~91, p. 44--59, 2016.
+ISSN 1386-5056.
+Dispon{\'\i}vel em: \url{https://www.sciencedirect.com/science/article/pii/S1386505616300648}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Nakamura \textit{et al.} 2017]{nakamura2017}
+\abntrefinfo{Nakamura \textit{et al.}}{NAKAMURA \textit{et al.}}{2017}
+{NAKAMURA, K. \textit{et al.} Effect of number of household members on falls among elderly people living alone.
+\textbf{Geriatrics and Gerontology International}, 2017.
+Dispon{\'\i}vel em: \url{https://scispace.com/pdf/effect-of-number-of-household-members-on-falls-among-3fjroopn.pdf}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Oracle Corporation 2026]{oracleoci2026}
+\abntrefinfo{Oracle Corporation}{ORACLE CORPORATION}{2026}
+{ORACLE CORPORATION. \textbf{Oracle Cloud Infrastructure Vision Overview - Introduction}.
+[S.l.], 2026. Dispon{\'\i}vel em: \url{https://docs.oracle.com/en/cloud/paas/ociov/oci\_intro.html}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Perseguino, Horta \& Ribeiro 2017]{perseguino2017}
+\abntrefinfo{Perseguino, Horta \& Ribeiro}{PERSEGUINO; HORTA; RIBEIRO}{2017}
+{PERSEGUINO, M.~G.; HORTA, A. L. d.~M.; RIBEIRO, C.~A. The family in face of the elderly's reality of living alone.
+\textbf{Revista Brasileira de Enfermagem}, v.~70, n.~2, p. 235--241, 2017.
+Dispon{\'\i}vel em: \url{http://dx.doi.org/10.1590/0034-7167-2016-0398}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Rebou{\c c}as 2019]{reboucas2019}
+\abntrefinfo{Rebou{\c c}as}{REBOU{\c C}AS}{2019}
+{REBOU{\c C}AS, T. K.~M.
+\textbf{Uso de IoT para Aux{\'i}lio e Monitoramento de Pessoas com Necessidades Especiais}.
+Disserta\c{c}\~{a}o (Mestrado) --- Universidade Federal do Cear{\'a}, 2019.
+Dispon{\'\i}vel em: \url{https://repositorio.ufc.br/bitstream/riufc/49470/1/2019\_tcc\_tkmreboucas.pdf}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Schwaber \& Sutherland 2020]{scrumguide2020}
+\abntrefinfo{Schwaber \& Sutherland}{SCHWABER; SUTHERLAND}{2020}
+{SCHWABER, K.; SUTHERLAND, J. \textbf{The Scrum Guide: The Definitive Guide to Scrum}. [s.n.], 2020. Dispon{\'\i}vel em: \url{https://scrumguides.org}. Acesso em: 29 maio 2026.}
+
+\bibitem[Singh, Hashmi \& Sharma 2020]{predictivehealthcare2020}
+\abntrefinfo{Singh, Hashmi \& Sharma}{SINGH; HASHMI; SHARMA}{2020}
+{SINGH, D.~N.; HASHMI, M.~F.; SHARMA, S.~K. Predictive analytics and modeling for modern health care system for cerebral palsy patients.
+\textbf{Multimedia Tools and Applications}, Springer, v.~79, p. 10285--10307, 2020.
+Dispon{\'\i}vel em: \url{https://link.springer.com/article/10.1007/s11042-019-07834-4}. Acesso em: 02 jun. 2026.}
+
+\bibitem[Talal \textit{et al.} 2019]{smarthomehealth2019}
+\abntrefinfo{Talal \textit{et al.}}{TALAL \textit{et al.}}{2019}
+{TALAL, M. \textit{et al.} Smart home-based iot for real-time and secure remote health monitoring of triage and priority system using body sensors: Multi-driven systematic review.
+\textbf{Journal of Medical Systems}, Springer, v.~43, n.~42, 2019.
+Dispon{\'\i}vel em: \url{https://link.springer.com/article/10.1007/s10916-019-1158-z}. Acesso em: 02 jun. 2026.}
+
+\end{thebibliography}
