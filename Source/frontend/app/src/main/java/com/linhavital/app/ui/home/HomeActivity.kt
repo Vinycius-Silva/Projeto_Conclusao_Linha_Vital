@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import com.linhavital.app.utils.applySystemBarsPadding
 import androidx.lifecycle.lifecycleScope
 import com.linhavital.app.data.repository.ContatoRepository
 import com.linhavital.app.databinding.ActivityHomeBinding
@@ -38,6 +39,10 @@ class HomeActivity : AppCompatActivity() {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        binding.headerHome.applySystemBarsPadding(top = true)
+        binding.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
 
         window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
