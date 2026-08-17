@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.linhavital.app.utils.applySystemBarsPadding
 import com.linhavital.app.databinding.ActivityRegisterBinding
 
 class RegisterActivity : AppCompatActivity() {
@@ -18,6 +19,9 @@ class RegisterActivity : AppCompatActivity() {
 
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        binding.rootRegister.applySystemBarsPadding(top = true, bottom = true)
 
         window.statusBarColor =
             android.graphics.Color.parseColor("#FFF5F5")

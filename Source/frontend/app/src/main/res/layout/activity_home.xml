@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/rootHome"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +10,7 @@
 
     <!-- Header -->
     <LinearLayout
+        android:id="@+id/headerHome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -98,60 +101,69 @@
 
     </LinearLayout>
 
-    <!-- Bottom navigation -->
+    <!-- Bottom navigation: o padding inferior é preenchido pelo inset do sistema. -->
     <LinearLayout
+        android:id="@+id/bottomNavigationContainer"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:elevation="8dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF">
 
         <LinearLayout
-            android:id="@+id/btnNavHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:elevation="8dp">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_logo"
-                android:contentDescription="Home" />
+            <LinearLayout
+                android:id="@+id/btnNavHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Início"
-                android:textSize="11sp"
-                android:textColor="#BB0013"
-                android:fontFamily="@font/public_sans" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_logo"
+                    android:contentDescription="Home" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Início"
+                    android:textSize="11sp"
+                    android:textColor="#BB0013"
+                    android:fontFamily="@font/public_sans" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnNavContatos"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_ajuda_imediata"
+                    android:contentDescription="Contatos" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contatos"
+                    android:textSize="11sp"
+                    android:textColor="#757575"
+                    android:fontFamily="@font/public_sans" />
+            </LinearLayout>
+
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnNavContatos"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_ajuda_imediata"
-                android:contentDescription="Contatos" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Contatos"
-                android:textSize="11sp"
-                android:textColor="#757575"
-                android:fontFamily="@font/public_sans" />
-        </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>

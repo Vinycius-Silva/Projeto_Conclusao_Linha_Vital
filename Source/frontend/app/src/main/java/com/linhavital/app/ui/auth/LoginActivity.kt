@@ -12,6 +12,7 @@ import com.linhavital.app.ui.home.HomeActivity
 import com.linhavital.app.utils.SessionManager
 import kotlinx.coroutines.launch
 import androidx.core.view.WindowCompat
+import com.linhavital.app.utils.applySystemBarsPadding
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,6 +24,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        binding.rootLogin.applySystemBarsPadding(top = true, bottom = true)
 
         window.statusBarColor = android.graphics.Color.parseColor("#FAFAFA")
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true

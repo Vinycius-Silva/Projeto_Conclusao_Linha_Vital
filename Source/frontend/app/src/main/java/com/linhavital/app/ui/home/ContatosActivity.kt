@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.linhavital.app.utils.applySystemBarsPadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
@@ -31,6 +32,10 @@ class ContatosActivity : AppCompatActivity() {
 
         binding = ActivityContatosBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        binding.headerContatos.applySystemBarsPadding(top = true)
+        binding.rootContatos.applySystemBarsPadding(bottom = true)
 
         sessionManager = SessionManager(this)
 
