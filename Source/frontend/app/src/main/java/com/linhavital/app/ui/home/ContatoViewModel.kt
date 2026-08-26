@@ -71,6 +71,42 @@ class ContatoViewModel : ViewModel() {
         }
     }
 
+    fun atualizarContato(
+        usuarioId: Long,
+        contatoId: Long,
+        nome: String,
+        telefone: String,
+        email: String,
+        tipo: String
+    ) {
+        if (nome.isBlank() || telefone.isBlank()) {
+            _estado.value = ContatoEstado.Erro("Preencha nome e telefone")
+            return
+        }
+
+        _estado.value = ContatoEstado.Loading
+        viewModelScope.launch {
+            val contato = ContatoEmergencia(
+                id = contatoId,
+                nome = nome,
+                telefone = telefone,
+                email = email,
+                tipoContato = tipo
+            )
+            val result = repository.atualizarContato(usuarioId, contatoId, contato)
+            if (result.isSuccess) {
+                _estado.postValue(ContatoEstado.Atualizado)
+                carregarContatos(usuarioId)
+            } else {
+                _estado.postValue(
+                    ContatoEstado.Erro(
+                        result.exceptionOrNull()?.message ?: "Erro ao atualizar contato"
+                    )
+                )
+            }
+        }
+    }
+
     fun deletarContato(usuarioId: Long, contatoId: Long) {
         viewModelScope.launch {
             val result = repository.deletarContato(usuarioId, contatoId)
@@ -91,5 +127,6 @@ class ContatoViewModel : ViewModel() {
 sealed class ContatoEstado {
     object Loading : ContatoEstado()
     object Sucesso : ContatoEstado()
+    object Atualizado : ContatoEstado()
     data class Erro(val message: String) : ContatoEstado()
 }

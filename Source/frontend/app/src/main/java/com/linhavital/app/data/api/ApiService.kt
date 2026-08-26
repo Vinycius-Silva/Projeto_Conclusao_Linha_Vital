@@ -35,6 +35,13 @@ interface ApiService {
         @Body contato: ContatoEmergencia
     ): ContatoEmergencia
 
+    @PUT("contatos/usuario/{usuarioId}/{contatoId}")
+    suspend fun atualizarContatoDoUsuario(
+        @Path("usuarioId") usuarioId: Long,
+        @Path("contatoId") contatoId: Long,
+        @Body contato: ContatoEmergencia
+    ): ContatoEmergencia
+
     @DELETE("contatos/usuario/{usuarioId}/{contatoId}")
     suspend fun deletarContatoDoUsuario(
         @Path("usuarioId") usuarioId: Long,

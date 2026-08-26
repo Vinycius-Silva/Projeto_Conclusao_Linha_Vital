@@ -8,6 +8,8 @@ import com.linhavital.app.databinding.ItemContatoBinding
 
 class ContatoAdapter(
     private var contatos: List<ContatoEmergencia>,
+    private val onLigar: (String) -> Unit,
+    private val onEditar: (ContatoEmergencia) -> Unit,
     private val onDeletar: (Long) -> Unit
 ) : RecyclerView.Adapter<ContatoAdapter.ViewHolder>() {
 
@@ -23,11 +25,24 @@ class ContatoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val contato = contatos[position]
+
+        holder.binding.tvAvatarContato.text =
+            contato.nome.trim().firstOrNull()?.uppercase() ?: "?"
+
         holder.binding.tvNomeContato.text = contato.nome
         holder.binding.tvTelefoneContato.text = contato.telefone
         holder.binding.tvTipoContato.text = contato.tipoContato
+
+        holder.binding.btnLigar.setOnClickListener {
+            onLigar(contato.telefone)
+        }
+
+        holder.binding.btnEditar.setOnClickListener {
+            onEditar(contato)
+        }
+
         holder.binding.btnDeletar.setOnClickListener {
-            contato.id?.let { id -> onDeletar(id) }
+            contato.id?.let(onDeletar)
         }
     }
 

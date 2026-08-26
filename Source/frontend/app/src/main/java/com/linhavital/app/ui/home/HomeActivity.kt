@@ -59,6 +59,13 @@ class HomeActivity : AppCompatActivity() {
             registrarCliqueEmergencia("Clique")
         }
 
+        binding.btnNavHome.setBackgroundResource(com.linhavital.app.R.drawable.nav_item_active)
+        binding.iconNavHome.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
+        binding.btnNavHome.setOnClickListener { }
+        binding.btnNavCriterios.setOnClickListener {
+            startActivity(Intent(this, CriteriosActivity::class.java))
+        }
+
         binding.btnNavContatos.setOnClickListener {
             startActivity(Intent(this, ContatosActivity::class.java))
         }

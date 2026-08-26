@@ -42,6 +42,11 @@
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
 
         <activity
+            android:name=".ui.home.CriteriosActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="LinhaVital"

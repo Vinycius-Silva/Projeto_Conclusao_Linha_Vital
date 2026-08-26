@@ -30,6 +30,19 @@ class ContatoRepository {
         }
     }
 
+    suspend fun atualizarContato(
+        usuarioId: Long,
+        contatoId: Long,
+        contato: ContatoEmergencia
+    ): Result<ContatoEmergencia> {
+        return try {
+            Result.success(api.atualizarContatoDoUsuario(usuarioId, contatoId, contato))
+        } catch (e: Exception) {
+            Log.e("ContatoRepository", "Erro ao atualizar: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
     suspend fun deletarContato(usuarioId: Long, contatoId: Long): Result<Unit> {
         return try {
             Log.d("ContatoRepository", "Deletando contato ID: $contatoId do usuário ID: $usuarioId")
