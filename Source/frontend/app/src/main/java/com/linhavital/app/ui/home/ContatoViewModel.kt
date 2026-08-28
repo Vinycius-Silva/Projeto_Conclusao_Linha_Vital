@@ -45,6 +45,10 @@ class ContatoViewModel : ViewModel() {
             _estado.value = ContatoEstado.Erro("Preencha nome e telefone")
             return
         }
+        if (telefone.filter(Char::isDigit).length < 10) {
+            _estado.value = ContatoEstado.Erro("Informe um telefone válido")
+            return
+        }
 
         _estado.value = ContatoEstado.Loading
 
@@ -81,6 +85,10 @@ class ContatoViewModel : ViewModel() {
     ) {
         if (nome.isBlank() || telefone.isBlank()) {
             _estado.value = ContatoEstado.Erro("Preencha nome e telefone")
+            return
+        }
+        if (telefone.filter(Char::isDigit).length < 10) {
+            _estado.value = ContatoEstado.Erro("Informe um telefone válido")
             return
         }
 

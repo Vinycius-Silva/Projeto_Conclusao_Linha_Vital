@@ -14,14 +14,15 @@ class AlertaController(
 ) {
 
     @GetMapping
-    fun listar(): List<Alerta> {
-        return alertaRepository.findAll()
-    }
+    fun listar(): List<Alerta> = alertaRepository.findAll()
+
+    @GetMapping("/usuario/{usuarioId}")
+    fun listarPorUsuario(@PathVariable usuarioId: Long): List<Alerta> =
+        alertaService.listarPorUsuario(usuarioId)
 
     @PostMapping("/panico/{usuarioId}")
     fun alertaPanico(@PathVariable usuarioId: Long): ResponseEntity<Map<String, Any>> {
         val alerta = alertaService.criarAlertaPanico(usuarioId)
-
         return ResponseEntity.ok(
             mapOf(
                 "mensagem" to "Alerta de pânico registrado com sucesso",

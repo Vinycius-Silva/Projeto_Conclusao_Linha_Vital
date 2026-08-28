@@ -4,59 +4,42 @@ import com.linhavital.backend.model.Alerta
 import com.linhavital.backend.repository.AlertaRepository
 import com.linhavital.backend.repository.UsuarioRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AlertaService(
-    val alertaRepository: AlertaRepository,
-    val usuarioRepository: UsuarioRepository,
-    val notificacaoService: NotificacaoService
+    private val alertaRepository: AlertaRepository,
+    private val usuarioRepository: UsuarioRepository
 ) {
 
-    fun criarAlertaPanico(usuarioId: Long): Alerta {
-        val usuario = usuarioRepository.findById(usuarioId).orElseThrow {
-            RuntimeException("Usuário não encontrado")
-        }
+    fun criarAlertaPanico(usuarioId: Long): Alerta = criar(usuarioId, "PANICO")
 
-        val alerta = Alerta(
-            tipo = "PANICO",
-            status = "ATIVO",
-            usuario = usuario
+    fun criarAlertaInatividade(usuarioId: Long): Alerta = criar(usuarioId, "INATIVIDADE")
+
+    fun listarPorUsuario(usuarioId: Long): List<Alerta> =
+        alertaRepository.findByUsuarioIdOrderByDataHoraDesc(usuarioId)
+
+    @Transactional
+    fun resolverAlertasInatividade(usuarioId: Long) {
+        val ativos = alertaRepository.findByUsuarioIdAndTipoAndStatus(
+            usuarioId,
+            "INATIVIDADE",
+            "ATIVO"
         )
-
-        val alertaSalvo = alertaRepository.save(alerta)
-
-        usuario.fcmToken?.let {
-            notificacaoService.enviarNotificacao(
-                it,
-                "EMERGÊNCIA",
-                "Botão de pânico acionado!"
-            )
-        }
-
-        return alertaSalvo
+        ativos.forEach { it.status = "RESOLVIDO" }
+        alertaRepository.saveAll(ativos)
     }
 
-    fun criarAlertaInatividade(usuarioId: Long): Alerta {
+    private fun criar(usuarioId: Long, tipo: String): Alerta {
         val usuario = usuarioRepository.findById(usuarioId).orElseThrow {
             RuntimeException("Usuário não encontrado")
         }
-
-        val alerta = Alerta(
-            tipo = "INATIVIDADE",
-            status = "ATIVO",
-            usuario = usuario
-        )
-
-        val alertaSalvo = alertaRepository.save(alerta)
-
-        usuario.fcmToken?.let {
-            notificacaoService.enviarNotificacao(
-                it,
-                "⚠️ Inatividade detectada",
-                "Usuário sem atividade!"
+        return alertaRepository.save(
+            Alerta(
+                tipo = tipo,
+                status = "ATIVO",
+                usuario = usuario
             )
-        }
-
-        return alertaSalvo
+        )
     }
 }

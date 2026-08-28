@@ -25,37 +25,59 @@ class ContatoEmergenciaService(
     fun salvar(contato: ContatoEmergencia) = repository.save(contato)
 
     fun listarPorUsuario(usuarioId: Long): List<ContatoEmergencia> {
+        validarUsuario(usuarioId)
         return usuarioContatoRepository.findContatosByUsuarioId(usuarioId)
     }
 
     @Transactional
     fun salvarParaUsuario(usuarioId: Long, contato: ContatoEmergencia): ContatoEmergencia {
-        val usuario = usuarioRepository.findById(usuarioId).orElseThrow {
-            RuntimeException("Usuário não encontrado")
-        }
+        val usuario = validarUsuario(usuarioId)
+        validarContato(contato)
 
-        val contatoSalvo = repository.save(contato)
+        val contatoSalvo = repository.save(contato.copy(id = 0))
+        val prioridade = usuarioContatoRepository.findMaxPrioridadeByUsuarioId(usuarioId) + 1
 
-        val prioridade = usuarioContatoRepository.countByUsuarioId(usuarioId).toInt() + 1
-
-        val usuarioContato = UsuarioContato(
-            prioridade = prioridade,
-            usuario = usuario,
-            contato = contatoSalvo
+        usuarioContatoRepository.save(
+            UsuarioContato(
+                prioridade = prioridade,
+                usuario = usuario,
+                contato = contatoSalvo
+            )
         )
-
-        usuarioContatoRepository.save(usuarioContato)
 
         return contatoSalvo
     }
 
     @Transactional
+    fun atualizarDoUsuario(
+        usuarioId: Long,
+        contatoId: Long,
+        contatoAtualizado: ContatoEmergencia
+    ): ContatoEmergencia {
+        validarUsuario(usuarioId)
+        if (usuarioContatoRepository.countByUsuarioIdAndContatoId(usuarioId, contatoId) == 0L) {
+            throw RuntimeException("Contato não pertence ao usuário informado")
+        }
+        validarContato(contatoAtualizado)
+
+        val atual = buscarPorId(contatoId)
+        val novo = atual.copy(
+            nome = contatoAtualizado.nome.trim(),
+            telefone = contatoAtualizado.telefone.trim(),
+            email = contatoAtualizado.email.trim(),
+            tipoContato = contatoAtualizado.tipoContato.trim()
+        )
+        return repository.save(novo)
+    }
+
+    @Transactional
     fun deletarDoUsuario(usuarioId: Long, contatoId: Long) {
-        usuarioContatoRepository.deleteByUsuarioIdAndContatoId(usuarioId, contatoId)
+        validarUsuario(usuarioId)
+        if (usuarioContatoRepository.deleteByUsuarioIdAndContatoId(usuarioId, contatoId) == 0) {
+            throw RuntimeException("Contato não pertence ao usuário informado")
+        }
 
-        val quantidadeRelacionamentos = usuarioContatoRepository.countByContatoId(contatoId)
-
-        if (quantidadeRelacionamentos == 0L) {
+        if (usuarioContatoRepository.countByContatoId(contatoId) == 0L) {
             historicoNotificacaoRepository.deleteByContatoId(contatoId)
             repository.deleteById(contatoId)
         }
@@ -66,5 +88,13 @@ class ContatoEmergenciaService(
         historicoNotificacaoRepository.deleteByContatoId(id)
         usuarioContatoRepository.deleteByContatoId(id)
         repository.deleteById(id)
+    }
+
+    private fun validarUsuario(usuarioId: Long) =
+        usuarioRepository.findById(usuarioId).orElseThrow { RuntimeException("Usuário não encontrado") }
+
+    private fun validarContato(contato: ContatoEmergencia) {
+        require(contato.nome.isNotBlank()) { "Nome do contato é obrigatório" }
+        require(contato.telefone.filter(Char::isDigit).length >= 10) { "Telefone do contato é inválido" }
     }
 }

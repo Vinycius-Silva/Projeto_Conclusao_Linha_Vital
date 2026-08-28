@@ -1,28 +1,18 @@
 package com.linhavital.app.data.api
 
-import com.linhavital.app.data.model.ContatoEmergencia
-import com.linhavital.app.data.model.Usuario
+import com.linhavital.app.data.model.*
 import retrofit2.http.*
 
 interface ApiService {
 
-    @GET("usuarios")
-    suspend fun getUsuarios(): List<Usuario>
+    @POST("auth/login")
+    suspend fun login(@Body request: LoginRequest): UsuarioSessao
 
     @POST("usuarios")
-    suspend fun criarUsuario(@Body usuario: Usuario): Usuario
+    suspend fun criarUsuario(@Body usuario: Usuario): UsuarioSessao
 
     @GET("usuarios/{id}")
-    suspend fun getUsuario(@Path("id") id: Long): Usuario
-
-    @GET("contatos")
-    suspend fun getContatos(): List<ContatoEmergencia>
-
-    @POST("contatos")
-    suspend fun criarContato(@Body contato: ContatoEmergencia): ContatoEmergencia
-
-    @DELETE("contatos/{id}")
-    suspend fun deletarContato(@Path("id") id: Long)
+    suspend fun getUsuario(@Path("id") id: Long): UsuarioSessao
 
     @GET("contatos/usuario/{usuarioId}")
     suspend fun getContatosDoUsuario(
@@ -47,8 +37,25 @@ interface ApiService {
         @Path("usuarioId") usuarioId: Long,
         @Path("contatoId") contatoId: Long
     )
+
     @POST("alerta/panico/{usuarioId}")
     suspend fun criarAlertaPanico(
         @Path("usuarioId") usuarioId: Long
     ): Map<String, Any>
+
+    @GET("monitoramento/status/{usuarioId}")
+    suspend fun getMonitoramentoStatus(
+        @Path("usuarioId") usuarioId: Long
+    ): MonitoramentoStatus
+
+    @PUT("monitoramento/configuracao/{usuarioId}")
+    suspend fun configurarMonitoramento(
+        @Path("usuarioId") usuarioId: Long,
+        @Body request: MonitoramentoConfiguracaoRequest
+    ): MonitoramentoStatus
+
+    @POST("monitoramento/check-in/{usuarioId}")
+    suspend fun registrarCheckIn(
+        @Path("usuarioId") usuarioId: Long
+    ): MonitoramentoStatus
 }

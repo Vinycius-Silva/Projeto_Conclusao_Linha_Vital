@@ -1,39 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootCriterios"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFF5F5">
+    android:background="#FFF5F5"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/headerCriterios"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="#FFFFFF"
         android:gravity="center_vertical"
-        android:padding="20dp"
-        android:background="#FFFFFF">
-
+        android:orientation="horizontal"
+        android:padding="20dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/newsreader_regular"
             android:text="Critérios de Emergência"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:textColor="#1A1A1A"
-            android:fontFamily="@font/newsreader_regular" />
-
+            android:textSize="20sp"
+            android:textStyle="bold" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdicionarCriterio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Adicionar"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
             android:backgroundTint="#BB0013"
-            android:fontFamily="@font/public_sans" />
+            android:text="Configurar"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
     <ScrollView
@@ -41,7 +39,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,117 +48,111 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Defina quando seus contatos devem ser avisados."
-                android:textSize="14sp"
+                android:layout_marginBottom="16dp"
+                android:text="O MVP usa apenas critérios que possuem fluxo funcional completo."
                 android:textColor="#757575"
-                android:fontFamily="@font/public_sans"
-                android:layout_marginBottom="16dp" />
+                android:textSize="14sp" />
 
             <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="#EEE5E5"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="SOS manual"
+                        android:textColor="#1A1A1A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Ativo • toque 3x no SOS ou pressione 3x o volume para baixo com o app em primeiro plano."
+                        android:textColor="#757575"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardInatividade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="1dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#EEE5E5"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
-
+                app:strokeColor="#E8C5C8"
+                app:strokeWidth="1dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Queda"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#1A1A1A"
-                        android:fontFamily="@font/public_sans" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Seus contatos serão avisados caso o app detecte uma movimentação brusca."
-                        android:textSize="13sp"
-                        android:textColor="#757575"
-                        android:layout_marginTop="6dp"
-                        android:fontFamily="@font/public_sans" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#EEE5E5"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Botão de pânico"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#1A1A1A"
-                        android:fontFamily="@font/public_sans" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Seus contatos serão avisados caso o botão de pânico seja pressionado 3 vezes."
-                        android:textSize="13sp"
-                        android:textColor="#757575"
-                        android:layout_marginTop="6dp"
-                        android:fontFamily="@font/public_sans" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="#EEE5E5"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Ausência de resposta"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
                         android:textColor="#1A1A1A"
-                        android:fontFamily="@font/public_sans" />
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvStatusInatividade"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Carregando..."
+                        android:textColor="#BB0013"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvDescricaoInatividade"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="Configure o intervalo de check-in."
+                        android:textColor="#757575"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.65"
+                app:cardBackgroundColor="#F6F3F3"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="#E5E0E0"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Seus contatos serão avisados caso você não responda à notificação dentro de 35 minutos."
-                        android:textSize="13sp"
-                        android:textColor="#757575"
+                        android:text="Detecção automática de queda"
+                        android:textColor="#555555"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:fontFamily="@font/public_sans" />
+                        android:text="Fora do MVP atual • planejado como trabalho futuro."
+                        android:textColor="#777777"
+                        android:textSize="13sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

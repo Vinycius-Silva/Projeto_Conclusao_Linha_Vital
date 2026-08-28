@@ -1,5 +1,6 @@
 package com.linhavital.backend.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
 import java.time.LocalDate
 
@@ -24,9 +25,11 @@ data class Usuario(
     @Column(name = "data_nascimento", nullable = false)
     var dataNascimento: LocalDate,
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "senha_usuario", nullable = false)
     var senha: String,
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "fcm_token")
     var fcmToken: String? = null
 )

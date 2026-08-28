@@ -45,7 +45,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="A sua segurança e saúde em primeiro lugar."
+            android:text="Check-ins preventivos, rede de contatos e SOS manual em um único fluxo."
             android:textSize="14sp"
             android:textColor="#757575"
             android:fontFamily="@font/public_sans"
@@ -56,7 +56,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Telefone ou E-mail"
+            android:hint="E-mail"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -186,7 +186,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Acompanhe seus sinais em tempo real."
+                        android:text="Configure check-ins periódicos para confirmar que está tudo bem."
                         android:textSize="13sp"
                         android:fontFamily="@font/public_sans"
                         android:textColor="#757575"

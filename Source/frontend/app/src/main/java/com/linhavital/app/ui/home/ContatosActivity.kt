@@ -1,27 +1,23 @@
 package com.linhavital.app.ui.home
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.text.InputType
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.textfield.TextInputEditText
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.linhavital.app.R
-import com.linhavital.app.databinding.ActivityContatosBinding
 import com.linhavital.app.data.model.ContatoEmergencia
+import com.linhavital.app.databinding.ActivityContatosBinding
 import com.linhavital.app.utils.SessionManager
 import com.linhavital.app.utils.applySystemBarsPadding
 import kotlinx.coroutines.launch
@@ -41,7 +37,6 @@ class ContatosActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityContatosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -52,18 +47,16 @@ class ContatosActivity : AppCompatActivity() {
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         sessionManager = SessionManager(this)
-
         binding.btnVoltar.setOnClickListener { finish() }
-        binding.fabAdicionarContato.setOnClickListener { mostrarDialogContato(null) }
+        binding.fabAdicionarContato.setOnClickListener { abrirFormulario(null) }
 
         adapter = ContatoAdapter(
             emptyList(),
             onLigar = ::ligarParaContato,
-            onEditar = ::mostrarDialogContato,
+            onEditar = ::abrirFormulario,
             onDeletar = ::confirmarExclusao
         )
-
-        binding.rvContatos.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        binding.rvContatos.layoutManager = LinearLayoutManager(this)
         binding.rvContatos.adapter = adapter
 
         viewModel.contatos.observe(this) { contatos ->
@@ -71,31 +64,28 @@ class ContatosActivity : AppCompatActivity() {
             binding.tvEmpty.visibility = if (contatos.isEmpty()) View.VISIBLE else View.GONE
             adapter.atualizar(contatos)
         }
-
         viewModel.estado.observe(this) { estado ->
-            when (estado) {
-                is ContatoEstado.Sucesso ->
-                    Toast.makeText(this, "Contato cadastrado.", Toast.LENGTH_SHORT).show()
-                is ContatoEstado.Atualizado ->
-                    Toast.makeText(this, "Contato atualizado.", Toast.LENGTH_SHORT).show()
-                is ContatoEstado.Erro ->
-                    Toast.makeText(this, estado.message, Toast.LENGTH_LONG).show()
-                else -> Unit
+            if (estado is ContatoEstado.Erro) {
+                Toast.makeText(this, estado.message, Toast.LENGTH_LONG).show()
             }
         }
 
         configurarBottomBar()
-
         lifecycleScope.launch {
             val id = sessionManager.getUserId()
             if (id == null || id == 0L) {
                 Toast.makeText(this@ContatosActivity, "Sessão inválida. Faça login novamente.", Toast.LENGTH_LONG).show()
                 finish()
-                return@launch
+            } else {
+                usuarioIdLogado = id
+                viewModel.carregarContatos(id)
             }
-            usuarioIdLogado = id
-            viewModel.carregarContatos(id)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        usuarioIdLogado?.let(viewModel::carregarContatos)
     }
 
     private fun configurarBottomBar() {
@@ -105,80 +95,19 @@ class ContatosActivity : AppCompatActivity() {
 
         binding.btnNavHome.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             })
             finish()
         }
-        binding.btnNavContatos.setOnClickListener { /* tela atual */ }
+        binding.btnNavContatos.setOnClickListener { }
         binding.btnNavCriterios.setOnClickListener {
             startActivity(Intent(this, CriteriosActivity::class.java))
+            finish()
         }
     }
 
-    private fun mostrarDialogContato(contato: ContatoEmergencia?) {
-        val usuarioId = usuarioIdLogado ?: return
-
-        val layout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(48, 8, 48, 0)
-        }
-
-        val etNome = TextInputEditText(this).apply {
-            hint = "Nome completo"
-            setText(contato?.nome.orEmpty())
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
-        }
-        val etTelefone = TextInputEditText(this).apply {
-            hint = "Telefone"
-            setText(contato?.telefone.orEmpty())
-            inputType = InputType.TYPE_CLASS_PHONE
-        }
-        val etEmail = TextInputEditText(this).apply {
-            hint = "E-mail (opcional)"
-            setText(contato?.email.orEmpty())
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        }
-        val spinner = Spinner(this)
-        val tipos = listOf("Emergência", "Confiança", "Familiar", "Médico", "Amigo", "Cuidador", "Outro")
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, tipos)
-        contato?.tipoContato?.let {
-            val index = tipos.indexOf(it)
-            if (index >= 0) spinner.setSelection(index)
-        }
-
-        layout.addView(etNome)
-        layout.addView(etTelefone)
-        layout.addView(etEmail)
-        layout.addView(spinner)
-
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(if (contato == null) "Adicionar contato" else "Editar contato")
-            .setView(layout)
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Salvar", null)
-            .create()
-
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val nome = etNome.text?.toString()?.trim().orEmpty()
-                val telefone = etTelefone.text?.toString()?.trim().orEmpty()
-                val email = etEmail.text?.toString()?.trim().orEmpty()
-                val tipo = spinner.selectedItem.toString()
-
-                if (nome.isBlank() || telefone.isBlank()) {
-                    Toast.makeText(this, "Nome e telefone são obrigatórios.", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                if (contato?.id == null) {
-                    viewModel.cadastrarContato(usuarioId, nome, telefone, email, tipo)
-                } else {
-                    viewModel.atualizarContato(usuarioId, contato.id, nome, telefone, email, tipo)
-                }
-                dialog.dismiss()
-            }
-        }
-        dialog.show()
+    private fun abrirFormulario(contato: ContatoEmergencia?) {
+        startActivity(ContatoFormActivity.intent(this, contato))
     }
 
     private fun confirmarExclusao(contatoId: Long) {
@@ -193,23 +122,17 @@ class ContatosActivity : AppCompatActivity() {
     }
 
     private fun ligarParaContato(numeroOriginal: String) {
-        val numero = numeroOriginal.filter { it.isDigit() }
+        val numero = formatarNumero(numeroOriginal)
         if (numero.isBlank()) {
             Toast.makeText(this, "Número inválido.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val formatado = when {
-            numero.startsWith("55") -> "+$numero"
-            numero.length in 10..11 -> "+55$numero"
-            else -> numero
-        }
-
-        numeroPendenteLigacao = formatado
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
-            == PackageManager.PERMISSION_GRANTED
+        numeroPendenteLigacao = numero
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) ==
+            PackageManager.PERMISSION_GRANTED
         ) {
-            iniciarLigacao(formatado)
+            iniciarLigacao(numero)
         } else {
             ActivityCompat.requestPermissions(
                 this,
@@ -219,12 +142,20 @@ class ContatosActivity : AppCompatActivity() {
         }
     }
 
-    private fun iniciarLigacao(numero: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_CALL, Uri.parse("tel:$numero")))
-        } catch (_: Exception) {
-            Toast.makeText(this, "Não foi possível iniciar a ligação.", Toast.LENGTH_SHORT).show()
+    private fun formatarNumero(numeroOriginal: String): String {
+        val numero = numeroOriginal.filter(Char::isDigit).trimStart('0')
+        return when {
+            numero.startsWith("55") && numero.length >= 12 -> "+$numero"
+            numero.length in 10..11 -> "+55$numero"
+            else -> ""
         }
+    }
+
+    private fun iniciarLigacao(numero: String) {
+        runCatching { startActivity(Intent(Intent.ACTION_CALL, Uri.parse("tel:$numero"))) }
+            .onFailure {
+                Toast.makeText(this, "Não foi possível iniciar a ligação.", Toast.LENGTH_SHORT).show()
+            }
     }
 
     override fun onRequestPermissionsResult(

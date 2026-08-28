@@ -15,22 +15,34 @@ interface UsuarioContatoRepository : JpaRepository<UsuarioContato, UsuarioContat
         SELECT uc.contato
         FROM UsuarioContato uc
         WHERE uc.usuario.id = :usuarioId
-        ORDER BY uc.prioridade ASC
+        ORDER BY uc.prioridade ASC, uc.contato.id ASC
         """
     )
     fun findContatosByUsuarioId(@Param("usuarioId") usuarioId: Long): List<ContatoEmergencia>
 
     @Query(
-        value = "SELECT COUNT(*) FROM usuariocontato WHERE fk_usuario_id_usuario = :usuarioId",
-        nativeQuery = true
+        """
+        SELECT COALESCE(MAX(uc.prioridade), 0)
+        FROM UsuarioContato uc
+        WHERE uc.usuario.id = :usuarioId
+        """
     )
-    fun countByUsuarioId(@Param("usuarioId") usuarioId: Long): Long
+    fun findMaxPrioridadeByUsuarioId(@Param("usuarioId") usuarioId: Long): Int
 
     @Query(
         value = "SELECT COUNT(*) FROM usuariocontato WHERE fk_contato_id_contato = :contatoId",
         nativeQuery = true
     )
     fun countByContatoId(@Param("contatoId") contatoId: Long): Long
+
+    @Query(
+        value = "SELECT COUNT(*) FROM usuariocontato WHERE fk_usuario_id_usuario = :usuarioId AND fk_contato_id_contato = :contatoId",
+        nativeQuery = true
+    )
+    fun countByUsuarioIdAndContatoId(
+        @Param("usuarioId") usuarioId: Long,
+        @Param("contatoId") contatoId: Long
+    ): Long
 
     @Modifying
     @Query(

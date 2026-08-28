@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "alerta")
 data class Alerta(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_alerta")
@@ -19,7 +18,7 @@ data class Alerta(
     val dataHora: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "status_alerta")
-    val status: String = "PENDENTE",
+    var status: String = "PENDENTE",
 
     @ManyToOne
     @JoinColumn(name = "fk_usuario_id_usuario")

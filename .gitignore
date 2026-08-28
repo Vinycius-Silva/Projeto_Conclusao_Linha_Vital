@@ -1,2 +1,31 @@
+# Segredos
+.env
+.env.*
+!.env.example
+**/firebase-key.json
+**/*service-account*.json
 
-Source/backend/src/main/resources/firebase-key.json
+# IDEs / builds
+**/.gradle/
+**/.idea/
+**/.kotlin/
+**/build/
+**/local.properties
+**/*.iml
+
+# Artefatos LaTeX
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
+
+# Sistema
+.DS_Store
+Thumbs.db

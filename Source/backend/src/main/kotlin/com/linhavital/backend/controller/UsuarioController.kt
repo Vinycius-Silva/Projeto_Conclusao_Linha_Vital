@@ -1,5 +1,6 @@
 package com.linhavital.backend.controller
 
+import com.linhavital.backend.dto.UsuarioResponse
 import com.linhavital.backend.model.Usuario
 import com.linhavital.backend.service.UsuarioService
 import org.springframework.web.bind.annotation.*
@@ -8,24 +9,16 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/usuarios")
 class UsuarioController(private val service: UsuarioService) {
 
-    @GetMapping
-    fun listar(): List<Usuario> = service.listar()
-
     @GetMapping("/{id}")
-    fun buscar(@PathVariable id: Long): Usuario =
-        service.buscarPorId(id)
+    fun buscar(@PathVariable id: Long): UsuarioResponse = service.buscarRespostaPorId(id)
 
     @PostMapping
-    fun criar(@RequestBody usuario: Usuario): Usuario =
-        service.salvar(usuario)
+    fun criar(@RequestBody usuario: Usuario): UsuarioResponse = service.salvar(usuario)
 
     @PutMapping("/{id}")
-    fun atualizar(
-        @PathVariable id: Long,
-        @RequestBody usuario: Usuario
-    ): Usuario = service.atualizar(id, usuario)
+    fun atualizar(@PathVariable id: Long, @RequestBody usuario: Usuario): UsuarioResponse =
+        service.atualizar(id, usuario)
 
     @DeleteMapping("/{id}")
-    fun deletar(@PathVariable id: Long) =
-        service.deletar(id)
+    fun deletar(@PathVariable id: Long) = service.deletar(id)
 }
