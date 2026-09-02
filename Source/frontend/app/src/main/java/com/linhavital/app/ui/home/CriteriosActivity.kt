@@ -28,7 +28,7 @@ class CriteriosActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.headerCriterios.applySystemBarsPadding(top = true)
-        binding.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
+        binding.bottomNavigation.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
         window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
@@ -36,21 +36,21 @@ class CriteriosActivity : AppCompatActivity() {
         binding.btnAdicionarCriterio.setOnClickListener { abrirConfiguracao() }
         binding.cardInatividade.setOnClickListener { abrirConfiguracao() }
 
-        binding.btnNavCriterios.setBackgroundResource(R.drawable.nav_item_active)
-        binding.iconNavCriterios.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
-        binding.labelNavCriterios.setTextColor(android.graphics.Color.parseColor("#BB0013"))
+        binding.bottomNavigation.btnNavCriterios.setBackgroundResource(R.drawable.nav_item_active)
+        binding.bottomNavigation.iconNavCriterios.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
+        binding.bottomNavigation.labelNavCriterios.setTextColor(android.graphics.Color.parseColor("#BB0013"))
 
-        binding.btnNavHome.setOnClickListener {
+        binding.bottomNavigation.btnNavHome.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             })
             finish()
         }
-        binding.btnNavContatos.setOnClickListener {
+        binding.bottomNavigation.btnNavContatos.setOnClickListener {
             startActivity(Intent(this, ContatosActivity::class.java))
             finish()
         }
-        binding.btnNavCriterios.setOnClickListener { }
+        binding.bottomNavigation.btnNavCriterios.setOnClickListener { }
 
         lifecycleScope.launch {
             usuarioId = sessionManager.getUserId()

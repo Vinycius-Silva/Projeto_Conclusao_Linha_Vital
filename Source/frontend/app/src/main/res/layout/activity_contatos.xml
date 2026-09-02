@@ -79,6 +79,8 @@
         android:fontFamily="@font/public_sans"
         android:visibility="gone" />
 
-    <include layout="@layout/view_bottom_navigation" />
+    <include
+        android:id="@+id/bottomNavigation"
+        layout="@layout/view_bottom_navigation" />
 
 </LinearLayout>

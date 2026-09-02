@@ -52,7 +52,7 @@ class HomeActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.headerHome.applySystemBarsPadding(top = true)
-        binding.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
+        binding.bottomNavigation.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
         window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
@@ -96,14 +96,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun configurarBottomBar() {
-        binding.btnNavHome.setBackgroundResource(R.drawable.nav_item_active)
-        binding.iconNavHome.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
-        binding.labelNavHome.setTextColor(android.graphics.Color.parseColor("#BB0013"))
-        binding.btnNavHome.setOnClickListener { }
-        binding.btnNavCriterios.setOnClickListener {
+        binding.bottomNavigation.btnNavHome.setBackgroundResource(R.drawable.nav_item_active)
+        binding.bottomNavigation.iconNavHome.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
+        binding.bottomNavigation.labelNavHome.setTextColor(android.graphics.Color.parseColor("#BB0013"))
+        binding.bottomNavigation.btnNavHome.setOnClickListener { }
+        binding.bottomNavigation.btnNavCriterios.setOnClickListener {
             startActivity(Intent(this, CriteriosActivity::class.java))
         }
-        binding.btnNavContatos.setOnClickListener {
+        binding.bottomNavigation.btnNavContatos.setOnClickListener {
             startActivity(Intent(this, ContatosActivity::class.java))
         }
     }

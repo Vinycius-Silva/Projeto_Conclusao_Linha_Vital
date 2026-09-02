@@ -195,5 +195,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/view_bottom_navigation" />
+    <include
+        android:id="@+id/bottomNavigation"
+        layout="@layout/view_bottom_navigation" />
 </LinearLayout>
