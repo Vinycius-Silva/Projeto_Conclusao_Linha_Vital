@@ -19,6 +19,7 @@ import com.linhavital.app.data.model.ContatoEmergencia
 import com.linhavital.app.data.model.MonitoramentoStatus
 import com.linhavital.app.data.repository.AlertaRepository
 import com.linhavital.app.data.repository.ContatoRepository
+import com.linhavital.app.data.repository.HistoricoNotificacaoRepository
 import com.linhavital.app.data.repository.MonitoramentoRepository
 import com.linhavital.app.databinding.ActivityHomeBinding
 import com.linhavital.app.monitoring.CheckInScheduler
@@ -32,9 +33,17 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var sessionManager: SessionManager
 
-    private val monitoramentoRepository = MonitoramentoRepository()
-    private val contatoRepository = ContatoRepository()
-    private val alertaRepository = AlertaRepository()
+    private val monitoramentoRepository =
+        MonitoramentoRepository()
+
+    private val contatoRepository =
+        ContatoRepository()
+
+    private val alertaRepository =
+        AlertaRepository()
+
+    private val historicoNotificacaoRepository =
+        HistoricoNotificacaoRepository()
 
     private var usuarioId: Long? = null
 
@@ -46,18 +55,27 @@ class HomeActivity : AppCompatActivity() {
     private var notificationPermissionAsked = false
 
     /*
-     * ================================
+     * ===================================================
      * CONTROLE DA CASCATA DE EMERGÊNCIA
-     * ================================
+     * ===================================================
      */
 
-    private var contatosCascata: List<ContatoEmergencia> = emptyList()
+    private var contatosCascata: List<ContatoEmergencia> =
+        emptyList()
 
     private var indiceContatoAtual = 0
 
     private var cascataEmAndamento = false
 
     private var aguardandoRetornoLigacao = false
+
+    /*
+     * ID do alerta PANICO criado pelo backend.
+     *
+     * Todos os registros de TENTATIVA,
+     * NAO_ATENDIDO e ATENDIDO usarão esse ID.
+     */
+    private var alertaIdCascata: Long? = null
 
     companion object {
 
@@ -68,84 +86,117 @@ class HomeActivity : AppCompatActivity() {
         const val EXTRA_OPEN_CHECK_IN = "open_check_in"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
 
         super.onCreate(savedInstanceState)
 
-        binding = ActivityHomeBinding.inflate(layoutInflater)
+        binding =
+            ActivityHomeBinding.inflate(
+                layoutInflater
+            )
 
-        setContentView(binding.root)
+        setContentView(
+            binding.root
+        )
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowCompat.setDecorFitsSystemWindows(
+            window,
+            false
+        )
 
-        binding.headerHome.applySystemBarsPadding(top = true)
+        binding.headerHome
+            .applySystemBarsPadding(
+                top = true
+            )
 
-        binding.bottomNavigation.bottomNavigationContainer
-            .applySystemBarsPadding(bottom = true)
+        binding.bottomNavigation
+            .bottomNavigationContainer
+            .applySystemBarsPadding(
+                bottom = true
+            )
 
         window.statusBarColor =
-            android.graphics.Color.parseColor("#FFF5F5")
+            android.graphics.Color.parseColor(
+                "#FFF5F5"
+            )
 
         WindowCompat
-            .getInsetsController(window, window.decorView)
-            .isAppearanceLightStatusBars = true
+            .getInsetsController(
+                window,
+                window.decorView
+            )
+            .isAppearanceLightStatusBars =
+            true
 
-        sessionManager = SessionManager(this)
+        sessionManager =
+            SessionManager(this)
 
-        CheckInScheduler.ensureChannel(this)
+        CheckInScheduler.ensureChannel(
+            this
+        )
 
         /*
          * SOS
          */
 
-        binding.btnSOS.setOnClickListener {
+        binding.btnSOS
+            .setOnClickListener {
 
-            registrarCliqueEmergencia("Toque")
-        }
+                registrarCliqueEmergencia(
+                    "Toque"
+                )
+            }
 
         /*
          * CHECK-IN
          */
 
-        binding.btnCheckIn.setOnClickListener {
+        binding.btnCheckIn
+            .setOnClickListener {
 
-            confirmarCheckIn()
-        }
+                confirmarCheckIn()
+            }
 
-        binding.btnConfigurarMonitoramento.setOnClickListener {
+        binding.btnConfigurarMonitoramento
+            .setOnClickListener {
 
-            startActivity(
-                Intent(
-                    this,
-                    CriterioFormActivity::class.java
+                startActivity(
+                    Intent(
+                        this,
+                        CriterioFormActivity::class.java
+                    )
                 )
-            )
-        }
+            }
 
         /*
          * CONTATOS
          */
 
-        binding.btnVerContatos.setOnClickListener {
+        binding.btnVerContatos
+            .setOnClickListener {
 
-            startActivity(
-                Intent(
-                    this,
-                    ContatosActivity::class.java
+                startActivity(
+                    Intent(
+                        this,
+                        ContatosActivity::class.java
+                    )
                 )
-            )
-        }
+            }
 
         configurarBottomBar()
 
-        binding.btnLogout.setOnClickListener {
+        binding.btnLogout
+            .setOnClickListener {
 
-            logout()
-        }
+                logout()
+            }
 
         lifecycleScope.launch {
 
-            usuarioId = sessionManager.getUserId()
+            usuarioId =
+                sessionManager.getUserId()
 
             if (
                 usuarioId == null ||
@@ -158,7 +209,10 @@ class HomeActivity : AppCompatActivity() {
             }
 
             binding.tvBemVindo.text =
-                "Olá, ${sessionManager.getUserName() ?: "Usuário"}!"
+                "Olá, ${
+                    sessionManager.getUserName()
+                        ?: "Usuário"
+                }!"
 
             carregarDashboard()
 
@@ -175,7 +229,9 @@ class HomeActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
 
-                intent.removeExtra(EXTRA_OPEN_CHECK_IN)
+                intent.removeExtra(
+                    EXTRA_OPEN_CHECK_IN
+                )
             }
         }
     }
@@ -185,11 +241,11 @@ class HomeActivity : AppCompatActivity() {
      * RETORNO DA TELA DE LIGAÇÃO
      * ===================================================
      *
-     * O Android comum não permite determinar de forma
-     * confiável se a pessoa chamada realmente atendeu.
+     * O Android não permite detectar de forma confiável
+     * se uma chamada convencional foi atendida.
      *
-     * Portanto, quando o usuário retorna ao Linha Vital,
-     * perguntamos se o contato atendeu.
+     * Quando o usuário retorna para o Linha Vital,
+     * perguntamos manualmente se o contato atendeu.
      */
 
     override fun onResume() {
@@ -206,7 +262,8 @@ class HomeActivity : AppCompatActivity() {
             aguardandoRetornoLigacao
         ) {
 
-            aguardandoRetornoLigacao = false
+            aguardandoRetornoLigacao =
+                false
 
             binding.root.postDelayed({
 
@@ -227,29 +284,34 @@ class HomeActivity : AppCompatActivity() {
 
     private fun configurarBottomBar() {
 
-        binding.bottomNavigation.btnNavHome
+        binding.bottomNavigation
+            .btnNavHome
             .setBackgroundResource(
                 R.drawable.nav_item_active
             )
 
-        binding.bottomNavigation.iconNavHome
+        binding.bottomNavigation
+            .iconNavHome
             .setColorFilter(
                 android.graphics.Color.parseColor(
                     "#BB0013"
                 )
             )
 
-        binding.bottomNavigation.labelNavHome
+        binding.bottomNavigation
+            .labelNavHome
             .setTextColor(
                 android.graphics.Color.parseColor(
                     "#BB0013"
                 )
             )
 
-        binding.bottomNavigation.btnNavHome
+        binding.bottomNavigation
+            .btnNavHome
             .setOnClickListener { }
 
-        binding.bottomNavigation.btnNavCriterios
+        binding.bottomNavigation
+            .btnNavCriterios
             .setOnClickListener {
 
                 startActivity(
@@ -260,7 +322,8 @@ class HomeActivity : AppCompatActivity() {
                 )
             }
 
-        binding.bottomNavigation.btnNavContatos
+        binding.bottomNavigation
+            .btnNavContatos
             .setOnClickListener {
 
                 startActivity(
@@ -280,7 +343,8 @@ class HomeActivity : AppCompatActivity() {
 
     private fun carregarDashboard() {
 
-        val id = usuarioId ?: return
+        val id =
+            usuarioId ?: return
 
         lifecycleScope.launch {
 
@@ -297,7 +361,8 @@ class HomeActivity : AppCompatActivity() {
                     binding.tvProximoCheckIn.text =
                         "Não foi possível consultar o monitoramento."
 
-                    binding.btnCheckIn.isEnabled = false
+                    binding.btnCheckIn.isEnabled =
+                        false
                 }
 
             contatoRepository
@@ -308,10 +373,12 @@ class HomeActivity : AppCompatActivity() {
                         when {
 
                             contatos.isEmpty() -> {
+
                                 "Nenhum contato cadastrado"
                             }
 
                             else -> {
+
                                 "Prioritário: " +
                                         "${contatos.first().nome} • " +
                                         contatos.first().tipoContato
@@ -343,13 +410,16 @@ class HomeActivity : AppCompatActivity() {
             when {
 
                 !status.ativo ->
+
                     "Monitoramento pausado"
 
                 status.checkInPendente ||
                         status.alertaInatividadeAberto ->
+
                     "Check-in pendente"
 
                 else ->
+
                     "Monitoramento ativo"
             }
 
@@ -357,13 +427,16 @@ class HomeActivity : AppCompatActivity() {
             when {
 
                 !status.ativo ->
+
                     "Ative os check-ins em Critérios para iniciar o ciclo preventivo."
 
                 status.checkInPendente ||
                         status.alertaInatividadeAberto ->
+
                     "O prazo terminou. Confirme agora que está tudo bem para encerrar a ocorrência."
 
                 else ->
+
                     "Próximo check-in em aproximadamente " +
                             "${status.minutosRestantes.coerceAtLeast(1)} min."
             }
@@ -377,10 +450,14 @@ class HomeActivity : AppCompatActivity() {
                 status.alertaInatividadeAberto
             ) {
 
-                CheckInScheduler.cancel(this)
+                CheckInScheduler.cancel(
+                    this
+                )
 
             } else if (
-                !CheckInScheduler.isScheduled(this)
+                !CheckInScheduler.isScheduled(
+                    this
+                )
             ) {
 
                 CheckInScheduler.schedule(
@@ -392,15 +469,19 @@ class HomeActivity : AppCompatActivity() {
 
         } else {
 
-            CheckInScheduler.cancel(this)
+            CheckInScheduler.cancel(
+                this
+            )
         }
     }
 
     private fun confirmarCheckIn() {
 
-        val id = usuarioId ?: return
+        val id =
+            usuarioId ?: return
 
-        binding.btnCheckIn.isEnabled = false
+        binding.btnCheckIn.isEnabled =
+            false
 
         lifecycleScope.launch {
 
@@ -408,11 +489,14 @@ class HomeActivity : AppCompatActivity() {
                 .checkIn(id)
                 .onSuccess { status ->
 
-                    renderMonitoramento(status)
+                    renderMonitoramento(
+                        status
+                    )
 
                     CheckInScheduler.schedule(
                         this@HomeActivity,
-                        status.intervaloMinutos.toLong()
+                        status.intervaloMinutos
+                            .toLong()
                     )
 
                     Toast.makeText(
@@ -446,7 +530,8 @@ class HomeActivity : AppCompatActivity() {
     ): Boolean {
 
         if (
-            event.action == KeyEvent.ACTION_DOWN &&
+            event.action ==
+            KeyEvent.ACTION_DOWN &&
             event.repeatCount == 0 &&
             event.keyCode ==
             KeyEvent.KEYCODE_VOLUME_DOWN
@@ -459,7 +544,9 @@ class HomeActivity : AppCompatActivity() {
             return true
         }
 
-        return super.dispatchKeyEvent(event)
+        return super.dispatchKeyEvent(
+            event
+        )
     }
 
     /*
@@ -485,7 +572,8 @@ class HomeActivity : AppCompatActivity() {
 
         sosClickCount++
 
-        lastSosClickTime = agora
+        lastSosClickTime =
+            agora
 
         when (sosClickCount) {
 
@@ -525,8 +613,8 @@ class HomeActivity : AppCompatActivity() {
     private fun acionarEmergencia() {
 
         /*
-         * Impede iniciar outra cascata enquanto
-         * já existe uma em andamento.
+         * Impede que duas cascatas sejam iniciadas
+         * ao mesmo tempo.
          */
 
         if (cascataEmAndamento) {
@@ -552,42 +640,66 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             /*
-             * Registra primeiro o alerta de pânico.
+             * Cria o alerta PANICO.
              */
 
-            val alerta =
+            val resultadoAlerta =
                 alertaRepository
-                    .registrarAlertaPanico(id)
+                    .registrarAlertaPanico(
+                        id
+                    )
+
+            resultadoAlerta
+                .onSuccess { idAlerta ->
+
+                    /*
+                     * Guarda o ID do alerta que será usado
+                     * em todos os eventos da cascata.
+                     */
+
+                    alertaIdCascata =
+                        idAlerta
+                }
+                .onFailure {
+
+                    /*
+                     * Se o backend falhar, ainda tentamos
+                     * realizar as ligações.
+                     */
+
+                    alertaIdCascata =
+                        null
+
+                    Toast.makeText(
+                        this@HomeActivity,
+                        "O SOS continuará, mas não foi possível registrar o alerta no backend.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
 
             /*
-             * Mesmo se o backend falhar,
-             * tentamos realizar as ligações.
-             */
-
-            if (alerta.isFailure) {
-
-                Toast.makeText(
-                    this@HomeActivity,
-                    "O SOS continuará, mas não foi possível registrar o alerta no backend.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-
-            /*
-             * Busca TODOS os contatos.
+             * Busca os contatos do usuário.
+             *
+             * O backend já devolve a lista
+             * respeitando a prioridade.
              */
 
             contatoRepository
                 .listarContatos(id)
                 .onSuccess { contatos ->
 
-                    if (contatos.isEmpty()) {
+                    if (
+                        contatos.isEmpty()
+                    ) {
 
                         Toast.makeText(
                             this@HomeActivity,
                             "Cadastre um contato para completar o fluxo de SOS.",
                             Toast.LENGTH_LONG
                         ).show()
+
+                        alertaIdCascata =
+                            null
 
                         startActivity(
                             Intent(
@@ -599,16 +711,14 @@ class HomeActivity : AppCompatActivity() {
                         return@onSuccess
                     }
 
-                    /*
-                     * Inicia a cascata.
-                     *
-                     * O backend já retorna os contatos
-                     * pela prioridade.
-                     */
-
-                    iniciarCascata(contatos)
+                    iniciarCascata(
+                        contatos
+                    )
                 }
                 .onFailure {
+
+                    alertaIdCascata =
+                        null
 
                     Toast.makeText(
                         this@HomeActivity,
@@ -629,13 +739,17 @@ class HomeActivity : AppCompatActivity() {
         contatos: List<ContatoEmergencia>
     ) {
 
-        contatosCascata = contatos
+        contatosCascata =
+            contatos
 
-        indiceContatoAtual = 0
+        indiceContatoAtual =
+            0
 
-        cascataEmAndamento = true
+        cascataEmAndamento =
+            true
 
-        aguardandoRetornoLigacao = false
+        aguardandoRetornoLigacao =
+            false
 
         ligarParaContatoAtual()
     }
@@ -648,7 +762,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun ligarParaContatoAtual() {
 
-        if (!cascataEmAndamento) {
+        if (
+            !cascataEmAndamento
+        ) {
 
             return
         }
@@ -660,20 +776,17 @@ class HomeActivity : AppCompatActivity() {
                 )
 
         /*
-         * Se não há mais contato,
-         * a cascata terminou.
+         * Não existem mais contatos.
          */
 
-        if (contato == null) {
+        if (
+            contato == null
+        ) {
 
             finalizarCascataSemAtendimento()
 
             return
         }
-
-        /*
-         * Validação do telefone.
-         */
 
         val numeroFormatado =
             formatarNumero(
@@ -681,11 +794,13 @@ class HomeActivity : AppCompatActivity() {
             )
 
         /*
-         * Se o telefone desse contato
-         * for inválido, pula para o próximo.
+         * Telefone inválido:
+         * pula para o próximo contato.
          */
 
-        if (numeroFormatado.isBlank()) {
+        if (
+            numeroFormatado.isBlank()
+        ) {
 
             Toast.makeText(
                 this,
@@ -705,9 +820,27 @@ class HomeActivity : AppCompatActivity() {
             Toast.LENGTH_SHORT
         ).show()
 
-        prepararLigacao(
-            contato.telefone
-        )
+        /*
+         * Registra TENTATIVA antes de realizar
+         * a ligação.
+         */
+
+        lifecycleScope.launch {
+
+            registrarStatusCascata(
+                contato = contato,
+                status = "TENTATIVA"
+            )
+
+            /*
+             * Mesmo que o histórico não seja salvo,
+             * a ligação continua.
+             */
+
+            prepararLigacao(
+                contato.telefone
+            )
+        }
     }
 
     /*
@@ -725,7 +858,9 @@ class HomeActivity : AppCompatActivity() {
                 )
                 ?: return
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(
+            this
+        )
             .setTitle(
                 "Contato de emergência"
             )
@@ -736,18 +871,123 @@ class HomeActivity : AppCompatActivity() {
                 "Sim"
             ) { _, _ ->
 
-                finalizarCascataComAtendimento(
-                    contato
-                )
+                lifecycleScope.launch {
+
+                    /*
+                     * O usuário confirmou que
+                     * este contato atendeu.
+                     */
+
+                    registrarStatusCascata(
+                        contato = contato,
+                        status = "ATENDIDO"
+                    )
+
+                    finalizarCascataComAtendimento(
+                        contato
+                    )
+                }
             }
             .setNegativeButton(
                 "Não"
             ) { _, _ ->
 
-                chamarProximoContato()
+                lifecycleScope.launch {
+
+                    /*
+                     * Este contato não atendeu.
+                     */
+
+                    registrarStatusCascata(
+                        contato = contato,
+                        status = "NAO_ATENDIDO"
+                    )
+
+                    /*
+                     * Passa para o próximo contato.
+                     */
+
+                    chamarProximoContato()
+                }
             }
-            .setCancelable(false)
+            .setCancelable(
+                false
+            )
             .show()
+    }
+
+    /*
+     * ===================================================
+     * REGISTRO DO HISTÓRICO DA CASCATA
+     * ===================================================
+     */
+
+    private suspend fun registrarStatusCascata(
+        contato: ContatoEmergencia,
+        status: String
+    ) {
+
+        /*
+         * Sem ID de alerta não conseguimos relacionar
+         * o evento no backend.
+         *
+         * A ligação continua normalmente.
+         */
+
+        val alertaId =
+            alertaIdCascata
+                ?: run {
+
+                    android.util.Log.w(
+                        "HomeActivity",
+                        "Evento $status não registrado: alerta sem ID."
+                    )
+
+                    return
+                }
+
+        /*
+         * No model ContatoEmergencia o campo id é Long?,
+         * pois um contato ainda não salvo pode não ter ID.
+         *
+         * Para um contato vindo do backend, o ID deve
+         * estar preenchido. Mesmo assim fazemos a
+         * validação para evitar NullPointerException.
+         */
+
+        val contatoId =
+            contato.id
+                ?: run {
+
+                    android.util.Log.e(
+                        "HomeActivity",
+                        "Contato ${contato.nome} não possui ID. " +
+                                "O status $status não será registrado."
+                    )
+
+                    return
+                }
+
+        historicoNotificacaoRepository
+            .registrarTentativa(
+                alertaId = alertaId,
+                contatoId = contatoId,
+                status = status
+            )
+            .onFailure { erro ->
+
+                /*
+                 * Falhar ao registrar o histórico
+                 * nunca deve interromper uma emergência.
+                 */
+
+                android.util.Log.e(
+                    "HomeActivity",
+                    "Não foi possível registrar $status " +
+                            "para o contato $contatoId: ${erro.message}",
+                    erro
+                )
+            }
     }
 
     /*
@@ -800,7 +1040,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun finalizarCascataSemAtendimento() {
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(
+            this
+        )
             .setTitle(
                 "Nenhum contato disponível"
             )
@@ -812,7 +1054,9 @@ class HomeActivity : AppCompatActivity() {
                 "OK",
                 null
             )
-            .setCancelable(false)
+            .setCancelable(
+                false
+            )
             .show()
 
         limparCascata()
@@ -829,13 +1073,20 @@ class HomeActivity : AppCompatActivity() {
         contatosCascata =
             emptyList()
 
-        indiceContatoAtual = 0
+        indiceContatoAtual =
+            0
 
-        cascataEmAndamento = false
+        cascataEmAndamento =
+            false
 
-        aguardandoRetornoLigacao = false
+        aguardandoRetornoLigacao =
+            false
 
-        numeroPendenteLigacao = null
+        numeroPendenteLigacao =
+            null
+
+        alertaIdCascata =
+            null
     }
 
     /*
@@ -853,7 +1104,9 @@ class HomeActivity : AppCompatActivity() {
                 numeroOriginal
             )
 
-        if (numero.isBlank()) {
+        if (
+            numero.isBlank()
+        ) {
 
             Toast.makeText(
                 this,
@@ -861,7 +1114,9 @@ class HomeActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
 
-            if (cascataEmAndamento) {
+            if (
+                cascataEmAndamento
+            ) {
 
                 chamarProximoContato()
             }
@@ -912,11 +1167,15 @@ class HomeActivity : AppCompatActivity() {
                 .filter(
                     Char::isDigit
                 )
-                .trimStart('0')
+                .trimStart(
+                    '0'
+                )
 
         return when {
 
-            numero.startsWith("55") &&
+            numero.startsWith(
+                "55"
+            ) &&
                     numero.length >= 12 -> {
 
                 "+$numero"
@@ -945,11 +1204,15 @@ class HomeActivity : AppCompatActivity() {
     ) {
 
         /*
-         * Marca que estamos saindo do aplicativo
-         * para realizar uma ligação.
+         * Marca que o aplicativo está indo para
+         * a tela de chamada.
+         *
+         * Quando voltar, onResume() mostrará
+         * a confirmação de atendimento.
          */
 
-        aguardandoRetornoLigacao = true
+        aguardandoRetornoLigacao =
+            true
 
         runCatching {
 
@@ -973,7 +1236,9 @@ class HomeActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
 
-            if (cascataEmAndamento) {
+            if (
+                cascataEmAndamento
+            ) {
 
                 chamarProximoContato()
             }
@@ -1038,11 +1303,12 @@ class HomeActivity : AppCompatActivity() {
                         .getOrNull()
                         ?.let { status ->
 
-                            monitoramentoRepository.configurar(
-                                id,
-                                false,
-                                status.intervaloMinutos
-                            )
+                            monitoramentoRepository
+                                .configurar(
+                                    id,
+                                    false,
+                                    status.intervaloMinutos
+                                )
                         }
                 }
 

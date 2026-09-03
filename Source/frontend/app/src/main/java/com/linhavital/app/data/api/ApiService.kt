@@ -6,13 +6,19 @@ import retrofit2.http.*
 interface ApiService {
 
     @POST("auth/login")
-    suspend fun login(@Body request: LoginRequest): UsuarioSessao
+    suspend fun login(
+        @Body request: LoginRequest
+    ): UsuarioSessao
 
     @POST("usuarios")
-    suspend fun criarUsuario(@Body usuario: Usuario): UsuarioSessao
+    suspend fun criarUsuario(
+        @Body usuario: Usuario
+    ): UsuarioSessao
 
     @GET("usuarios/{id}")
-    suspend fun getUsuario(@Path("id") id: Long): UsuarioSessao
+    suspend fun getUsuario(
+        @Path("id") id: Long
+    ): UsuarioSessao
 
     @GET("contatos/usuario/{usuarioId}")
     suspend fun getContatosDoUsuario(
@@ -43,6 +49,20 @@ interface ApiService {
         @Path("usuarioId") usuarioId: Long
     ): Map<String, Any>
 
+    /*
+     * Registra os eventos da cascata de emergência.
+     *
+     * Status possíveis no backend:
+     * TENTATIVA
+     * NAO_ATENDIDO
+     * ATENDIDO
+     */
+    @POST("notificacoes/alerta/{alertaId}/tentativa")
+    suspend fun registrarTentativaContato(
+        @Path("alertaId") alertaId: Long,
+        @Body request: TentativaContatoRequest
+    ): Map<String, Any>
+
     @GET("monitoramento/status/{usuarioId}")
     suspend fun getMonitoramentoStatus(
         @Path("usuarioId") usuarioId: Long
@@ -51,7 +71,7 @@ interface ApiService {
     @PUT("monitoramento/configuracao/{usuarioId}")
     suspend fun configurarMonitoramento(
         @Path("usuarioId") usuarioId: Long,
-        @Body request: MonitoramentoConfiguracaoRequest
+        @Body request: ConfiguracaoMonitoramentoRequest
     ): MonitoramentoStatus
 
     @POST("monitoramento/check-in/{usuarioId}")
