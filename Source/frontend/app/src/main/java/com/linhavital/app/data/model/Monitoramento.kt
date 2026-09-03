@@ -2,7 +2,7 @@ package com.linhavital.app.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class MonitoramentoConfiguracaoRequest(
+data class ConfiguracaoMonitoramentoRequest(
     @SerializedName("ativo") val ativo: Boolean,
     @SerializedName("intervaloMinutos") val intervaloMinutos: Int
 )
