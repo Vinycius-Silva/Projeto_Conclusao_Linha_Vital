@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:id="@+id/rootRegister"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootRegister"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF5F5"
@@ -12,201 +11,172 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="28dp"
-        android:paddingBottom="32dp">
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:paddingBottom="36dp">
 
-        <!-- Header com botão voltar e logo -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="24dp">
+        <ImageButton
+            android:id="@+id/btnVoltar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/circle_background"
+            android:contentDescription="Voltar"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_revert" />
 
-            <ImageButton
-                android:id="@+id/btnVoltar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_revert"
-                android:background="@drawable/circle_background"
-                android:contentDescription="Voltar"
-                android:padding="8dp" />
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Logo Linha Vital"
+            android:src="@drawable/ic_logo" />
 
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_logo"
-                android:layout_marginStart="12dp"
-                android:contentDescription="Logo" />
-
-        </LinearLayout>
-
-        <!-- Título -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Crie sua conta"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#1A1A1A"
+            android:layout_marginTop="12dp"
             android:fontFamily="@font/newsreader_regular"
-            android:layout_marginTop="24dp" />
+            android:gravity="center"
+            android:text="Crie sua conta"
+            android:textColor="#1A1A1A"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Junte-se à nossa rede de proteção e cuidado."
-            android:textSize="14sp"
-            android:textColor="#757575"
-            android:fontFamily="@font/public_sans"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="28dp" />
-
-        <!-- Campo Email -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="E-mail ou Telefone"
-            android:textSize="13sp"
-            android:textStyle="bold"
+            android:layout_marginBottom="24dp"
             android:fontFamily="@font/public_sans"
-            android:textColor="#1A1A1A"
-            android:layout_marginBottom="6dp" />
+            android:gravity="center"
+            android:text="Seus dados básicos identificam a conta e tornam o fluxo de emergência consistente."
+            android:textColor="#757575"
+            android:textSize="14sp" />
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail ou Telefone"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#E0E0E0"
-            app:boxBackgroundColor="#FFFFFF"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:hint="Nome completo"
+            app:boxBackgroundColor="#FFFFFF">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="E-mail"
+            app:boxBackgroundColor="#FFFFFF">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/public_sans"
                 android:inputType="textEmailAddress"
                 android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Campo Senha -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Senha"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/public_sans"
-            android:textColor="#1A1A1A"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="6dp" />
-
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Telefone"
+            app:boxBackgroundColor="#FFFFFF">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Data de nascimento (DD/MM/AAAA)"
+            app:boxBackgroundColor="#FFFFFF">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBirthDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:imeOptions="actionNext" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:hint="Senha"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#E0E0E0"
             app:boxBackgroundColor="#FFFFFF"
-            app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            app:passwordToggleEnabled="true">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/public_sans"
                 android:inputType="textPassword"
                 android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Campo Confirmar Senha -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Confirmar Senha"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/public_sans"
-            android:textColor="#1A1A1A"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="6dp" />
-
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirmar Senha"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#E0E0E0"
+            android:layout_marginTop="12dp"
+            android:hint="Confirmar senha"
             app:boxBackgroundColor="#FFFFFF"
-            app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            app:passwordToggleEnabled="true">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/public_sans"
                 android:inputType="textPassword"
                 android:imeOptions="actionDone" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botão Criar conta -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCadastrar"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Criar conta"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:fontFamily="@font/public_sans"
-            android:textStyle="bold"
-            android:layout_marginTop="32dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="24dp"
             android:backgroundTint="#BB0013"
-            app:cornerRadius="30dp" />
+            android:text="Criar conta"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="28dp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:visibility="gone" />
 
-        <!-- Já tem conta -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="18dp"
             android:gravity="center"
-            android:layout_marginTop="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Já tenho uma conta? "
-                android:textSize="14sp"
-                android:fontFamily="@font/public_sans"
-                android:textColor="#757575" />
-
-            <TextView
-                android:id="@+id/tvLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fazer login"
-                android:textSize="14sp"
-                android:fontFamily="@font/public_sans"
-                android:textColor="#BB0013"
-                android:textStyle="bold" />
-        </LinearLayout>
-
+            android:padding="8dp"
+            android:text="Já tem uma conta? Fazer login"
+            android:textColor="#BB0013"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

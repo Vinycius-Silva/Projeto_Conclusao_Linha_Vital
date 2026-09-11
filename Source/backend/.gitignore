@@ -38,3 +38,8 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+# Segredos e configuração local
+.env
+firebase-key.json
+*.service-account.json

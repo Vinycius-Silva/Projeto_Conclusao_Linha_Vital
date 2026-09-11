@@ -6,13 +6,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.linhavital.app.databinding.ActivityLoginBinding
 import com.linhavital.app.ui.home.HomeActivity
+import com.linhavital.app.ui.onboarding.OnboardingActivity
 import com.linhavital.app.utils.SessionManager
-import kotlinx.coroutines.launch
-import androidx.core.view.WindowCompat
 import com.linhavital.app.utils.applySystemBarsPadding
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -27,47 +28,54 @@ class LoginActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.rootLogin.applySystemBarsPadding(top = true, bottom = true)
-
-        window.statusBarColor = android.graphics.Color.parseColor("#FAFAFA")
+        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         sessionManager = SessionManager(this)
-
         lifecycleScope.launch {
             if (sessionManager.isLoggedIn()) {
-                startActivity(Intent(this@LoginActivity, HomeActivity::class.java))
-                finish()
-                return@launch
+                abrirPosLogin()
             }
         }
 
         binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
-            viewModel.login(email, password)
+            viewModel.login(
+                binding.etEmail.text?.toString().orEmpty(),
+                binding.etPassword.text?.toString().orEmpty()
+            )
         }
-
         binding.tvCadastro.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+        binding.tvEsqueciSenha.visibility = View.GONE
 
         viewModel.loginState.observe(this) { state ->
             when (state) {
-                is LoginState.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.btnLogin.isEnabled = false
-                }
+                is LoginState.Loading -> setLoading(true)
                 is LoginState.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
+                    setLoading(false)
+                    lifecycleScope.launch { abrirPosLogin() }
                 }
                 is LoginState.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnLogin.isEnabled = true
+                    setLoading(false)
                     Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+
+    private suspend fun abrirPosLogin() {
+        val destino = if (sessionManager.hasCompletedOnboarding()) {
+            HomeActivity::class.java
+        } else {
+            OnboardingActivity::class.java
+        }
+        startActivity(Intent(this, destino))
+        finish()
+    }
+
+    private fun setLoading(loading: Boolean) {
+        binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+        binding.btnLogin.isEnabled = !loading
     }
 }

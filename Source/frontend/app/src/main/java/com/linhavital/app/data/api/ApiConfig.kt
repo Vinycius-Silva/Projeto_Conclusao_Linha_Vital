@@ -1,6 +1,8 @@
 package com.linhavital.app.data.api
 
+import com.linhavital.app.BuildConfig
+
 object ApiConfig {
-    const val BASE_URL = "http://192.168.15.20:8080/"
+    val BASE_URL: String = BuildConfig.API_BASE_URL
     const val TIMEOUT_SECONDS = 30L
 }
