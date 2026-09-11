@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="lv_page_gutter">24dp</dimen>
+    <dimen name="lv_onboarding_art_height">208dp</dimen>
+    <integer name="lv_motion_short">180</integer>
+    <integer name="lv_motion_medium">220</integer>
+</resources>

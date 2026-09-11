@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    style="@style/Widget.LinhaVital.Card">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top">
+            <TextView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/tvAvatarContato"
+                style="@style/TextAppearance.LinhaVital.Section"
+                android:gravity="center"
+                android:background="@drawable/lv_avatar_background"
+                android:textColor="@color/lv_brand"
+                android:importantForAccessibility="no" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvNomeContato"
+                    style="@style/TextAppearance.LinhaVital.Section" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTelefoneContato"
+                    style="@style/TextAppearance.LinhaVital.Body"
+                    android:layout_marginTop="5dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTipoContato"
+                    style="@style/TextAppearance.LinhaVital.Caption"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnLigar"
+                style="@style/Widget.LinhaVital.Button.Outline"
+                android:text="@string/item_contato_btnligar_text"
+                app:icon="@drawable/ic_nav_phone"
+                app:iconGravity="textStart"
+                android:layout_weight="1"
+                android:minHeight="48dp" />
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/btnEditar"
+                android:src="@drawable/ic_nav_edit"
+                style="@style/Widget.LinhaVital.IconButton"
+                android:contentDescription="@string/item_contato_btneditar_contentdescription"
+                android:layout_marginStart="8dp" />
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/btnDeletar"
+                android:src="@drawable/ic_lv_delete"
+                style="@style/Widget.LinhaVital.IconButton"
+                android:contentDescription="@string/item_contato_btndeletar_contentdescription"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

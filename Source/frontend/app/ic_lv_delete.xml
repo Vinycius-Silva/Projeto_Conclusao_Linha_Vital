@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:autoMirrored="false">
+    <path
+        android:strokeColor="@color/lv_brand"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M4,6H20 M9,6V3H15V6 M6,6L7,21H17L18,6 M10,10V17 M14,10V17" />
+</vector>

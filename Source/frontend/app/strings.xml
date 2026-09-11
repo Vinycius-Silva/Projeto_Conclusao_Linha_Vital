@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LinhaVital</string>
+    <string name="lv_back">Voltar</string>
+    <string name="lv_loading">Carregando</string>
+    <string name="lv_signing_in">Entrando…</string>
+    <string name="lv_creating_account">Criando conta…</string>
+    <string name="lv_saving">Salvando…</string>
+    <string name="lv_login">Entrar</string>
+    <string name="lv_create_account">Criar conta</string>
+    <string name="lv_save">Salvar</string>
+    <string name="lv_save_configuration">Salvar configuração</string>
+    <string name="lv_call_contact">Ligar para %1$s</string>
+    <string name="lv_edit_contact">Editar %1$s</string>
+    <string name="lv_delete_contact">Excluir %1$s</string>
+    <string name="activity_home_btnlogout_text">Sair</string>
+    <string name="activity_home_tvbemvindo_text">Olá, Usuário!</string>
+    <string name="activity_home_10_text">Sua rotina de segurança</string>
+    <string name="activity_home_11_text">Acompanhe o check-in preventivo e mantenha sua rede de proteção pronta para o SOS.</string>
+    <string name="activity_home_tvmonitoramentostatus_text">Carregando monitoramento...</string>
+    <string name="activity_home_tvproximocheckin_text">Consultando próximo check-in.</string>
+    <string name="activity_home_btncheckin_text">Estou bem</string>
+    <string name="activity_home_btnconfigurarmonitoramento_text">Configurar intervalo</string>
+    <string name="activity_home_22_text">Rede de proteção</string>
+    <string name="activity_home_tvcontatoprioritario_text">Carregando contatos...</string>
+    <string name="activity_home_btnvercontatos_text">Gerenciar contatos</string>
+    <string name="activity_home_btnsos_text">SOS</string>
+    <string name="activity_home_btnsos_contentdescription">SOS. Toque 3 vezes para acionar.</string>
+    <string name="activity_home_27_text">Toque 3x em até 2 segundos. O atalho de volume funciona enquanto o app está em primeiro plano.</string>
+    <string name="activity_register_9_text">Crie sua conta</string>
+    <string name="activity_register_10_text">Seus dados básicos identificam a conta e tornam o fluxo de emergência consistente.</string>
+    <string name="activity_register_inputname_hint">Nome completo</string>
+    <string name="activity_register_inputemail_hint">E-mail</string>
+    <string name="activity_register_inputphone_hint">Telefone</string>
+    <string name="activity_register_inputbirthdate_hint">Data de nascimento (DD/MM/AAAA)</string>
+    <string name="activity_register_inputpassword_hint">Senha</string>
+    <string name="activity_register_inputconfirmpassword_hint">Confirmar senha</string>
+    <string name="activity_register_btncadastrar_text">Criar conta</string>
+    <string name="activity_register_tvlogin_text">Já tem uma conta? Fazer login</string>
+    <string name="activity_login_2_text">Bem-vindo ao Linha Vital</string>
+    <string name="activity_login_4_text">Check-ins preventivos, rede de contatos e SOS manual em um único fluxo.</string>
+    <string name="activity_login_inputemail_hint">E-mail</string>
+    <string name="activity_login_inputpassword_hint">Senha</string>
+    <string name="activity_login_btnlogin_text">Entrar</string>
+    <string name="activity_login_tvesquecisenha_text">Esqueci minha senha</string>
+    <string name="activity_login_14_text">ou</string>
+    <string name="activity_login_tvcadastro_text">Criar conta</string>
+    <string name="view_bottom_navigation_btnnavcriterios_contentdescription">Critérios</string>
+    <string name="view_bottom_navigation_labelnavcriterios_text">Critérios</string>
+    <string name="view_bottom_navigation_btnnavhome_contentdescription">Início</string>
+    <string name="view_bottom_navigation_labelnavhome_text">Início</string>
+    <string name="view_bottom_navigation_btnnavcontatos_contentdescription">Contatos</string>
+    <string name="view_bottom_navigation_labelnavcontatos_text">Contatos</string>
+    <string name="item_contato_btnligar_text">Ligar</string>
+    <string name="item_contato_btneditar_contentdescription">Editar contato</string>
+    <string name="item_contato_btndeletar_contentdescription">Excluir contato</string>
+    <string name="activity_onboarding_btnskip_text">Pular</string>
+    <string name="activity_onboarding_tveyebrow_text">MONITORAMENTO PREVENTIVO</string>
+    <string name="activity_onboarding_btnnext_text">Próximo</string>
+    <string name="activity_onboarding_tvprogress_text">1 DE 4</string>
+    <string name="activity_contatos_8_text">Contatos de <font color="#BB0013">Emergência</font>
+    </string>
+    <string name="activity_contatos_fabadicionarcontato_text">Adicionar contato</string>
+    <string name="activity_contatos_tvempty_text">Nenhum contato cadastrado.
+Toque em + para adicionar.</string>
+    <string name="activity_criterio_form_9_text">Configurar <font color="#BB0013">critério</font>
+    </string>
+    <string name="activity_criterio_form_10_text">Ausência de resposta</string>
+    <string name="activity_criterio_form_11_text">O período começa novamente sempre que você confirma ‘Estou bem’.</string>
+    <string name="activity_criterio_form_switchmonitoramento_text">Monitoramento preventivo ativo</string>
+    <string name="activity_criterio_form_16_text">Intervalo para check-in</string>
+    <string name="activity_criterio_form_20_text">A opção de 1 minuto existe apenas para facilitar a demonstração do TCC.</string>
+    <string name="activity_criterio_form_btnsalvar_text">Salvar configuração</string>
+    <string name="activity_criterios_9_text">Critérios de <font color="#BB0013">Emergência</font>
+    </string>
+    <string name="activity_criterios_btnadicionarcriterio_text">Configurar</string>
+    <string name="activity_criterios_11_text">O MVP usa apenas critérios que possuem fluxo funcional completo.</string>
+    <string name="activity_criterios_15_text">SOS manual</string>
+    <string name="activity_criterios_16_text">Ativo • toque 3x no SOS ou pressione 3x o volume para baixo com o app em primeiro plano.</string>
+    <string name="activity_criterios_20_text">Ausência de resposta</string>
+    <string name="activity_criterios_tvstatusinatividade_text">Carregando...</string>
+    <string name="activity_criterios_tvdescricaoinatividade_text">Configure o intervalo de check-in.</string>
+    <string name="activity_criterios_25_text">Detecção automática de queda</string>
+    <string name="activity_criterios_26_text">Fora do MVP atual • planejado como trabalho futuro.</string>
+    <string name="activity_contato_form_tvtitle_text">Adicionar contato</string>
+    <string name="activity_contato_form_10_text">O primeiro contato da lista é o contato prioritário usado pelo SOS manual.</string>
+    <string name="activity_contato_form_inputnome_hint">Nome completo</string>
+    <string name="activity_contato_form_inputtelefone_hint">Telefone</string>
+    <string name="activity_contato_form_inputemail_hint">E-mail (opcional)</string>
+    <string name="activity_contato_form_18_text">Relação com você</string>
+    <string name="activity_contato_form_btnsalvar_text">Salvar</string>
+</resources>
