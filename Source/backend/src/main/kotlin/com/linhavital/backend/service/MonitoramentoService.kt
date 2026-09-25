@@ -126,7 +126,7 @@ class MonitoramentoService(
         registrarCheckIn(usuarioId)
 
     @Scheduled(
-        fixedDelay = 60_000
+        fixedDelayString = "\${MONITORAMENTO_SCHEDULER_MS:5000}"
     )
     @Transactional
     fun verificarInatividade() {
@@ -142,12 +142,14 @@ class MonitoramentoService(
                         !it.alertaInatividadeAberto
             }
             .filter {
-                agora.isAfter(
+
+                val limite =
                     it.ultimaConfirmacao
                         .plusMinutes(
                             it.intervaloMinutos.toLong()
                         )
-                )
+
+                !agora.isBefore(limite)
             }
             .forEach { configuracao ->
 
@@ -161,10 +163,11 @@ class MonitoramentoService(
                     configuracao.ultimaConfirmacao
                 )
 
-                alertaService
-                    .criarAlertaInatividade(
-                        usuarioId
-                    )
+                val alerta =
+                    alertaService
+                        .criarAlertaInatividade(
+                            usuarioId
+                        )
 
                 configuracao.alertaInatividadeAberto =
                     true
@@ -186,7 +189,10 @@ class MonitoramentoService(
                                 usuarioId,
 
                             dataUltimoMonitoramento =
-                                configuracao.ultimaConfirmacao
+                                configuracao.ultimaConfirmacao,
+
+                            alerta =
+                                alerta
                         )
 
                 }.onSuccess { resultado ->

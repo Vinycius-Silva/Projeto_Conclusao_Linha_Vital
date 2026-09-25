@@ -1,6 +1,10 @@
 package com.linhavital.backend.service
 
+import com.linhavital.backend.model.Alerta
+import com.linhavital.backend.model.ContatoEmergencia
+import com.linhavital.backend.model.HistoricoNotificacao
 import com.linhavital.backend.model.Localizacao
+import com.linhavital.backend.repository.HistoricoNotificacaoRepository
 import com.linhavital.backend.repository.LocalizacaoRepository
 import com.linhavital.backend.repository.UsuarioContatoRepository
 import com.linhavital.backend.repository.UsuarioRepository
@@ -18,9 +22,16 @@ class EmailInatividadeService(
     private val usuarioRepository: UsuarioRepository,
     private val usuarioContatoRepository: UsuarioContatoRepository,
     private val localizacaoRepository: LocalizacaoRepository,
+    private val historicoNotificacaoRepository: HistoricoNotificacaoRepository,
 
     @Value("\${LINHA_VITAL_EMAIL_REMETENTE}")
-    private val emailRemetente: String
+    private val emailRemetente: String,
+
+    @Value("\${EMAIL_MAX_TENTATIVAS:3}")
+    private val maxTentativas: Int,
+
+    @Value("\${EMAIL_INTERVALO_TENTATIVAS_MS:2000}")
+    private val intervaloTentativasMs: Long
 ) {
 
     private val logger =
@@ -107,7 +118,8 @@ class EmailInatividadeService(
 
     fun enviarEmailsInatividade(
         usuarioId: Long,
-        dataUltimoMonitoramento: LocalDateTime
+        dataUltimoMonitoramento: LocalDateTime,
+        alerta: Alerta
     ): ResultadoEnvioEmail {
 
         val usuario =
@@ -157,6 +169,12 @@ class EmailInatividadeService(
 
                 ignorados++
 
+                registrarHistorico(
+                    contato = contato,
+                    alerta = alerta,
+                    status = "IGNORADO"
+                )
+
                 logger.warn(
                     "Contato {} do usuário {} não possui e-mail. Ignorando.",
                     contato.id,
@@ -166,37 +184,92 @@ class EmailInatividadeService(
                 return@forEach
             }
 
-            try {
+            val tentativasPermitidas =
+                maxTentativas.coerceAtLeast(1)
 
-                enviarEmailInatividade(
-                    destinatario = email,
-                    nomeContato = contato.nome,
-                    nomeUsuario = usuario.nome,
-                    dataUltimoMonitoramento = dataUltimoMonitoramento,
-                    ultimaLocalizacao = ultimaLocalizacao
-                )
+            var enviado = false
+            var ultimaExcecao: Exception? = null
+
+            for (tentativa in 1..tentativasPermitidas) {
+
+                try {
+
+                    enviarEmailInatividade(
+                        destinatario = email,
+                        nomeContato = contato.nome,
+                        nomeUsuario = usuario.nome,
+                        dataUltimoMonitoramento = dataUltimoMonitoramento,
+                        ultimaLocalizacao = ultimaLocalizacao
+                    )
+
+                    enviado = true
+
+                    logger.info(
+                        "E-mail de inatividade enviado com sucesso. " +
+                                "usuarioId={}, contatoId={}, email={}, tentativa={}",
+                        usuarioId,
+                        contato.id,
+                        email,
+                        tentativa
+                    )
+
+                    break
+
+                } catch (exception: Exception) {
+
+                    ultimaExcecao =
+                        exception
+
+                    logger.warn(
+                        "Falha na tentativa {} de {} para envio de e-mail. " +
+                                "usuarioId={}, contatoId={}, email={}",
+                        tentativa,
+                        tentativasPermitidas,
+                        usuarioId,
+                        contato.id,
+                        email
+                    )
+
+                    if (tentativa < tentativasPermitidas) {
+
+                        val continuar =
+                            aguardarNovaTentativa()
+
+                        if (!continuar) {
+                            break
+                        }
+                    }
+                }
+            }
+
+            if (enviado) {
 
                 enviados++
 
-                logger.info(
-                    "E-mail de inatividade enviado com sucesso. " +
-                            "usuarioId={}, contatoId={}, email={}",
-                    usuarioId,
-                    contato.id,
-                    email
+                registrarHistorico(
+                    contato = contato,
+                    alerta = alerta,
+                    status = "ENVIADO"
                 )
 
-            } catch (exception: Exception) {
+            } else {
 
                 erros++
 
+                registrarHistorico(
+                    contato = contato,
+                    alerta = alerta,
+                    status = "ERRO"
+                )
+
                 logger.error(
-                    "Erro ao enviar e-mail de inatividade. " +
+                    "Não foi possível enviar o e-mail de inatividade após {} tentativa(s). " +
                             "usuarioId={}, contatoId={}, email={}",
+                    tentativasPermitidas,
                     usuarioId,
                     contato.id,
                     email,
-                    exception
+                    ultimaExcecao
                 )
             }
         }
@@ -207,6 +280,67 @@ class EmailInatividadeService(
             ignorados = ignorados,
             erros = erros
         )
+    }
+
+    private fun registrarHistorico(
+        contato: ContatoEmergencia,
+        alerta: Alerta,
+        status: String
+    ) {
+
+        try {
+
+            historicoNotificacaoRepository.save(
+                HistoricoNotificacao(
+                    status = status,
+                    dataHora = LocalDateTime.now(),
+                    contato = contato,
+                    alerta = alerta
+                )
+            )
+
+            logger.info(
+                "Histórico de notificação registrado. alertaId={}, contatoId={}, status={}",
+                alerta.id,
+                contato.id,
+                status
+            )
+
+        } catch (exception: Exception) {
+
+            logger.error(
+                "Erro ao registrar histórico de notificação. " +
+                        "alertaId={}, contatoId={}, status={}",
+                alerta.id,
+                contato.id,
+                status,
+                exception
+            )
+        }
+    }
+
+    private fun aguardarNovaTentativa(): Boolean {
+
+        if (intervaloTentativasMs <= 0) {
+            return true
+        }
+
+        return try {
+
+            Thread.sleep(intervaloTentativasMs)
+
+            true
+
+        } catch (exception: InterruptedException) {
+
+            Thread.currentThread().interrupt()
+
+            logger.warn(
+                "Thread interrompida durante espera para nova tentativa de envio."
+            )
+
+            false
+        }
     }
 
     private fun enviarEmailInatividade(
