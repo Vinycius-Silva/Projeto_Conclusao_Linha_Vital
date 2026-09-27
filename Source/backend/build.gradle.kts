@@ -34,6 +34,10 @@ dependencies {
 		"org.springframework.boot:spring-boot-starter-validation"
 	)
 
+	implementation(
+		"org.springframework.boot:spring-boot-starter-security"
+	)
+
 	// Envio de e-mail via SMTP
 	implementation(
 		"org.springframework.boot:spring-boot-starter-mail"
@@ -52,6 +56,11 @@ dependencies {
 		"com.google.firebase:firebase-admin:9.2.0"
 	)
 
+	// Validação server-side do Google ID Token
+	implementation(
+		"com.google.api-client:google-api-client:2.9.1"
+	)
+
 	developmentOnly(
 		"org.springframework.boot:spring-boot-devtools"
 	)
@@ -62,6 +71,10 @@ dependencies {
 
 	testImplementation(
 		"org.springframework.boot:spring-boot-starter-test"
+	)
+
+	testImplementation(
+		"org.springframework.security:spring-security-test"
 	)
 
 	testImplementation(
