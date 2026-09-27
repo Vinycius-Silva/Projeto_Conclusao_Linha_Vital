@@ -1,8 +1,4 @@
 package com.linhavital.app.ui.home
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.linhavital.app.ui.common.accentGreeting
-import com.linhavital.app.ui.common.NavigationTab
-import com.linhavital.app.ui.common.selectTab
 
 import android.Manifest
 import android.content.Intent
@@ -10,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,16 +14,22 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.linhavital.app.R
 import com.linhavital.app.data.model.ContatoEmergencia
 import com.linhavital.app.data.model.MonitoramentoStatus
 import com.linhavital.app.data.repository.AlertaRepository
 import com.linhavital.app.data.repository.ContatoRepository
 import com.linhavital.app.data.repository.HistoricoNotificacaoRepository
+import com.linhavital.app.data.repository.LocalizacaoRepository
 import com.linhavital.app.data.repository.MonitoramentoRepository
 import com.linhavital.app.databinding.ActivityHomeBinding
+import com.linhavital.app.location.LocalizacaoProvider
 import com.linhavital.app.monitoring.CheckInScheduler
 import com.linhavital.app.ui.auth.LoginActivity
+import com.linhavital.app.ui.common.NavigationTab
+import com.linhavital.app.ui.common.accentGreeting
+import com.linhavital.app.ui.common.selectTab
 import com.linhavital.app.utils.SessionManager
 import com.linhavital.app.utils.applySystemBarsPadding
 import kotlinx.coroutines.launch
@@ -35,6 +38,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var sessionManager: SessionManager
+    private lateinit var localizacaoProvider: LocalizacaoProvider
 
     private val monitoramentoRepository =
         MonitoramentoRepository()
@@ -48,6 +52,9 @@ class HomeActivity : AppCompatActivity() {
     private val historicoNotificacaoRepository =
         HistoricoNotificacaoRepository()
 
+    private val localizacaoRepository =
+        LocalizacaoRepository()
+
     private var usuarioId: Long? = null
 
     private var sosClickCount = 0
@@ -56,6 +63,7 @@ class HomeActivity : AppCompatActivity() {
     private var numeroPendenteLigacao: String? = null
 
     private var notificationPermissionAsked = false
+    private var locationPermissionAsked = false
 
     /*
      * ===================================================
@@ -63,7 +71,8 @@ class HomeActivity : AppCompatActivity() {
      * ===================================================
      */
 
-    private var contatosCascata: List<ContatoEmergencia> =
+    private var contatosCascata:
+            List<ContatoEmergencia> =
         emptyList()
 
     private var indiceContatoAtual = 0
@@ -74,9 +83,6 @@ class HomeActivity : AppCompatActivity() {
 
     /*
      * ID do alerta PANICO criado pelo backend.
-     *
-     * Todos os registros de TENTATIVA,
-     * NAO_ATENDIDO e ATENDIDO usarão esse ID.
      */
     private var alertaIdCascata: Long? = null
 
@@ -86,7 +92,10 @@ class HomeActivity : AppCompatActivity() {
 
         private const val REQUEST_NOTIFICATIONS = 103
 
-        const val EXTRA_OPEN_CHECK_IN = "open_check_in"
+        private const val REQUEST_LOCATION = 104
+
+        const val EXTRA_OPEN_CHECK_IN =
+            "open_check_in"
     }
 
     override fun onCreate(
@@ -103,7 +112,12 @@ class HomeActivity : AppCompatActivity() {
         setContentView(
             binding.root
         )
-        binding.root.applySystemBarsPadding(left = true, right = true)
+
+        binding.root
+            .applySystemBarsPadding(
+                left = true,
+                right = true
+            )
 
         WindowCompat.setDecorFitsSystemWindows(
             window,
@@ -122,7 +136,10 @@ class HomeActivity : AppCompatActivity() {
             )
 
         window.statusBarColor =
-            ContextCompat.getColor(this, R.color.lv_background)
+            ContextCompat.getColor(
+                this,
+                R.color.lv_background
+            )
 
         WindowCompat
             .getInsetsController(
@@ -135,12 +152,17 @@ class HomeActivity : AppCompatActivity() {
         sessionManager =
             SessionManager(this)
 
+        localizacaoProvider =
+            LocalizacaoProvider(this)
+
         CheckInScheduler.ensureChannel(
             this
         )
 
         /*
+         * ===================================================
          * SOS
+         * ===================================================
          */
 
         binding.btnSOS
@@ -152,7 +174,9 @@ class HomeActivity : AppCompatActivity() {
             }
 
         /*
+         * ===================================================
          * CHECK-IN
+         * ===================================================
          */
 
         binding.btnCheckIn
@@ -173,7 +197,9 @@ class HomeActivity : AppCompatActivity() {
             }
 
         /*
+         * ===================================================
          * CONTATOS
+         * ===================================================
          */
 
         binding.btnVerContatos
@@ -215,9 +241,20 @@ class HomeActivity : AppCompatActivity() {
                     sessionManager.getUserName()
                         ?: "Usuário"
                 }!"
-            binding.tvBemVindo.accentGreeting()
+
+            binding.tvBemVindo
+                .accentGreeting()
 
             carregarDashboard()
+
+            /*
+             * Ao entrar na Home, solicita a permissão
+             * de localização.
+             *
+             * Se ela já estiver concedida,
+             * registra uma localização imediatamente.
+             */
+            solicitarPermissaoLocalizacaoSeNecessario()
 
             if (
                 intent.getBooleanExtra(
@@ -243,19 +280,15 @@ class HomeActivity : AppCompatActivity() {
      * ===================================================
      * RETORNO DA TELA DE LIGAÇÃO
      * ===================================================
-     *
-     * O Android não permite detectar de forma confiável
-     * se uma chamada convencional foi atendida.
-     *
-     * Quando o usuário retorna para o Linha Vital,
-     * perguntamos manualmente se o contato atendeu.
      */
 
     override fun onResume() {
 
         super.onResume()
 
-        if (usuarioId != null) {
+        if (
+            usuarioId != null
+        ) {
 
             carregarDashboard()
         }
@@ -270,7 +303,9 @@ class HomeActivity : AppCompatActivity() {
 
             binding.root.postDelayed({
 
-                if (cascataEmAndamento) {
+                if (
+                    cascataEmAndamento
+                ) {
 
                     mostrarConfirmacaoAtendimento()
                 }
@@ -287,7 +322,10 @@ class HomeActivity : AppCompatActivity() {
 
     private fun configurarBottomBar() {
 
-        binding.bottomNavigation.selectTab(NavigationTab.HOME)
+        binding.bottomNavigation
+            .selectTab(
+                NavigationTab.HOME
+            )
 
         binding.bottomNavigation
             .btnNavHome
@@ -332,27 +370,39 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             monitoramentoRepository
-                .obterStatus(id)
+                .obterStatus(
+                    id
+                )
                 .onSuccess(
                     ::renderMonitoramento
                 )
                 .onFailure {
 
-                    binding.tvMonitoramentoStatus.text =
+                    binding
+                        .tvMonitoramentoStatus
+                        .text =
                         "Backend indisponível"
 
-                    binding.tvProximoCheckIn.text =
+                    binding
+                        .tvProximoCheckIn
+                        .text =
                         "Não foi possível consultar o monitoramento."
 
-                    binding.btnCheckIn.isEnabled =
+                    binding
+                        .btnCheckIn
+                        .isEnabled =
                         false
                 }
 
             contatoRepository
-                .listarContatos(id)
+                .listarContatos(
+                    id
+                )
                 .onSuccess { contatos ->
 
-                    binding.tvContatoPrioritario.text =
+                    binding
+                        .tvContatoPrioritario
+                        .text =
                         when {
 
                             contatos.isEmpty() -> {
@@ -364,13 +414,17 @@ class HomeActivity : AppCompatActivity() {
 
                                 "Prioritário: " +
                                         "${contatos.first().nome} • " +
-                                        contatos.first().tipoContato
+                                        contatos
+                                            .first()
+                                            .tipoContato
                             }
                         }
                 }
                 .onFailure {
 
-                    binding.tvContatoPrioritario.text =
+                    binding
+                        .tvContatoPrioritario
+                        .text =
                         "Não foi possível carregar seus contatos"
                 }
         }
@@ -421,10 +475,16 @@ class HomeActivity : AppCompatActivity() {
                 else ->
 
                     "Próximo check-in em aproximadamente " +
-                            "${status.minutosRestantes.coerceAtLeast(1)} min."
+                            "${
+                                status
+                                    .minutosRestantes
+                                    .coerceAtLeast(1)
+                            } min."
             }
 
-        if (status.ativo) {
+        if (
+            status.ativo
+        ) {
 
             solicitarPermissaoNotificacaoSeNecessario()
 
@@ -445,7 +505,8 @@ class HomeActivity : AppCompatActivity() {
 
                 CheckInScheduler.schedule(
                     this,
-                    status.minutosRestantes
+                    status
+                        .minutosRestantes
                         .coerceAtLeast(1)
                 )
             }
@@ -458,6 +519,12 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    /*
+     * ===================================================
+     * CHECK-IN
+     * ===================================================
+     */
+
     private fun confirmarCheckIn() {
 
         val id =
@@ -469,7 +536,9 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             monitoramentoRepository
-                .checkIn(id)
+                .checkIn(
+                    id
+                )
                 .onSuccess { status ->
 
                     renderMonitoramento(
@@ -478,8 +547,20 @@ class HomeActivity : AppCompatActivity() {
 
                     CheckInScheduler.schedule(
                         this@HomeActivity,
-                        status.intervaloMinutos
+                        status
+                            .intervaloMinutos
                             .toLong()
+                    )
+
+                    /*
+                     * O check-in já foi confirmado.
+                     *
+                     * Em seguida atualizamos a localização,
+                     * sem impedir o fluxo caso GPS ou backend
+                     * estejam indisponíveis.
+                     */
+                    registrarLocalizacaoEmSegundoPlano(
+                        motivo = "CHECK_IN"
                     )
 
                     Toast.makeText(
@@ -500,6 +581,146 @@ class HomeActivity : AppCompatActivity() {
                     ).show()
                 }
         }
+    }
+
+    /*
+     * ===================================================
+     * LOCALIZAÇÃO
+     * ===================================================
+     */
+
+    private fun solicitarPermissaoLocalizacaoSeNecessario() {
+
+        /*
+         * Se já temos permissão, não mostramos
+         * a caixa novamente. Apenas atualizamos
+         * a posição.
+         */
+        if (
+            localizacaoProvider
+                .possuiPermissao()
+        ) {
+
+            registrarLocalizacaoEmSegundoPlano(
+                motivo = "HOME"
+            )
+
+            return
+        }
+
+        /*
+         * Evita pedir a mesma permissão várias
+         * vezes durante a mesma Activity.
+         */
+        if (
+            locationPermissionAsked
+        ) {
+
+            return
+        }
+
+        locationPermissionAsked =
+            true
+
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            REQUEST_LOCATION
+        )
+    }
+
+    private fun registrarLocalizacaoEmSegundoPlano(
+        motivo: String
+    ) {
+
+        /*
+         * A ausência de permissão nunca deve
+         * impedir o restante do Linha Vital.
+         */
+        if (
+            !localizacaoProvider
+                .possuiPermissao()
+        ) {
+
+            Log.w(
+                "Localizacao",
+                "Localização não registrada ($motivo): permissão não concedida."
+            )
+
+            return
+        }
+
+        lifecycleScope.launch {
+
+            registrarLocalizacaoAtual(
+                motivo = motivo
+            )
+        }
+    }
+
+    private suspend fun registrarLocalizacaoAtual(
+        motivo: String
+    ): Boolean {
+
+        if (
+            !localizacaoProvider
+                .possuiPermissao()
+        ) {
+
+            return false
+        }
+
+        val resultadoLocalizacao =
+            localizacaoProvider
+                .obterLocalizacaoAtual()
+
+        val coordenadas =
+            resultadoLocalizacao
+                .getOrElse { erro ->
+
+                    Log.w(
+                        "Localizacao",
+                        "Não foi possível obter a localização ($motivo): ${erro.message}",
+                        erro
+                    )
+
+                    return false
+                }
+
+        val resultadoBackend =
+            localizacaoRepository
+                .registrar(
+                    latitude =
+                        coordenadas.latitude,
+
+                    longitude =
+                        coordenadas.longitude
+                )
+
+        resultadoBackend
+            .onSuccess { localizacao ->
+
+                Log.d(
+                    "Localizacao",
+                    "Localização registrada ($motivo): " +
+                            "id=${localizacao.id}, " +
+                            "lat=${localizacao.latitude}, " +
+                            "lng=${localizacao.longitude}"
+                )
+            }
+            .onFailure { erro ->
+
+                Log.w(
+                    "Localizacao",
+                    "Não foi possível enviar a localização ao backend ($motivo): ${erro.message}",
+                    erro
+                )
+            }
+
+        return resultadoBackend.isSuccess
     }
 
     /*
@@ -558,7 +779,9 @@ class HomeActivity : AppCompatActivity() {
         lastSosClickTime =
             agora
 
-        when (sosClickCount) {
+        when (
+            sosClickCount
+        ) {
 
             1 -> {
 
@@ -599,8 +822,9 @@ class HomeActivity : AppCompatActivity() {
          * Impede que duas cascatas sejam iniciadas
          * ao mesmo tempo.
          */
-
-        if (cascataEmAndamento) {
+        if (
+            cascataEmAndamento
+        ) {
 
             Toast.makeText(
                 this,
@@ -614,6 +838,18 @@ class HomeActivity : AppCompatActivity() {
         val id =
             usuarioId ?: return
 
+        /*
+         * Inicia a atualização da localização
+         * imediatamente.
+         *
+         * Ela não bloqueia a emergência:
+         * mesmo se GPS ou backend falharem,
+         * o SOS continua normalmente.
+         */
+        registrarLocalizacaoEmSegundoPlano(
+            motivo = "SOS"
+        )
+
         Toast.makeText(
             this,
             "SOS acionado. Buscando seus contatos de emergência...",
@@ -625,7 +861,6 @@ class HomeActivity : AppCompatActivity() {
             /*
              * Cria o alerta PANICO.
              */
-
             val resultadoAlerta =
                 alertaRepository
                     .registrarAlertaPanico(
@@ -634,11 +869,6 @@ class HomeActivity : AppCompatActivity() {
 
             resultadoAlerta
                 .onSuccess { idAlerta ->
-
-                    /*
-                     * Guarda o ID do alerta que será usado
-                     * em todos os eventos da cascata.
-                     */
 
                     alertaIdCascata =
                         idAlerta
@@ -649,7 +879,6 @@ class HomeActivity : AppCompatActivity() {
                      * Se o backend falhar, ainda tentamos
                      * realizar as ligações.
                      */
-
                     alertaIdCascata =
                         null
 
@@ -662,13 +891,11 @@ class HomeActivity : AppCompatActivity() {
 
             /*
              * Busca os contatos do usuário.
-             *
-             * O backend já devolve a lista
-             * respeitando a prioridade.
              */
-
             contatoRepository
-                .listarContatos(id)
+                .listarContatos(
+                    id
+                )
                 .onSuccess { contatos ->
 
                     if (
@@ -758,10 +985,6 @@ class HomeActivity : AppCompatActivity() {
                     indiceContatoAtual
                 )
 
-        /*
-         * Não existem mais contatos.
-         */
-
         if (
             contato == null
         ) {
@@ -775,11 +998,6 @@ class HomeActivity : AppCompatActivity() {
             formatarNumero(
                 contato.telefone
             )
-
-        /*
-         * Telefone inválido:
-         * pula para o próximo contato.
-         */
 
         if (
             numeroFormatado.isBlank()
@@ -803,22 +1021,12 @@ class HomeActivity : AppCompatActivity() {
             Toast.LENGTH_SHORT
         ).show()
 
-        /*
-         * Registra TENTATIVA antes de realizar
-         * a ligação.
-         */
-
         lifecycleScope.launch {
 
             registrarStatusCascata(
                 contato = contato,
                 status = "TENTATIVA"
             )
-
-            /*
-             * Mesmo que o histórico não seja salvo,
-             * a ligação continua.
-             */
 
             prepararLigacao(
                 contato.telefone
@@ -856,11 +1064,6 @@ class HomeActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
 
-                    /*
-                     * O usuário confirmou que
-                     * este contato atendeu.
-                     */
-
                     registrarStatusCascata(
                         contato = contato,
                         status = "ATENDIDO"
@@ -877,18 +1080,10 @@ class HomeActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
 
-                    /*
-                     * Este contato não atendeu.
-                     */
-
                     registrarStatusCascata(
                         contato = contato,
                         status = "NAO_ATENDIDO"
                     )
-
-                    /*
-                     * Passa para o próximo contato.
-                     */
 
                     chamarProximoContato()
                 }
@@ -910,18 +1105,11 @@ class HomeActivity : AppCompatActivity() {
         status: String
     ) {
 
-        /*
-         * Sem ID de alerta não conseguimos relacionar
-         * o evento no backend.
-         *
-         * A ligação continua normalmente.
-         */
-
         val alertaId =
             alertaIdCascata
                 ?: run {
 
-                    android.util.Log.w(
+                    Log.w(
                         "HomeActivity",
                         "Evento $status não registrado: alerta sem ID."
                     )
@@ -929,20 +1117,11 @@ class HomeActivity : AppCompatActivity() {
                     return
                 }
 
-        /*
-         * No model ContatoEmergencia o campo id é Long?,
-         * pois um contato ainda não salvo pode não ter ID.
-         *
-         * Para um contato vindo do backend, o ID deve
-         * estar preenchido. Mesmo assim fazemos a
-         * validação para evitar NullPointerException.
-         */
-
         val contatoId =
             contato.id
                 ?: run {
 
-                    android.util.Log.e(
+                    Log.e(
                         "HomeActivity",
                         "Contato ${contato.nome} não possui ID. " +
                                 "O status $status não será registrado."
@@ -959,12 +1138,7 @@ class HomeActivity : AppCompatActivity() {
             )
             .onFailure { erro ->
 
-                /*
-                 * Falhar ao registrar o histórico
-                 * nunca deve interromper uma emergência.
-                 */
-
-                android.util.Log.e(
+                Log.e(
                     "HomeActivity",
                     "Não foi possível registrar $status " +
                             "para o contato $contatoId: ${erro.message}",
@@ -1186,14 +1360,6 @@ class HomeActivity : AppCompatActivity() {
         numero: String
     ) {
 
-        /*
-         * Marca que o aplicativo está indo para
-         * a tela de chamada.
-         *
-         * Quando voltar, onResume() mostrará
-         * a confirmação de atendimento.
-         */
-
         aguardandoRetornoLigacao =
             true
 
@@ -1282,7 +1448,9 @@ class HomeActivity : AppCompatActivity() {
                 ?.let { id ->
 
                     monitoramentoRepository
-                        .obterStatus(id)
+                        .obterStatus(
+                            id
+                        )
                         .getOrNull()
                         ?.let { status ->
 
@@ -1340,34 +1508,66 @@ class HomeActivity : AppCompatActivity() {
             grantResults
         )
 
-        /*
-         * PERMISSÃO DE LIGAÇÃO
-         */
-
-        if (
-            requestCode ==
-            REQUEST_CALL_PHONE
+        when (
+            requestCode
         ) {
 
-            if (
-                grantResults.firstOrNull() ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
+            /*
+             * ===================================================
+             * PERMISSÃO DE LIGAÇÃO
+             * ===================================================
+             */
 
-                numeroPendenteLigacao
-                    ?.let(
-                        ::iniciarLigacao
+            REQUEST_CALL_PHONE -> {
+
+                if (
+                    grantResults
+                        .firstOrNull() ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+
+                    numeroPendenteLigacao
+                        ?.let(
+                            ::iniciarLigacao
+                        )
+
+                } else {
+
+                    Toast.makeText(
+                        this,
+                        "A permissão para realizar ligações é necessária para executar a cascata de emergência.",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    limparCascata()
+                }
+            }
+
+            /*
+             * ===================================================
+             * PERMISSÃO DE LOCALIZAÇÃO
+             * ===================================================
+             */
+
+            REQUEST_LOCATION -> {
+
+                if (
+                    localizacaoProvider
+                        .possuiPermissao()
+                ) {
+
+                    registrarLocalizacaoEmSegundoPlano(
+                        motivo = "PERMISSAO_CONCEDIDA"
                     )
 
-            } else {
+                } else {
 
-                Toast.makeText(
-                    this,
-                    "A permissão para realizar ligações é necessária para executar a cascata de emergência.",
-                    Toast.LENGTH_LONG
-                ).show()
-
-                limparCascata()
+                    Toast.makeText(
+                        this,
+                        "Sem acesso à localização. O Linha Vital continuará funcionando, mas não poderá informar sua posição aos contatos.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
