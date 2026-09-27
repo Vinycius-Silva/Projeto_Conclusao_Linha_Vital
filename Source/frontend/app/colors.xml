@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lv_brand">#BB0013</color>
+    <color name="lv_brand_pressed">#970010</color>
+    <color name="lv_on_brand">#FFFFFF</color>
+    <color name="lv_background">#FFFAFA</color>
+    <color name="lv_surface">#FFFFFF</color>
+    <color name="lv_surface_tinted">#FFF0F1</color>
+    <color name="lv_ink">#241D1E</color>
+    <color name="lv_muted">#6A5C5E</color>
+    <color name="lv_outline">#DECFD1</color>
+    <color name="lv_outline_focus">#BB0013</color>
+    <color name="lv_disabled">#EBE3E4</color>
+    <color name="lv_disabled_text">#786D6F</color>
+    <color name="lv_ripple">#1FBB0013</color>
+    <color name="lv_error">#9F0012</color>
+    <color name="lv_error_surface">#FFE9EC</color>
+    <color name="lv_success">#226349</color>
+</resources>

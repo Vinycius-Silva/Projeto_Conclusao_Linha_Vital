@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <style name="Theme.LinhaVital" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/lv_brand</item>
+        <item name="colorPrimaryVariant">@color/lv_brand_pressed</item>
+        <item name="colorOnPrimary">@color/lv_on_brand</item>
+        <item name="colorSecondary">@color/lv_brand</item>
+        <item name="colorOnSecondary">@color/lv_on_brand</item>
+        <item name="colorSurface">@color/lv_surface</item>
+        <item name="colorOnSurface">@color/lv_ink</item>
+        <item name="colorError">@color/lv_error</item>
+        <item name="android:windowBackground">@color/lv_background</item>
+        <item name="android:colorBackground">@color/lv_background</item>
+        <item name="android:statusBarColor">@color/lv_background</item>
+        <item name="android:navigationBarColor">@color/lv_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:windowAnimationStyle">@style/Animation.LinhaVital.Windows</item>
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="fontFamily">@font/public_sans</item>
+        <item name="android:textColorPrimary">@color/lv_ink</item>
+        <item name="android:textColorSecondary">@color/lv_muted</item>
+        <item name="colorControlActivated">@color/lv_brand</item>
+        <item name="colorControlHighlight">@color/lv_ripple</item>
+        <item name="materialButtonStyle">@style/Widget.LinhaVital.Button.Primary</item>
+        <item name="textInputStyle">@style/Widget.LinhaVital.TextInput</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.LinhaVital.Dialog</item>
+    </style>
+    <style name="ThemeOverlay.LinhaVital.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/lv_brand</item>
+        <item name="colorSecondary">@color/lv_brand</item>
+        <item name="colorSurface">@color/lv_surface</item>
+        <item name="android:fontFamily">@font/public_sans</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Title" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:fontFamily">@font/newsreader_regular</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/lv_ink</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Brand" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:fontFamily">@font/newsreader_italic</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/lv_brand</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/lv_muted</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Label" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/lv_ink</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Section" parent="TextAppearance.LinhaVital.Label">
+        <item name="android:textSize">18sp</item>
+        <item name="android:accessibilityHeading">true</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Caption" parent="TextAppearance.LinhaVital.Body">
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="TextAppearance.LinhaVital.Error" parent="TextAppearance.LinhaVital.Body">
+        <item name="android:textColor">@color/lv_error</item>
+        <item name="android:background">@drawable/lv_error_background</item>
+        <item name="android:padding">16dp</item>
+    </style>
+    <style name="Widget.LinhaVital.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="rippleColor">@color/lv_ripple</item>
+        <item name="backgroundTint">@color/lv_button_fill</item>
+        <item name="android:textColor">@color/lv_button_text</item>
+        <item name="iconTint">@color/lv_button_text</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+    <style name="Widget.LinhaVital.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="rippleColor">@color/lv_ripple</item>
+        <item name="backgroundTint">@color/lv_surface</item>
+        <item name="android:textColor">@color/lv_link_text</item>
+        <item name="iconTint">@color/lv_link_text</item>
+        <item name="strokeColor">@color/lv_outline</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+    <style name="Widget.LinhaVital.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="rippleColor">@color/lv_ripple</item>
+        <item name="android:textColor">@color/lv_link_text</item>
+        <item name="iconTint">@color/lv_link_text</item>
+    </style>
+    <style name="Widget.LinhaVital.IconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:tint">@color/lv_brand</item>
+    </style>
+    <style name="Widget.LinhaVital.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/lv_surface</item>
+        <item name="boxStrokeColor">@color/lv_input_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="hintTextColor">@color/lv_brand</item>
+        <item name="android:textColorHint">@color/lv_muted</item>
+        <item name="startIconTint">@color/lv_muted</item>
+        <item name="endIconTint">@color/lv_muted</item>
+    </style>
+    <style name="Widget.LinhaVital.EditText" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
+        <item name="android:fontFamily">@font/public_sans</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/lv_ink</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">18dp</item>
+    </style>
+    <style name="Widget.LinhaVital.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/lv_surface</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/lv_outline</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+    <style name="Animation.LinhaVital.Windows" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/lv_open_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/lv_open_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/lv_close_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/lv_close_exit</item>
+    </style>
+</resources>
