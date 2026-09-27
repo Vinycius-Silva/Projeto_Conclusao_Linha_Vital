@@ -86,7 +86,7 @@ Toque em + para adicionar.</string>
     <string name="activity_contato_form_10_text">O primeiro contato da lista é o contato prioritário usado pelo SOS manual.</string>
     <string name="activity_contato_form_inputnome_hint">Nome completo</string>
     <string name="activity_contato_form_inputtelefone_hint">Telefone</string>
-    <string name="activity_contato_form_inputemail_hint">E-mail (opcional)</string>
+    <string name="activity_contato_form_inputemail_hint">E-mail</string>
     <string name="activity_contato_form_18_text">Relação com você</string>
     <string name="activity_contato_form_btnsalvar_text">Salvar</string>
 </resources>
