@@ -122,4 +122,23 @@ interface ApiService {
     suspend fun registrarCheckIn(
         @Path("usuarioId") usuarioId: Long
     ): MonitoramentoStatus
+
+    /*
+     * =====================================================
+     * LOCALIZAÇÃO
+     * =====================================================
+     */
+
+    @POST("localizacoes")
+    suspend fun registrarLocalizacao(
+        @Body request: LocalizacaoRequest
+    ): LocalizacaoResponse
+
+    @GET("localizacoes/ultima")
+    suspend fun obterUltimaLocalizacao():
+            LocalizacaoResponse
+
+    @GET("localizacoes")
+    suspend fun listarLocalizacoes():
+            List<LocalizacaoResponse>
 }
