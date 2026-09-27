@@ -26,6 +26,14 @@ class HistoricoNotificacaoService(
     fun listar(): List<HistoricoNotificacao> =
         repository.findAll()
 
+    fun listarPorUsuario(
+        usuarioId: Long
+    ): List<HistoricoNotificacao> =
+        repository
+            .findByAlertaUsuarioIdOrderByDataHoraDesc(
+                usuarioId
+            )
+
     fun salvar(notificacao: HistoricoNotificacao): HistoricoNotificacao =
         repository.save(notificacao)
 

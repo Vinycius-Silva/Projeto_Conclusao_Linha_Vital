@@ -5,7 +5,15 @@ import jakarta.persistence.*
 import java.time.LocalDate
 
 @Entity
-@Table(name = "usuario")
+@Table(
+    name = "usuario",
+    uniqueConstraints = [
+        UniqueConstraint(
+            name = "uk_usuario_oauth",
+            columnNames = ["oauth_provider", "oauth_subject"]
+        )
+    ]
+)
 data class Usuario(
 
     @Id
@@ -31,5 +39,13 @@ data class Usuario(
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "fcm_token")
-    var fcmToken: String? = null
+    var fcmToken: String? = null,
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "oauth_provider", length = 30)
+    var oauthProvider: String? = null,
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "oauth_subject", length = 255)
+    var oauthSubject: String? = null
 )
