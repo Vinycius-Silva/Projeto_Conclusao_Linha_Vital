@@ -1,4 +1,10 @@
-val apiBaseUrl = providers.gradleProperty("API_BASE_URL").orElse("http://10.0.2.2:8080/").get()
+val apiBaseUrl = providers.gradleProperty("API_BASE_URL")
+    .orElse("http://10.0.2.2:8080/")
+    .get()
+
+val googleWebClientId = providers.gradleProperty("GOOGLE_WEB_CLIENT_ID")
+    .orElse("")
+    .get()
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,10 +13,10 @@ plugins {
 
 android {
     namespace = "com.linhavital.app"
+
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
-
         }
     }
 
@@ -20,7 +26,18 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"$apiBaseUrl\""
+        )
+
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"$googleWebClientId\""
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,16 +45,19 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose = true
         viewBinding = true
@@ -46,6 +66,7 @@ android {
 }
 
 dependencies {
+
     // Android core
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -62,7 +83,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    // ViewModel + LiveData (MVVM)
+    // ViewModel + LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
@@ -71,7 +92,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
-    // Retrofit + OkHttp (MB04)
+    // Retrofit + OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -82,6 +103,11 @@ dependencies {
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Google Sign-In / Credential Manager
+    implementation("androidx.credentials:credentials:1.6.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
 
     // Tests
     testImplementation("junit:junit:4.13.2")

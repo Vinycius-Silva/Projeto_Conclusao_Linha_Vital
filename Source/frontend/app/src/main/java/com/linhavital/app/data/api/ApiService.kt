@@ -5,10 +5,38 @@ import retrofit2.http.*
 
 interface ApiService {
 
+    /*
+     * =====================================================
+     * AUTENTICAÇÃO
+     * =====================================================
+     */
+
     @POST("auth/login")
     suspend fun login(
         @Body request: LoginRequest
-    ): UsuarioSessao
+    ): AuthResponse
+
+    @POST("auth/google")
+    suspend fun loginGoogle(
+        @Body request: GoogleLoginRequest
+    ): GoogleLoginResponse
+
+    @POST("auth/google/cadastro")
+    suspend fun cadastrarGoogle(
+        @Body request: GoogleCadastroRequest
+    ): AuthResponse
+
+    @GET("auth/me")
+    suspend fun usuarioAtual(): UsuarioSessao
+
+    @POST("auth/logout")
+    suspend fun logout(): Map<String, String>
+
+    /*
+     * =====================================================
+     * USUÁRIOS
+     * =====================================================
+     */
 
     @POST("usuarios")
     suspend fun criarUsuario(
@@ -19,6 +47,12 @@ interface ApiService {
     suspend fun getUsuario(
         @Path("id") id: Long
     ): UsuarioSessao
+
+    /*
+     * =====================================================
+     * CONTATOS
+     * =====================================================
+     */
 
     @GET("contatos/usuario/{usuarioId}")
     suspend fun getContatosDoUsuario(
@@ -44,24 +78,34 @@ interface ApiService {
         @Path("contatoId") contatoId: Long
     )
 
+    /*
+     * =====================================================
+     * ALERTAS
+     * =====================================================
+     */
+
     @POST("alerta/panico/{usuarioId}")
     suspend fun criarAlertaPanico(
         @Path("usuarioId") usuarioId: Long
     ): Map<String, Any>
 
     /*
-     * Registra os eventos da cascata de emergência.
-     *
-     * Status possíveis no backend:
-     * TENTATIVA
-     * NAO_ATENDIDO
-     * ATENDIDO
+     * =====================================================
+     * HISTÓRICO DE NOTIFICAÇÃO
+     * =====================================================
      */
+
     @POST("notificacoes/alerta/{alertaId}/tentativa")
     suspend fun registrarTentativaContato(
         @Path("alertaId") alertaId: Long,
         @Body request: TentativaContatoRequest
     ): Map<String, Any>
+
+    /*
+     * =====================================================
+     * MONITORAMENTO
+     * =====================================================
+     */
 
     @GET("monitoramento/status/{usuarioId}")
     suspend fun getMonitoramentoStatus(

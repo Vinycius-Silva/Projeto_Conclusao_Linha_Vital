@@ -1,5 +1,6 @@
 package com.linhavital.app.ui.home
 
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,24 +11,48 @@ import kotlinx.coroutines.launch
 
 class ContatoViewModel : ViewModel() {
 
-    private val repository = ContatoRepository()
+    private val repository =
+        ContatoRepository()
 
-    private val _contatos = MutableLiveData<List<ContatoEmergencia>>()
-    val contatos: LiveData<List<ContatoEmergencia>> = _contatos
+    private val _contatos =
+        MutableLiveData<List<ContatoEmergencia>>()
 
-    private val _estado = MutableLiveData<ContatoEstado>()
-    val estado: LiveData<ContatoEstado> = _estado
+    val contatos:
+            LiveData<List<ContatoEmergencia>> =
+        _contatos
 
-    fun carregarContatos(usuarioId: Long) {
+    private val _estado =
+        MutableLiveData<ContatoEstado>()
+
+    val estado:
+            LiveData<ContatoEstado> =
+        _estado
+
+    fun carregarContatos(
+        usuarioId: Long
+    ) {
         viewModelScope.launch {
-            val result = repository.listarContatos(usuarioId)
+
+            val result =
+                repository.listarContatos(
+                    usuarioId
+                )
 
             if (result.isSuccess) {
-                _contatos.postValue(result.getOrNull() ?: emptyList())
+
+                _contatos.postValue(
+                    result.getOrNull()
+                        ?: emptyList()
+                )
+
             } else {
+
                 _estado.postValue(
                     ContatoEstado.Erro(
-                        result.exceptionOrNull()?.message ?: "Erro ao carregar contatos"
+                        result
+                            .exceptionOrNull()
+                            ?.message
+                            ?: "Erro ao carregar contatos"
                     )
                 )
             }
@@ -41,34 +66,77 @@ class ContatoViewModel : ViewModel() {
         email: String,
         tipo: String
     ) {
-        if (nome.isBlank() || telefone.isBlank()) {
-            _estado.value = ContatoEstado.Erro("Preencha nome e telefone")
-            return
-        }
-        if (telefone.filter(Char::isDigit).length < 10) {
-            _estado.value = ContatoEstado.Erro("Informe um telefone válido")
-            return
-        }
 
-        _estado.value = ContatoEstado.Loading
+        val nomeNormalizado =
+            nome.trim()
 
-        viewModelScope.launch {
-            val contato = ContatoEmergencia(
-                nome = nome,
-                telefone = telefone,
-                email = email,
-                tipoContato = tipo
+        val telefoneNormalizado =
+            telefone.trim()
+
+        val emailNormalizado =
+            email.trim()
+
+        val erro =
+            validarContato(
+                nome = nomeNormalizado,
+                telefone = telefoneNormalizado,
+                email = emailNormalizado
             )
 
-            val result = repository.cadastrarContato(usuarioId, contato)
+        if (erro != null) {
+
+            _estado.value =
+                ContatoEstado.Erro(
+                    erro
+                )
+
+            return
+        }
+
+        _estado.value =
+            ContatoEstado.Loading
+
+        viewModelScope.launch {
+
+            val contato =
+                ContatoEmergencia(
+                    nome =
+                        nomeNormalizado,
+
+                    telefone =
+                        telefoneNormalizado,
+
+                    email =
+                        emailNormalizado,
+
+                    tipoContato =
+                        tipo
+                )
+
+            val result =
+                repository.cadastrarContato(
+                    usuarioId,
+                    contato
+                )
 
             if (result.isSuccess) {
-                _estado.postValue(ContatoEstado.Sucesso)
-                carregarContatos(usuarioId)
+
+                _estado.postValue(
+                    ContatoEstado.Sucesso
+                )
+
+                carregarContatos(
+                    usuarioId
+                )
+
             } else {
+
                 _estado.postValue(
                     ContatoEstado.Erro(
-                        result.exceptionOrNull()?.message ?: "Erro ao cadastrar"
+                        result
+                            .exceptionOrNull()
+                            ?.message
+                            ?: "Erro ao cadastrar"
                     )
                 )
             }
@@ -83,58 +151,171 @@ class ContatoViewModel : ViewModel() {
         email: String,
         tipo: String
     ) {
-        if (nome.isBlank() || telefone.isBlank()) {
-            _estado.value = ContatoEstado.Erro("Preencha nome e telefone")
-            return
-        }
-        if (telefone.filter(Char::isDigit).length < 10) {
-            _estado.value = ContatoEstado.Erro("Informe um telefone válido")
+
+        val nomeNormalizado =
+            nome.trim()
+
+        val telefoneNormalizado =
+            telefone.trim()
+
+        val emailNormalizado =
+            email.trim()
+
+        val erro =
+            validarContato(
+                nome = nomeNormalizado,
+                telefone = telefoneNormalizado,
+                email = emailNormalizado
+            )
+
+        if (erro != null) {
+
+            _estado.value =
+                ContatoEstado.Erro(
+                    erro
+                )
+
             return
         }
 
-        _estado.value = ContatoEstado.Loading
+        _estado.value =
+            ContatoEstado.Loading
+
         viewModelScope.launch {
-            val contato = ContatoEmergencia(
-                id = contatoId,
-                nome = nome,
-                telefone = telefone,
-                email = email,
-                tipoContato = tipo
-            )
-            val result = repository.atualizarContato(usuarioId, contatoId, contato)
+
+            val contato =
+                ContatoEmergencia(
+                    id =
+                        contatoId,
+
+                    nome =
+                        nomeNormalizado,
+
+                    telefone =
+                        telefoneNormalizado,
+
+                    email =
+                        emailNormalizado,
+
+                    tipoContato =
+                        tipo
+                )
+
+            val result =
+                repository.atualizarContato(
+                    usuarioId,
+                    contatoId,
+                    contato
+                )
+
             if (result.isSuccess) {
-                _estado.postValue(ContatoEstado.Atualizado)
-                carregarContatos(usuarioId)
+
+                _estado.postValue(
+                    ContatoEstado.Atualizado
+                )
+
+                carregarContatos(
+                    usuarioId
+                )
+
             } else {
+
                 _estado.postValue(
                     ContatoEstado.Erro(
-                        result.exceptionOrNull()?.message ?: "Erro ao atualizar contato"
+                        result
+                            .exceptionOrNull()
+                            ?.message
+                            ?: "Erro ao atualizar contato"
                     )
                 )
             }
         }
     }
 
-    fun deletarContato(usuarioId: Long, contatoId: Long) {
+    fun deletarContato(
+        usuarioId: Long,
+        contatoId: Long
+    ) {
         viewModelScope.launch {
-            val result = repository.deletarContato(usuarioId, contatoId)
+
+            val result =
+                repository.deletarContato(
+                    usuarioId,
+                    contatoId
+                )
 
             if (result.isSuccess) {
-                carregarContatos(usuarioId)
+
+                carregarContatos(
+                    usuarioId
+                )
+
             } else {
+
                 _estado.postValue(
                     ContatoEstado.Erro(
-                        result.exceptionOrNull()?.message ?: "Erro ao deletar contato"
+                        result
+                            .exceptionOrNull()
+                            ?.message
+                            ?: "Erro ao deletar contato"
                     )
                 )
             }
         }
+    }
+
+    private fun validarContato(
+        nome: String,
+        telefone: String,
+        email: String
+    ): String? {
+
+        if (
+            nome.isBlank() ||
+            telefone.isBlank() ||
+            email.isBlank()
+        ) {
+            return "Preencha nome, telefone e e-mail"
+        }
+
+        val quantidadeDigitosTelefone =
+            telefone
+                .filter(
+                    Char::isDigit
+                )
+                .length
+
+        if (
+            quantidadeDigitosTelefone !in 10..13
+        ) {
+            return "Informe um telefone válido"
+        }
+
+        if (
+            !Patterns
+                .EMAIL_ADDRESS
+                .matcher(email)
+                .matches()
+        ) {
+            return "Informe um e-mail válido"
+        }
+
+        return null
     }
 }
 
 sealed class ContatoEstado {
-    object Loading : ContatoEstado()
-    object Sucesso : ContatoEstado()
-    object Atualizado : ContatoEstado()
-    data class Erro(val message: String) : ContatoEstado()
+
+    object Loading :
+        ContatoEstado()
+
+    object Sucesso :
+        ContatoEstado()
+
+    object Atualizado :
+        ContatoEstado()
+
+    data class Erro(
+        val message: String
+    ) : ContatoEstado()
 }

@@ -1,23 +1,25 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/lv_background"
     android:fillViewport="true"
     android:scrollbars="none">
+
     <LinearLayout
+        android:id="@+id/loginContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/loginContent"
         android:orientation="vertical"
         android:paddingStart="@dimen/lv_page_gutter"
+        android:paddingTop="28dp"
         android:paddingEnd="@dimen/lv_page_gutter"
-        android:paddingBottom="24dp"
-        android:paddingTop="28dp">
+        android:paddingBottom="24dp">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,6 +29,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp"
             android:accessibilityHeading="true" />
+
         <ImageView
             android:layout_width="80dp"
             android:layout_height="88dp"
@@ -34,6 +37,7 @@
             android:importantForAccessibility="no"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,64 +45,76 @@
             android:text="@string/activity_login_4_text"
             android:gravity="center"
             android:layout_marginBottom="32dp" />
+
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/inputEmail"
             style="@style/Widget.LinhaVital.TextInput"
             android:hint="@string/activity_login_inputemail_hint"
             android:layout_marginBottom="16dp"
             app:startIconDrawable="@drawable/ic_lv_mail">
+
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/etEmail"
                 style="@style/Widget.LinhaVital.EditText"
                 android:inputType="textEmailAddress"
                 android:imeOptions="actionNext"
                 android:maxLines="1"
                 android:autofillHints="emailAddress" />
+
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/inputPassword"
             style="@style/Widget.LinhaVital.TextInput"
             android:hint="@string/activity_login_inputpassword_hint"
             android:layout_marginBottom="16dp"
             app:startIconDrawable="@drawable/ic_lv_lock"
             app:endIconMode="password_toggle">
+
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/etPassword"
                 style="@style/Widget.LinhaVital.EditText"
                 android:inputType="textPassword"
                 android:imeOptions="actionDone"
                 android:maxLines="1"
                 android:autofillHints="password" />
+
         </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
+            android:id="@+id/tvFormError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tvFormError"
             style="@style/TextAppearance.LinhaVital.Error"
             android:visibility="gone"
             android:accessibilityLiveRegion="polite"
             android:layout_marginBottom="16dp" />
+
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnLogin"
             style="@style/Widget.LinhaVital.Button.Primary"
             android:text="@string/activity_login_btnlogin_text"
             app:icon="@drawable/ic_lv_arrow"
             app:iconGravity="textEnd" />
-        <FrameLayout android:layout_width="match_parent" android:layout_height="36dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="36dp">
+
             <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/progressBar"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:id="@+id/progressBar"
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:indeterminate="true"
@@ -106,26 +122,40 @@
                 app:indicatorSize="24dp"
                 app:trackThickness="2dp"
                 app:indicatorColor="@color/lv_brand" />
+
         </FrameLayout>
+
         <TextView
+            android:id="@+id/tvEsqueciSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tvEsqueciSenha"
             style="@style/TextAppearance.LinhaVital.Body"
             android:text="@string/activity_login_tvesquecisenha_text"
             android:visibility="gone" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextAppearance.LinhaVital.Caption"
-            android:text="@string/activity_login_14_text"
+            android:text="ou"
             android:gravity="center"
             android:layout_marginBottom="12dp" />
+
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoogle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/Widget.LinhaVital.Button.Outline"
+            android:text="Entrar com Google"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/tvCadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             style="@style/Widget.LinhaVital.Button.Outline"
             android:text="@string/activity_login_tvcadastro_text" />
+
     </LinearLayout>
+
 </ScrollView>
