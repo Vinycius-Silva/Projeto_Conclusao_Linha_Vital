@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
 
-    <!-- HTTP é permitido apenas para o backend local do emulador durante desenvolvimento. -->
+    <!-- Backend local do emulador -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">10.0.2.2</domain>
         <domain includeSubdomains="false">localhost</domain>
     </domain-config>
+
+    <!-- Backend Linha Vital na Oracle VM -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">147.15.70.81</domain>
+    </domain-config>
+
 </network-security-config>

@@ -3,6 +3,9 @@ package com.linhavital.app.ui.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -30,6 +33,9 @@ class RegisterActivity : AppCompatActivity() {
     private var googleIdToken:
             String? = null
 
+    private var alterandoData =
+        false
+
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
@@ -53,6 +59,14 @@ class RegisterActivity : AppCompatActivity() {
                 binding.etPassword,
                 binding.etConfirmPassword
             )
+
+        /*
+         * Máscara automática para DD/MM/AAAA.
+         *
+         * O usuário digita somente números.
+         * As barras são adicionadas automaticamente.
+         */
+        configurarMascaraData()
 
         WindowCompat.setDecorFitsSystemWindows(
             window,
@@ -105,6 +119,142 @@ class RegisterActivity : AppCompatActivity() {
         observarCadastro()
     }
 
+    /*
+     * ===================================================
+     * MÁSCARA DA DATA DE NASCIMENTO
+     * ===================================================
+     */
+
+    private fun configurarMascaraData() {
+
+        /*
+         * DD/MM/AAAA possui no máximo 10 caracteres.
+         */
+        binding.etBirthDate.filters =
+            arrayOf(
+                InputFilter.LengthFilter(10)
+            )
+
+        binding.etBirthDate
+            .addTextChangedListener(
+                object : TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                        // Não utilizado.
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        // Não utilizado.
+                    }
+
+                    override fun afterTextChanged(
+                        editable: Editable?
+                    ) {
+
+                        if (
+                            alterandoData ||
+                            editable == null
+                        ) {
+                            return
+                        }
+
+                        /*
+                         * Remove tudo que não for número.
+                         *
+                         * Exemplo:
+                         * "12/09/2004"
+                         * vira
+                         * "12092004"
+                         */
+                        val numeros =
+                            editable
+                                .toString()
+                                .filter(
+                                    Char::isDigit
+                                )
+                                .take(8)
+
+                        val dataFormatada =
+                            when {
+
+                                numeros.length <= 2 -> {
+
+                                    numeros
+                                }
+
+                                numeros.length <= 4 -> {
+
+                                    numeros.substring(
+                                        0,
+                                        2
+                                    ) +
+                                            "/" +
+                                            numeros.substring(
+                                                2
+                                            )
+                                }
+
+                                else -> {
+
+                                    numeros.substring(
+                                        0,
+                                        2
+                                    ) +
+                                            "/" +
+                                            numeros.substring(
+                                                2,
+                                                4
+                                            ) +
+                                            "/" +
+                                            numeros.substring(
+                                                4
+                                            )
+                                }
+                            }
+
+                        if (
+                            editable.toString() ==
+                            dataFormatada
+                        ) {
+                            return
+                        }
+
+                        alterandoData =
+                            true
+
+                        binding.etBirthDate
+                            .setText(
+                                dataFormatada
+                            )
+
+                        binding.etBirthDate
+                            .setSelection(
+                                dataFormatada.length
+                            )
+
+                        alterandoData =
+                            false
+                    }
+                }
+            )
+    }
+
+    /*
+     * ===================================================
+     * MODO DE CADASTRO
+     * ===================================================
+     */
+
     private fun configurarModo() {
 
         modoGoogle =
@@ -152,6 +302,12 @@ class RegisterActivity : AppCompatActivity() {
         binding.tvLogin.visibility =
             View.GONE
     }
+
+    /*
+     * ===================================================
+     * SALVAR
+     * ===================================================
+     */
 
     private fun salvar() {
 
@@ -215,6 +371,12 @@ class RegisterActivity : AppCompatActivity() {
                     .orEmpty()
         )
     }
+
+    /*
+     * ===================================================
+     * RESULTADO DO CADASTRO
+     * ===================================================
+     */
 
     private fun observarCadastro() {
 
@@ -290,6 +452,12 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
     }
+
+    /*
+     * ===================================================
+     * LOADING
+     * ===================================================
+     */
 
     private fun setLoading(
         loading: Boolean
