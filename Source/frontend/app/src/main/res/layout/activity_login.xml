@@ -1,248 +1,131 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <ScrollView
-    android:id="@+id/rootLogin"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF5F5"
-    android:fillViewport="true">
+    android:background="@color/lv_background"
+    android:fillViewport="true"
+    android:scrollbars="none">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/loginContent"
         android:orientation="vertical"
-        android:paddingHorizontal="28dp"
-        android:paddingBottom="32dp"
-        android:gravity="center_horizontal">
-        <!-- Logo -->
+        android:paddingStart="@dimen/lv_page_gutter"
+        android:paddingEnd="@dimen/lv_page_gutter"
+        android:paddingBottom="24dp"
+        android:paddingTop="28dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.LinhaVital.Title"
+            android:text="@string/activity_login_2_text"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="24dp"
+            android:accessibilityHeading="true" />
         <ImageView
             android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="48dp"
+            android:layout_height="88dp"
             android:src="@drawable/ic_logo"
-            android:contentDescription="Logo Linha Vital" />
-        <!-- Título -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Linha Vital"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:textColor="#BB0013"
-            android:fontFamily="@font/newsreader_italic"
-            android:layout_marginTop="8dp" />
-        <!-- Subtítulo -->
+            android:importantForAccessibility="no"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bem-vindo ao Linha Vital"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="#1A1A1A"
-            android:fontFamily="@font/newsreader_regular"
+            style="@style/TextAppearance.LinhaVital.Body"
+            android:text="@string/activity_login_4_text"
             android:gravity="center"
-            android:layout_marginTop="20dp" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Check-ins preventivos, rede de contatos e SOS manual em um único fluxo."
-            android:textSize="14sp"
-            android:textColor="#757575"
-            android:fontFamily="@font/public_sans"
-            android:gravity="center"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="28dp" />
-        <!-- Campo Email -->
+            android:layout_marginBottom="32dp" />
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="E-mail"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#E0E0E0"
-            app:boxBackgroundColor="#FFFFFF"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:id="@+id/inputEmail"
+            style="@style/Widget.LinhaVital.TextInput"
+            android:hint="@string/activity_login_inputemail_hint"
+            android:layout_marginBottom="16dp"
+            app:startIconDrawable="@drawable/ic_lv_mail">
             <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/public_sans"
+                style="@style/Widget.LinhaVital.EditText"
                 android:inputType="textEmailAddress"
-                android:imeOptions="actionNext" />
+                android:imeOptions="actionNext"
+                android:maxLines="1"
+                android:autofillHints="emailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
-        <!-- Campo Senha -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Senha"
-            android:layout_marginTop="16dp"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#E0E0E0"
-            app:boxBackgroundColor="#FFFFFF"
-            app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:id="@+id/inputPassword"
+            style="@style/Widget.LinhaVital.TextInput"
+            android:hint="@string/activity_login_inputpassword_hint"
+            android:layout_marginBottom="16dp"
+            app:startIconDrawable="@drawable/ic_lv_lock"
+            app:endIconMode="password_toggle">
             <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/public_sans"
+                style="@style/Widget.LinhaVital.EditText"
                 android:inputType="textPassword"
-                android:imeOptions="actionDone" />
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:autofillHints="password" />
         </com.google.android.material.textfield.TextInputLayout>
-        <!-- Botão Entrar -->
-        <Button
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvFormError"
+            style="@style/TextAppearance.LinhaVital.Error"
+            android:visibility="gone"
+            android:accessibilityLiveRegion="polite"
+            android:layout_marginBottom="16dp" />
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Entrar →"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:fontFamily="@font/public_sans"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="#E53935"
-            app:cornerRadius="30dp" />
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
-        <!-- Esqueci senha -->
+            style="@style/Widget.LinhaVital.Button.Primary"
+            android:text="@string/activity_login_btnlogin_text"
+            app:icon="@drawable/ic_lv_arrow"
+            app:iconGravity="textEnd" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="36dp">
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:id="@+id/progressBar"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:contentDescription="@string/lv_loading"
+                app:indicatorSize="24dp"
+                app:trackThickness="2dp"
+                app:indicatorColor="@color/lv_brand" />
+        </FrameLayout>
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/tvEsqueciSenha"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Esqueci minha senha"
-            android:textColor="#E53935"
-            android:textSize="14sp"
-            android:fontFamily="@font/public_sans"
-            android:layout_marginTop="12dp"
-            android:padding="4dp" />
-        <!-- Divisor -->
+            style="@style/TextAppearance.LinhaVital.Body"
+            android:text="@string/activity_login_tvesquecisenha_text"
+            android:visibility="gone" />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ou"
-            android:textColor="#9E9E9E"
-            android:textSize="14sp"
-            android:fontFamily="@font/public_sans"
-            android:layout_marginTop="4dp" />
-        <!-- Criar conta -->
-        <Button
+            style="@style/TextAppearance.LinhaVital.Caption"
+            android:text="@string/activity_login_14_text"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/tvCadastro"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Criar conta"
-            android:textSize="16sp"
-            android:textColor="#1A1A1A"
-            android:fontFamily="@font/public_sans"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#FFFFFF"
-            app:strokeColor="#E0E0E0"
-            app:strokeWidth="1dp"
-            app:cornerRadius="30dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-        <!-- Cards informativos -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="28dp">
-            <!-- Card 1 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/card_background"
-                android:padding="16dp">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_monitoramento_vital"
-                    android:background="@drawable/circle_background"
-                    android:padding="8dp"
-                    android:contentDescription="Monitoramento" />
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="14dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Monitoramento Vital"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/public_sans"
-                        android:textColor="#1A1A1A" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Configure check-ins periódicos para confirmar que está tudo bem."
-                        android:textSize="13sp"
-                        android:fontFamily="@font/public_sans"
-                        android:textColor="#757575"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </LinearLayout>
-            <!-- Card 2 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/card_background"
-                android:padding="16dp"
-                android:layout_marginTop="12dp">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_ajuda_imediata"
-                    android:background="@drawable/circle_background"
-                    android:padding="8dp"
-                    android:contentDescription="Ajuda" />
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="14dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ajuda Imediata"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:fontFamily="@font/public_sans"
-                        android:textColor="#1A1A1A" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Acione emergência com apenas um toque."
-                        android:textSize="13sp"
-                        android:fontFamily="@font/public_sans"
-                        android:textColor="#757575"
-                        android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-        <!-- Footer -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="© 2026 LINHA VITAL. PROTEÇÃO E CUIDADO."
-            android:textSize="10sp"
-            android:fontFamily="@font/public_sans"
-            android:textColor="#BDBDBD"
-            android:layout_marginTop="24dp"
-            android:gravity="center" />
+            style="@style/Widget.LinhaVital.Button.Outline"
+            android:text="@string/activity_login_tvcadastro_text" />
     </LinearLayout>
 </ScrollView>

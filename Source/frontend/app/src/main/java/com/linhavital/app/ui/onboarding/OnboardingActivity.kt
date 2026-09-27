@@ -1,4 +1,8 @@
 package com.linhavital.app.ui.onboarding
+import android.view.View
+import com.linhavital.app.ui.common.revealPage
+import com.linhavital.app.R
+import androidx.core.content.ContextCompat
 
 import android.content.Intent
 import android.os.Bundle
@@ -50,16 +54,19 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        binding.rootOnboarding.applySystemBarsPadding(top = true, bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        binding.rootOnboarding.applySystemBarsPadding(top = true, bottom = true, left = true, right = true)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         sessionManager = SessionManager(this)
+        page = savedInstanceState?.getInt("ui_onboarding_page", 0)?.coerceIn(0, pages.lastIndex) ?: 0
         binding.btnSkip.setOnClickListener { concluir() }
         binding.btnNext.setOnClickListener {
             if (page == pages.lastIndex) concluir() else {
                 page++
                 render()
+                binding.onboardingScroll.scrollTo(0, 0)
+                binding.pageContent.revealPage()
             }
         }
         render()
@@ -73,8 +80,31 @@ class OnboardingActivity : AppCompatActivity() {
         binding.tvDetail.text = current.detail
         binding.tvProgress.text = "${page + 1} DE ${pages.size}"
         binding.btnNext.text = if (page == pages.lastIndex) "Iniciar" else "Próximo"
-        binding.btnSkip.alpha = if (page == pages.lastIndex) 0f else 1f
+        binding.btnSkip.visibility = if (page == pages.lastIndex) View.INVISIBLE else View.VISIBLE
         binding.btnSkip.isEnabled = page != pages.lastIndex
+        binding.ivIllustration.setImageResource(when (page) {
+            0 -> R.drawable.figma_welcome_person
+            1 -> R.drawable.ic_monitoramento_vital
+            2 -> R.drawable.ic_nav_contacts
+            else -> R.drawable.ic_ajuda_imediata
+        })
+        val dots = listOf(binding.dot1, binding.dot2, binding.dot3, binding.dot4)
+        dots.forEachIndexed { index, dot ->
+            dot.isSelected = index == page
+            dot.layoutParams = dot.layoutParams.apply {
+                width = ((if (index == page) 24 else 8) * resources.displayMetrics.density).toInt()
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("ui_onboarding_page", page)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroy() {
+        binding.pageContent.animate().cancel()
+        super.onDestroy()
     }
 
     private fun concluir() {

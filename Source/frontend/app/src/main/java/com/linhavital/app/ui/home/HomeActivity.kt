@@ -1,4 +1,8 @@
 package com.linhavital.app.ui.home
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.linhavital.app.ui.common.accentGreeting
+import com.linhavital.app.ui.common.NavigationTab
+import com.linhavital.app.ui.common.selectTab
 
 import android.Manifest
 import android.content.Intent
@@ -8,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -100,6 +103,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(
             binding.root
         )
+        binding.root.applySystemBarsPadding(left = true, right = true)
 
         WindowCompat.setDecorFitsSystemWindows(
             window,
@@ -118,9 +122,7 @@ class HomeActivity : AppCompatActivity() {
             )
 
         window.statusBarColor =
-            android.graphics.Color.parseColor(
-                "#FFF5F5"
-            )
+            ContextCompat.getColor(this, R.color.lv_background)
 
         WindowCompat
             .getInsetsController(
@@ -213,6 +215,7 @@ class HomeActivity : AppCompatActivity() {
                     sessionManager.getUserName()
                         ?: "Usuário"
                 }!"
+            binding.tvBemVindo.accentGreeting()
 
             carregarDashboard()
 
@@ -284,27 +287,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun configurarBottomBar() {
 
-        binding.bottomNavigation
-            .btnNavHome
-            .setBackgroundResource(
-                R.drawable.nav_item_active
-            )
-
-        binding.bottomNavigation
-            .iconNavHome
-            .setColorFilter(
-                android.graphics.Color.parseColor(
-                    "#BB0013"
-                )
-            )
-
-        binding.bottomNavigation
-            .labelNavHome
-            .setTextColor(
-                android.graphics.Color.parseColor(
-                    "#BB0013"
-                )
-            )
+        binding.bottomNavigation.selectTab(NavigationTab.HOME)
 
         binding.bottomNavigation
             .btnNavHome
@@ -858,7 +841,7 @@ class HomeActivity : AppCompatActivity() {
                 )
                 ?: return
 
-        AlertDialog.Builder(
+        MaterialAlertDialogBuilder(
             this
         )
             .setTitle(
@@ -1040,7 +1023,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun finalizarCascataSemAtendimento() {
 
-        AlertDialog.Builder(
+        MaterialAlertDialogBuilder(
             this
         )
             .setTitle(

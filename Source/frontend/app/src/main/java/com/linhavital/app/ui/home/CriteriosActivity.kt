@@ -1,4 +1,7 @@
 package com.linhavital.app.ui.home
+import com.linhavital.app.ui.common.NavigationTab
+import com.linhavital.app.ui.common.selectTab
+import androidx.core.content.ContextCompat
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,20 +28,19 @@ class CriteriosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCriteriosBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding(left = true, right = true)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.headerCriterios.applySystemBarsPadding(top = true)
         binding.bottomNavigation.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         sessionManager = SessionManager(this)
         binding.btnAdicionarCriterio.setOnClickListener { abrirConfiguracao() }
         binding.cardInatividade.setOnClickListener { abrirConfiguracao() }
 
-        binding.bottomNavigation.btnNavCriterios.setBackgroundResource(R.drawable.nav_item_active)
-        binding.bottomNavigation.iconNavCriterios.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
-        binding.bottomNavigation.labelNavCriterios.setTextColor(android.graphics.Color.parseColor("#BB0013"))
+        binding.bottomNavigation.selectTab(NavigationTab.CRITERIOS)
 
         binding.bottomNavigation.btnNavHome.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java).apply {

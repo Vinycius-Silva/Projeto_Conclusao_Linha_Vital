@@ -1,112 +1,130 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version='1.0' encoding='utf-8'?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomNavigationContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/lv_brand"
     android:orientation="vertical"
-    android:background="#FFFFFF"
-    android:elevation="10dp">
-
-    <LinearLayout
-        android:id="@+id/bottomNavigation"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+    <com.linhavital.app.ui.common.NavigationWaveView
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="#FFFFFF">
-
+        android:layout_height="wrap_content"
+        android:id="@+id/navigationWave"
+        android:background="@color/lv_background">
         <LinearLayout
-            android:id="@+id/btnNavHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottomNavigation"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="6dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
-
-            <ImageView
-                android:id="@+id/iconNavHome"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_home"
-                android:contentDescription="Início" />
-
-            <TextView
-                android:id="@+id/labelNavHome"
-                android:layout_width="wrap_content"
+            android:minHeight="104dp"
+            android:paddingBottom="18dp">
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Início"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="#BB0013"
-                android:fontFamily="@font/public_sans" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnNavContatos"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="6dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
-
-            <ImageView
-                android:id="@+id/iconNavContatos"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_contacts"
-                android:contentDescription="Contatos" />
-
-            <TextView
-                android:id="@+id/labelNavContatos"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnNavCriterios"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:minHeight="86dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="6dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/view_bottom_navigation_btnnavcriterios_contentdescription">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelNavCriterios"
+                    style="@style/TextAppearance.LinhaVital.Caption"
+                    android:text="@string/view_bottom_navigation_labelnavcriterios_text"
+                    android:gravity="center"
+                    android:textColor="@color/lv_ink"
+                    android:layout_marginBottom="8dp"
+                    android:importantForAccessibility="no" />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/iconNavCriterios"
+                    android:src="@drawable/ic_nav_criteria"
+                    android:importantForAccessibility="no"
+                    android:tint="@color/lv_brand" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Contatos"
-                android:textSize="12sp"
-                android:textColor="#757575"
-                android:fontFamily="@font/public_sans" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/btnNavCriterios"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="6dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless">
-
-            <ImageView
-                android:id="@+id/iconNavCriterios"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_criteria"
-                android:contentDescription="Critérios" />
-
-            <TextView
-                android:id="@+id/labelNavCriterios"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnNavHome"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:minHeight="86dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="6dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/view_bottom_navigation_btnnavhome_contentdescription">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelNavHome"
+                    style="@style/TextAppearance.LinhaVital.Caption"
+                    android:text="@string/view_bottom_navigation_labelnavhome_text"
+                    android:gravity="center"
+                    android:textColor="@color/lv_ink"
+                    android:layout_marginBottom="8dp"
+                    android:importantForAccessibility="no" />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/iconNavHome"
+                    android:src="@drawable/ic_nav_home"
+                    android:importantForAccessibility="no"
+                    android:tint="@color/lv_brand" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Critérios"
-                android:textSize="12sp"
-                android:textColor="#757575"
-                android:fontFamily="@font/public_sans" />
+                android:id="@+id/btnNavContatos"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:minHeight="86dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="6dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/view_bottom_navigation_btnnavcontatos_contentdescription">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelNavContatos"
+                    style="@style/TextAppearance.LinhaVital.Caption"
+                    android:text="@string/view_bottom_navigation_labelnavcontatos_text"
+                    android:gravity="center"
+                    android:textColor="@color/lv_ink"
+                    android:layout_marginBottom="8dp"
+                    android:importantForAccessibility="no" />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/iconNavContatos"
+                    android:src="@drawable/ic_nav_contacts"
+                    android:importantForAccessibility="no"
+                    android:tint="@color/lv_brand" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </com.linhavital.app.ui.common.NavigationWaveView>
 </LinearLayout>

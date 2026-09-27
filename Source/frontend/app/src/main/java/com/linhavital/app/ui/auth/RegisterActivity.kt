@@ -1,4 +1,8 @@
 package com.linhavital.app.ui.auth
+import com.linhavital.app.ui.common.showFormError
+import com.linhavital.app.ui.common.clearErrorWhenEditing
+import com.linhavital.app.R
+import androidx.core.content.ContextCompat
 
 import android.os.Bundle
 import android.view.View
@@ -18,10 +22,11 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.tvFormError.clearErrorWhenEditing(binding.etName, binding.etEmail, binding.etPhone, binding.etBirthDate, binding.etPassword, binding.etConfirmPassword)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        binding.rootRegister.applySystemBarsPadding(top = true, bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        binding.rootRegister.applySystemBarsPadding(top = true, bottom = true, left = true, right = true, ime = true)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         binding.btnVoltar.setOnClickListener { finish() }
@@ -47,7 +52,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
                 is RegisterState.Error -> {
                     setLoading(false)
-                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    binding.tvFormError.showFormError(state.message)
                 }
             }
         }
@@ -56,5 +61,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun setLoading(loading: Boolean) {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         binding.btnCadastrar.isEnabled = !loading
+        binding.btnCadastrar.setText(if (loading) R.string.lv_creating_account else R.string.lv_create_account)
+        if (loading) binding.tvFormError.showFormError(null)
     }
 }
