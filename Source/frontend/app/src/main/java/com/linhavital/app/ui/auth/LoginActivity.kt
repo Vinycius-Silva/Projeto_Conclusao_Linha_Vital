@@ -1,4 +1,8 @@
 package com.linhavital.app.ui.auth
+import com.linhavital.app.ui.common.showFormError
+import com.linhavital.app.ui.common.clearErrorWhenEditing
+import com.linhavital.app.R
+import androidx.core.content.ContextCompat
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,10 +29,11 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.tvFormError.clearErrorWhenEditing(binding.etEmail, binding.etPassword)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        binding.rootLogin.applySystemBarsPadding(top = true, bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        binding.rootLogin.applySystemBarsPadding(top = true, bottom = true, left = true, right = true, ime = true)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         sessionManager = SessionManager(this)
@@ -58,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 is LoginState.Error -> {
                     setLoading(false)
-                    Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
+                    binding.tvFormError.showFormError(state.message)
                 }
             }
         }
@@ -77,5 +82,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setLoading(loading: Boolean) {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         binding.btnLogin.isEnabled = !loading
+        binding.btnLogin.setText(if (loading) R.string.lv_signing_in else R.string.lv_login)
+        if (loading) binding.tvFormError.showFormError(null)
     }
 }

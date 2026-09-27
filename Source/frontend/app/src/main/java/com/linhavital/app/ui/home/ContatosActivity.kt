@@ -1,4 +1,10 @@
 package com.linhavital.app.ui.home
+import android.animation.ValueAnimator
+import androidx.recyclerview.widget.DefaultItemAnimator
+import com.linhavital.app.ui.common.showFormError
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.linhavital.app.ui.common.NavigationTab
+import com.linhavital.app.ui.common.selectTab
 
 import android.Manifest
 import android.content.Intent
@@ -8,7 +14,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -39,11 +44,12 @@ class ContatosActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityContatosBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding(left = true, right = true)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.headerContatos.applySystemBarsPadding(top = true)
         binding.bottomNavigation.bottomNavigationContainer.applySystemBarsPadding(bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         sessionManager = SessionManager(this)
@@ -58,15 +64,26 @@ class ContatosActivity : AppCompatActivity() {
         )
         binding.rvContatos.layoutManager = LinearLayoutManager(this)
         binding.rvContatos.adapter = adapter
+        binding.rvContatos.itemAnimator = if (ValueAnimator.areAnimatorsEnabled()) {
+            DefaultItemAnimator().apply {
+                addDuration = 180L
+                removeDuration = 180L
+                moveDuration = 180L
+                supportsChangeAnimations = false
+            }
+        } else null
 
         viewModel.contatos.observe(this) { contatos ->
+            binding.progressContatos.visibility = View.INVISIBLE
+            binding.tvListError.showFormError(null)
             binding.rvContatos.visibility = if (contatos.isEmpty()) View.GONE else View.VISIBLE
             binding.tvEmpty.visibility = if (contatos.isEmpty()) View.VISIBLE else View.GONE
             adapter.atualizar(contatos)
         }
         viewModel.estado.observe(this) { estado ->
             if (estado is ContatoEstado.Erro) {
-                Toast.makeText(this, estado.message, Toast.LENGTH_LONG).show()
+                binding.progressContatos.visibility = View.INVISIBLE
+                binding.tvListError.showFormError(estado.message)
             }
         }
 
@@ -78,6 +95,7 @@ class ContatosActivity : AppCompatActivity() {
                 finish()
             } else {
                 usuarioIdLogado = id
+                showListLoading()
                 viewModel.carregarContatos(id)
             }
         }
@@ -85,13 +103,20 @@ class ContatosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        usuarioIdLogado?.let(viewModel::carregarContatos)
+        usuarioIdLogado?.let { id ->
+            showListLoading()
+            viewModel.carregarContatos(id)
+        }
+    }
+
+    private fun showListLoading() {
+        binding.progressContatos.visibility = View.VISIBLE
+        binding.tvEmpty.visibility = View.GONE
+        binding.tvListError.showFormError(null)
     }
 
     private fun configurarBottomBar() {
-        binding.bottomNavigation.btnNavContatos.setBackgroundResource(R.drawable.nav_item_active)
-        binding.bottomNavigation.iconNavContatos.setColorFilter(android.graphics.Color.parseColor("#BB0013"))
-        binding.bottomNavigation.labelNavContatos.setTextColor(android.graphics.Color.parseColor("#BB0013"))
+        binding.bottomNavigation.selectTab(NavigationTab.CONTATOS)
 
         binding.bottomNavigation.btnNavHome.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java).apply {
@@ -111,7 +136,7 @@ class ContatosActivity : AppCompatActivity() {
     }
 
     private fun confirmarExclusao(contatoId: Long) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Excluir contato?")
             .setMessage("Esse contato deixará de fazer parte da sua rede de proteção.")
             .setNegativeButton("Cancelar", null)

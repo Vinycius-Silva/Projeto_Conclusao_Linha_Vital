@@ -73,36 +73,6 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
                 android:accessibilityHeading="true" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/sosPanel"
-                android:orientation="vertical"
-                android:background="@color/lv_surface"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="4dp"
-                android:layout_marginBottom="20dp">
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/btnSOS"
-                    style="@style/Widget.LinhaVital.Button.Primary"
-                    android:text="@string/activity_home_btnsos_text"
-                    app:icon="@drawable/ic_nav_phone"
-                    app:iconGravity="textStart"
-                    android:minHeight="60dp"
-                    android:textSize="24sp"
-                    android:contentDescription="@string/activity_home_btnsos_contentdescription" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/TextAppearance.LinhaVital.Caption"
-                    android:text="@string/activity_home_27_text"
-                    android:gravity="center"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -207,5 +177,34 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sosPanel"
+        android:orientation="vertical"
+        android:background="@color/lv_surface"
+        android:paddingStart="@dimen/lv_page_gutter"
+        android:paddingEnd="@dimen/lv_page_gutter"
+        android:paddingTop="12dp"
+        android:paddingBottom="4dp">
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnSOS"
+            style="@style/Widget.LinhaVital.Button.Primary"
+            android:text="@string/activity_home_btnsos_text"
+            app:icon="@drawable/ic_nav_phone"
+            app:iconGravity="textStart"
+            android:minHeight="60dp"
+            android:textSize="24sp"
+            android:contentDescription="@string/activity_home_btnsos_contentdescription" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.LinhaVital.Caption"
+            android:text="@string/activity_home_27_text"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
     <include android:id="@+id/bottomNavigation" layout="@layout/view_bottom_navigation"/>
 </LinearLayout>

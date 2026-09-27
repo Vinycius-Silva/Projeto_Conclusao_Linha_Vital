@@ -13,7 +13,8 @@ fun View.applySystemBarsPadding(
     top: Boolean = false,
     bottom: Boolean = false,
     left: Boolean = false,
-    right: Boolean = false
+    right: Boolean = false,
+    ime: Boolean = false
 ) {
     val initialLeft = paddingLeft
     val initialTop = paddingTop
@@ -23,7 +24,8 @@ fun View.applySystemBarsPadding(
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
         val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
         val systemGestures = insets.getInsets(WindowInsetsCompat.Type.systemGestures())
-        val safeBottom = max(systemBars.bottom, systemGestures.bottom)
+        val keyboardBottom = if (ime) insets.getInsets(WindowInsetsCompat.Type.ime()).bottom else 0
+        val safeBottom = max(max(systemBars.bottom, systemGestures.bottom), keyboardBottom)
 
         view.setPadding(
             initialLeft + if (left) systemBars.left else 0,

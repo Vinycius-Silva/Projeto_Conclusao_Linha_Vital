@@ -1,4 +1,9 @@
 package com.linhavital.app.ui.home
+import com.linhavital.app.ui.common.accentLastWord
+import com.linhavital.app.ui.common.showFormError
+import com.linhavital.app.ui.common.clearErrorWhenEditing
+import com.linhavital.app.R
+import androidx.core.content.ContextCompat
 
 import android.content.Context
 import android.content.Intent
@@ -28,19 +33,23 @@ class ContatoFormActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityContatoFormBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.tvFormError.clearErrorWhenEditing(binding.etNome, binding.etTelefone, binding.etEmail)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.headerContatoForm.applySystemBarsPadding(top = true)
-        binding.rootContatoForm.applySystemBarsPadding(bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        binding.rootContatoForm.applySystemBarsPadding(bottom = true, left = true, right = true, ime = true)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         contatoId = intent.getLongExtra(EXTRA_ID, 0L).takeIf { it > 0 }
         binding.tvTitle.text = if (contatoId == null) "Adicionar contato" else "Editar contato"
+        binding.tvTitle.accentLastWord()
         binding.etNome.setText(intent.getStringExtra(EXTRA_NOME).orEmpty())
         binding.etTelefone.setText(intent.getStringExtra(EXTRA_TELEFONE).orEmpty())
         binding.etEmail.setText(intent.getStringExtra(EXTRA_EMAIL).orEmpty())
-        binding.spinnerTipo.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, tipos)
+        binding.spinnerTipo.adapter = ArrayAdapter(this, R.layout.item_spinner, tipos).apply {
+            setDropDownViewResource(R.layout.item_spinner_dropdown)
+        }
         intent.getStringExtra(EXTRA_TIPO)?.let { tipoAtual ->
             tipos.indexOf(tipoAtual).takeIf { it >= 0 }?.let(binding.spinnerTipo::setSelection)
         }
@@ -69,7 +78,7 @@ class ContatoFormActivity : AppCompatActivity() {
                 }
                 is ContatoEstado.Erro -> {
                     setLoading(false)
-                    Toast.makeText(this, estado.message, Toast.LENGTH_LONG).show()
+                    binding.tvFormError.showFormError(estado.message)
                 }
             }
         }
@@ -93,6 +102,8 @@ class ContatoFormActivity : AppCompatActivity() {
     private fun setLoading(loading: Boolean) {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         binding.btnSalvar.isEnabled = !loading
+        binding.btnSalvar.setText(if (loading) R.string.lv_saving else R.string.lv_save)
+        if (loading) binding.tvFormError.showFormError(null)
     }
 
     companion object {

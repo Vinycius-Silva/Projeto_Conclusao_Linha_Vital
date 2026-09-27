@@ -1,4 +1,7 @@
 package com.linhavital.app.ui.home
+import com.linhavital.app.ui.common.showFormError
+import com.linhavital.app.R
+import androidx.core.content.ContextCompat
 
 import android.os.Bundle
 import android.view.View
@@ -28,8 +31,8 @@ class CriterioFormActivity : AppCompatActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding.headerCriterioForm.applySystemBarsPadding(top = true)
-        binding.rootCriterioForm.applySystemBarsPadding(bottom = true)
-        window.statusBarColor = android.graphics.Color.parseColor("#FFF5F5")
+        binding.rootCriterioForm.applySystemBarsPadding(bottom = true, left = true, right = true, ime = true)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.lv_background)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
 
         val labels = intervalos.map {
@@ -37,9 +40,9 @@ class CriterioFormActivity : AppCompatActivity() {
         }
         binding.spinnerIntervalo.adapter = ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_dropdown_item,
+            R.layout.item_spinner,
             labels
-        )
+        ).apply { setDropDownViewResource(R.layout.item_spinner_dropdown) }
 
         binding.btnVoltar.setOnClickListener { finish() }
         binding.btnSalvar.setOnClickListener { salvar() }
@@ -60,11 +63,7 @@ class CriterioFormActivity : AppCompatActivity() {
                     binding.spinnerIntervalo.setSelection(if (index >= 0) index else 3)
                 }
                 .onFailure {
-                    Toast.makeText(
-                        this@CriterioFormActivity,
-                        "Não foi possível carregar a configuração.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    binding.tvFormError.showFormError("Não foi possível carregar a configuração.")
                 }
             setLoading(false)
         }
@@ -74,7 +73,7 @@ class CriterioFormActivity : AppCompatActivity() {
         val id = usuarioId ?: return
         val intervalo = intervalos[binding.spinnerIntervalo.selectedItemPosition]
         val ativo = binding.switchMonitoramento.isChecked
-        setLoading(true)
+        setLoading(true, R.string.lv_saving)
 
         lifecycleScope.launch {
             repository.configurar(id, ativo, intervalo)
@@ -93,18 +92,16 @@ class CriterioFormActivity : AppCompatActivity() {
                 }
                 .onFailure {
                     setLoading(false)
-                    Toast.makeText(
-                        this@CriterioFormActivity,
-                        "Não foi possível salvar a configuração.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    binding.tvFormError.showFormError("Não foi possível salvar a configuração.")
                 }
         }
     }
 
-    private fun setLoading(loading: Boolean) {
+    private fun setLoading(loading: Boolean, loadingLabel: Int = R.string.lv_loading) {
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         binding.btnSalvar.isEnabled = !loading
+        binding.btnSalvar.setText(if (loading) loadingLabel else R.string.lv_save_configuration)
+        if (loading) binding.tvFormError.showFormError(null)
         binding.switchMonitoramento.isEnabled = !loading
         binding.spinnerIntervalo.isEnabled = !loading
     }
