@@ -1,17 +1,47 @@
 package com.linhavital.backend.controller
 
-import com.linhavital.backend.model.Localizacao
+import com.linhavital.backend.dto.LocalizacaoRequest
+import com.linhavital.backend.dto.LocalizacaoResponse
 import com.linhavital.backend.service.LocalizacaoService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/localizacoes")
-class LocalizacaoController(private val service: LocalizacaoService) {
+class LocalizacaoController(
+    private val service: LocalizacaoService
+) {
 
     @GetMapping
-    fun listar() = service.listar()
+    fun listar():
+            List<LocalizacaoResponse> =
+        service.listarDoUsuarioAtual()
+
+    @GetMapping("/ultima")
+    fun obterUltima():
+            ResponseEntity<LocalizacaoResponse> {
+
+        val localizacao =
+            service.obterUltimaDoUsuarioAtual()
+
+        return if (
+            localizacao != null
+        ) {
+            ResponseEntity.ok(
+                localizacao
+            )
+        } else {
+            ResponseEntity
+                .noContent()
+                .build()
+        }
+    }
 
     @PostMapping
-    fun criar(@RequestBody localizacao: Localizacao) =
-        service.salvar(localizacao)
+    fun registrar(
+        @RequestBody request: LocalizacaoRequest
+    ): LocalizacaoResponse =
+        service.registrarLocalizacao(
+            request
+        )
 }

@@ -6,12 +6,24 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface HistoricoNotificacaoRepository : JpaRepository<HistoricoNotificacao, Long> {
+interface HistoricoNotificacaoRepository :
+    JpaRepository<HistoricoNotificacao, Long> {
+
+    fun findByAlertaUsuarioIdOrderByDataHoraDesc(
+        usuarioId: Long
+    ): List<HistoricoNotificacao>
 
     @Modifying
     @Query(
-        value = "DELETE FROM historiconotificacao WHERE fk_contato_id_contato = :contatoId",
+        value =
+            """
+            DELETE FROM historiconotificacao
+            WHERE fk_contato_id_contato = :contatoId
+            """,
         nativeQuery = true
     )
-    fun deleteByContatoId(@Param("contatoId") contatoId: Long): Int
-}   
+    fun deleteByContatoId(
+        @Param("contatoId")
+        contatoId: Long
+    ): Int
+}
