@@ -1,8 +1,13 @@
 % ----------------------------------------------------------
-% Trabalhos Futuros
+% Considerações Finais
 % ----------------------------------------------------------
 
-%% Para tornar os trabalhos futuros um capítulo a parte, use \chapter{Trabalhos Futuros}
 \chapter{Considerações Finais}
 
-\section{Dificuldades, escolhas e descartes}
+\section{Síntese dos resultados}
+
+O desenvolvimento do Linha Vital teve como propósito investigar a viabilidade de uma solução móvel de apoio a pessoas que vivem sozinhas, baseada em check-ins periódicos, identificação de períodos de inatividade e acionamento de uma rede de contatos em situações potencialmente críticas. Ao longo do projeto, a proposta inicial foi refinada até a consolidação de um produto mínimo viável que integra um aplicativo Android, um serviço de back-end desenvolvido em Kotlin com Spring Boot e um banco de dados PostgreSQL.
+
+No estado atual, o sistema permite o cadastro e a autenticação de usuários por e-mail e senha ou por Conta Google, utilizando sessões autenticadas por token Bearer. O aplicativo disponibiliza o gerenciamento de contatos de emergência, a configuração do intervalo de monitoramento, a realização do check-in de bem-estar e a consulta do estado do ciclo preventivo. No servidor, um processo periódico identifica quando o intervalo configurado é ultrapassado sem nova confirmação e registra uma ocorrência de inatividade, evitando a criação repetida de alertas para o mesmo ciclo.
+
+Como mecanismo de reação automática, o Linha Vital realiza o envio de e-mails aos contatos cadastrados quando uma inatividade é detectada. Quando autorizada pelo usuário, uma localização pontual também pode ser registrada e incorporada ao alerta, de forma a fornecer uma referência adicional aos contatos sem exigir rastreamento contínuo do aparelho. Paralelamente, o aplicativo oferece um mecanismo reativo manual por meio do SOS, que registra a ocorrência, recupera os contatos segundo sua prioridade e executa uma cascata assistida de ligações. Após cada tentativa, o usuário informa se houve atendimento, permitindo registrar o resultado e prosseguir para o próximo contato quando necessário.
