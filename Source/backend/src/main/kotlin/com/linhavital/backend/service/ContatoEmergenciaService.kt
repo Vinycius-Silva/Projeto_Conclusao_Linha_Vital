@@ -192,12 +192,15 @@ class ContatoEmergenciaService(
             usuarioId
         )
 
-        if (
+        val vinculosRemovidos =
             usuarioContatoRepository
                 .deleteByUsuarioIdAndContatoId(
                     usuarioId,
                     contatoId
-                ) == 0
+                )
+
+        if (
+            vinculosRemovidos == 0
         ) {
 
             throw RuntimeException(
@@ -205,22 +208,9 @@ class ContatoEmergenciaService(
             )
         }
 
-        if (
-            usuarioContatoRepository
-                .countByContatoId(
-                    contatoId
-                ) == 0L
-        ) {
-
-            historicoNotificacaoRepository
-                .deleteByContatoId(
-                    contatoId
-                )
-
-            repository.deleteById(
-                contatoId
-            )
-        }
+        removerContatoFisicoSePossivel(
+            contatoId
+        )
     }
 
     @Transactional
@@ -228,19 +218,78 @@ class ContatoEmergenciaService(
         id: Long
     ) {
 
-        historicoNotificacaoRepository
-            .deleteByContatoId(
-                id
-            )
-
         usuarioContatoRepository
             .deleteByContatoId(
                 id
             )
 
-        repository.deleteById(
+        removerContatoFisicoSePossivel(
             id
         )
+    }
+
+    /*
+     * ===================================================
+     * EXCLUSÃO FÍSICA SEGURA
+     * ===================================================
+     *
+     * O contato só é removido da tabela ContatoEmergencia
+     * quando não existe:
+     *
+     * 1. vínculo com nenhum usuário;
+     * 2. histórico de notificações relacionado a ele.
+     *
+     * Dessa forma, excluir um contato da agenda não apaga
+     * o histórico de SOS e de outras ocorrências antigas.
+     */
+    private fun removerContatoFisicoSePossivel(
+        contatoId: Long
+    ) {
+
+        val possuiVinculos =
+            usuarioContatoRepository
+                .countByContatoId(
+                    contatoId
+                ) > 0L
+
+        if (
+            possuiVinculos
+        ) {
+
+            return
+        }
+
+        val possuiHistorico =
+            historicoNotificacaoRepository
+                .countByContatoId(
+                    contatoId
+                ) > 0L
+
+        if (
+            possuiHistorico
+        ) {
+
+            /*
+             * O contato permanece fisicamente na tabela
+             * somente para preservar o histórico.
+             *
+             * Como não existe mais UsuarioContato,
+             * ele não aparecerá na agenda do usuário
+             * nem participará de novos SOS.
+             */
+            return
+        }
+
+        if (
+            repository.existsById(
+                contatoId
+            )
+        ) {
+
+            repository.deleteById(
+                contatoId
+            )
+        }
     }
 
     private fun validarUsuario(
