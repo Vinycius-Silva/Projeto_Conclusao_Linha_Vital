@@ -23,6 +23,7 @@ import com.linhavital.app.data.repository.ContatoRepository
 import com.linhavital.app.data.repository.HistoricoNotificacaoRepository
 import com.linhavital.app.data.repository.LocalizacaoRepository
 import com.linhavital.app.data.repository.MonitoramentoRepository
+import com.linhavital.app.data.repository.UsuarioRepository
 import com.linhavital.app.databinding.ActivityHomeBinding
 import com.linhavital.app.location.LocalizacaoProvider
 import com.linhavital.app.monitoring.CheckInScheduler
@@ -31,13 +32,17 @@ import com.linhavital.app.ui.common.NavigationTab
 import com.linhavital.app.ui.common.accentGreeting
 import com.linhavital.app.ui.common.selectTab
 import com.linhavital.app.utils.SessionManager
+import com.linhavital.app.utils.SosInteractionResult
+import com.linhavital.app.utils.SosInteractionTracker
 import com.linhavital.app.utils.applySystemBarsPadding
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
+
     private lateinit var sessionManager: SessionManager
+
     private lateinit var localizacaoProvider: LocalizacaoProvider
 
     private val monitoramentoRepository =
@@ -55,15 +60,21 @@ class HomeActivity : AppCompatActivity() {
     private val localizacaoRepository =
         LocalizacaoRepository()
 
+    private val usuarioRepository =
+        UsuarioRepository()
+
     private var usuarioId: Long? = null
 
-    private var sosClickCount = 0
-    private var lastSosClickTime = 0L
+    private val sosInteractionTracker =
+        SosInteractionTracker()
 
     private var numeroPendenteLigacao: String? = null
 
-    private var notificationPermissionAsked = false
-    private var locationPermissionAsked = false
+    private var notificationPermissionAsked =
+        false
+
+    private var locationPermissionAsked =
+        false
 
     /*
      * ===================================================
@@ -75,24 +86,31 @@ class HomeActivity : AppCompatActivity() {
             List<ContatoEmergencia> =
         emptyList()
 
-    private var indiceContatoAtual = 0
+    private var indiceContatoAtual =
+        0
 
-    private var cascataEmAndamento = false
+    private var cascataEmAndamento =
+        false
 
-    private var aguardandoRetornoLigacao = false
+    private var aguardandoRetornoLigacao =
+        false
 
     /*
      * ID do alerta PANICO criado pelo backend.
      */
-    private var alertaIdCascata: Long? = null
+    private var alertaIdCascata:
+            Long? = null
 
     companion object {
 
-        private const val REQUEST_CALL_PHONE = 101
+        private const val REQUEST_CALL_PHONE =
+            101
 
-        private const val REQUEST_NOTIFICATIONS = 103
+        private const val REQUEST_NOTIFICATIONS =
+            103
 
-        private const val REQUEST_LOCATION = 104
+        private const val REQUEST_LOCATION =
+            104
 
         const val EXTRA_OPEN_CHECK_IN =
             "open_check_in"
@@ -102,7 +120,9 @@ class HomeActivity : AppCompatActivity() {
         savedInstanceState: Bundle?
     ) {
 
-        super.onCreate(savedInstanceState)
+        super.onCreate(
+            savedInstanceState
+        )
 
         binding =
             ActivityHomeBinding.inflate(
@@ -119,10 +139,11 @@ class HomeActivity : AppCompatActivity() {
                 right = true
             )
 
-        WindowCompat.setDecorFitsSystemWindows(
-            window,
-            false
-        )
+        WindowCompat
+            .setDecorFitsSystemWindows(
+                window,
+                false
+            )
 
         binding.headerHome
             .applySystemBarsPadding(
@@ -150,14 +171,19 @@ class HomeActivity : AppCompatActivity() {
             true
 
         sessionManager =
-            SessionManager(this)
+            SessionManager(
+                this
+            )
 
         localizacaoProvider =
-            LocalizacaoProvider(this)
+            LocalizacaoProvider(
+                this
+            )
 
-        CheckInScheduler.ensureChannel(
-            this
-        )
+        CheckInScheduler
+            .ensureChannel(
+                this
+            )
 
         /*
          * ===================================================
@@ -224,7 +250,8 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             usuarioId =
-                sessionManager.getUserId()
+                sessionManager
+                    .getUserId()
 
             if (
                 usuarioId == null ||
@@ -238,7 +265,8 @@ class HomeActivity : AppCompatActivity() {
 
             binding.tvBemVindo.text =
                 "Olá, ${
-                    sessionManager.getUserName()
+                    sessionManager
+                        .getUserName()
                         ?: "Usuário"
                 }!"
 
@@ -301,16 +329,20 @@ class HomeActivity : AppCompatActivity() {
             aguardandoRetornoLigacao =
                 false
 
-            binding.root.postDelayed({
+            binding.root
+                .postDelayed(
+                    {
 
-                if (
-                    cascataEmAndamento
-                ) {
+                        if (
+                            cascataEmAndamento
+                        ) {
 
-                    mostrarConfirmacaoAtendimento()
-                }
+                            mostrarConfirmacaoAtendimento()
+                        }
 
-            }, 500)
+                    },
+                    500
+                )
         }
     }
 
@@ -329,7 +361,9 @@ class HomeActivity : AppCompatActivity() {
 
         binding.bottomNavigation
             .btnNavHome
-            .setOnClickListener { }
+            .setOnClickListener {
+
+            }
 
         binding.bottomNavigation
             .btnNavCriterios
@@ -365,7 +399,8 @@ class HomeActivity : AppCompatActivity() {
     private fun carregarDashboard() {
 
         val id =
-            usuarioId ?: return
+            usuarioId
+                ?: return
 
         lifecycleScope.launch {
 
@@ -440,46 +475,57 @@ class HomeActivity : AppCompatActivity() {
         status: MonitoramentoStatus
     ) {
 
-        binding.btnCheckIn.isEnabled =
+        binding.btnCheckIn
+            .isEnabled =
             status.ativo
 
-        binding.tvMonitoramentoStatus.text =
+        binding.tvMonitoramentoStatus
+            .text =
             when {
 
-                !status.ativo ->
+                !status.ativo -> {
 
                     "Monitoramento pausado"
+                }
 
                 status.checkInPendente ||
-                        status.alertaInatividadeAberto ->
+                        status.alertaInatividadeAberto -> {
 
                     "Check-in pendente"
+                }
 
-                else ->
+                else -> {
 
                     "Monitoramento ativo"
+                }
             }
 
-        binding.tvProximoCheckIn.text =
+        binding.tvProximoCheckIn
+            .text =
             when {
 
-                !status.ativo ->
+                !status.ativo -> {
 
                     "Ative os check-ins em Critérios para iniciar o ciclo preventivo."
+                }
 
                 status.checkInPendente ||
-                        status.alertaInatividadeAberto ->
+                        status.alertaInatividadeAberto -> {
 
                     "O prazo terminou. Confirme agora que está tudo bem para encerrar a ocorrência."
+                }
 
-                else ->
+                else -> {
 
                     "Próximo check-in em aproximadamente " +
                             "${
                                 status
                                     .minutosRestantes
-                                    .coerceAtLeast(1)
+                                    .coerceAtLeast(
+                                        1
+                                    )
                             } min."
+                }
             }
 
         if (
@@ -498,16 +544,19 @@ class HomeActivity : AppCompatActivity() {
                 )
 
             } else if (
-                !CheckInScheduler.isScheduled(
-                    this
-                )
+                !CheckInScheduler
+                    .isScheduled(
+                        this
+                    )
             ) {
 
                 CheckInScheduler.schedule(
                     this,
                     status
                         .minutosRestantes
-                        .coerceAtLeast(1)
+                        .coerceAtLeast(
+                            1
+                        )
                 )
             }
 
@@ -528,9 +577,11 @@ class HomeActivity : AppCompatActivity() {
     private fun confirmarCheckIn() {
 
         val id =
-            usuarioId ?: return
+            usuarioId
+                ?: return
 
-        binding.btnCheckIn.isEnabled =
+        binding.btnCheckIn
+            .isEnabled =
             false
 
         lifecycleScope.launch {
@@ -560,7 +611,8 @@ class HomeActivity : AppCompatActivity() {
                      * estejam indisponíveis.
                      */
                     registrarLocalizacaoEmSegundoPlano(
-                        motivo = "CHECK_IN"
+                        motivo =
+                            "CHECK_IN"
                     )
 
                     Toast.makeText(
@@ -571,7 +623,8 @@ class HomeActivity : AppCompatActivity() {
                 }
                 .onFailure {
 
-                    binding.btnCheckIn.isEnabled =
+                    binding.btnCheckIn
+                        .isEnabled =
                         true
 
                     Toast.makeText(
@@ -602,7 +655,8 @@ class HomeActivity : AppCompatActivity() {
         ) {
 
             registrarLocalizacaoEmSegundoPlano(
-                motivo = "HOME"
+                motivo =
+                    "HOME"
             )
 
             return
@@ -656,7 +710,8 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             registrarLocalizacaoAtual(
-                motivo = motivo
+                motivo =
+                    motivo
             )
         }
     }
@@ -720,7 +775,8 @@ class HomeActivity : AppCompatActivity() {
                 )
             }
 
-        return resultadoBackend.isSuccess
+        return resultadoBackend
+            .isSuccess
     }
 
     /*
@@ -763,47 +819,24 @@ class HomeActivity : AppCompatActivity() {
         tipoAcao: String
     ) {
 
-        val agora =
-            System.currentTimeMillis()
-
-        if (
-            agora - lastSosClickTime >
-            2_000
-        ) {
-
-            sosClickCount = 0
-        }
-
-        sosClickCount++
-
-        lastSosClickTime =
-            agora
-
         when (
-            sosClickCount
+            val resultado =
+                sosInteractionTracker
+                    .registrar()
         ) {
 
-            1 -> {
+            is SosInteractionResult.Progresso -> {
 
                 Toast.makeText(
                     this,
-                    "$tipoAcao mais 2x para acionar o SOS",
+                    "$tipoAcao mais " +
+                            "${resultado.interacoesRestantes}x " +
+                            "para acionar o SOS",
                     Toast.LENGTH_SHORT
                 ).show()
             }
 
-            2 -> {
-
-                Toast.makeText(
-                    this,
-                    "$tipoAcao mais 1x para acionar o SOS",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-            3 -> {
-
-                sosClickCount = 0
+            SosInteractionResult.Acionar -> {
 
                 acionarEmergencia()
             }
@@ -836,7 +869,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val id =
-            usuarioId ?: return
+            usuarioId
+                ?: return
 
         /*
          * Inicia a atualização da localização
@@ -847,7 +881,8 @@ class HomeActivity : AppCompatActivity() {
          * o SOS continua normalmente.
          */
         registrarLocalizacaoEmSegundoPlano(
-            motivo = "SOS"
+            motivo =
+                "SOS"
         )
 
         Toast.makeText(
@@ -1000,7 +1035,8 @@ class HomeActivity : AppCompatActivity() {
             )
 
         if (
-            numeroFormatado.isBlank()
+            numeroFormatado
+                .isBlank()
         ) {
 
             Toast.makeText(
@@ -1024,8 +1060,11 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             registrarStatusCascata(
-                contato = contato,
-                status = "TENTATIVA"
+                contato =
+                    contato,
+
+                status =
+                    "TENTATIVA"
             )
 
             prepararLigacao(
@@ -1065,8 +1104,11 @@ class HomeActivity : AppCompatActivity() {
                 lifecycleScope.launch {
 
                     registrarStatusCascata(
-                        contato = contato,
-                        status = "ATENDIDO"
+                        contato =
+                            contato,
+
+                        status =
+                            "ATENDIDO"
                     )
 
                     finalizarCascataComAtendimento(
@@ -1081,8 +1123,11 @@ class HomeActivity : AppCompatActivity() {
                 lifecycleScope.launch {
 
                     registrarStatusCascata(
-                        contato = contato,
-                        status = "NAO_ATENDIDO"
+                        contato =
+                            contato,
+
+                        status =
+                            "NAO_ATENDIDO"
                     )
 
                     chamarProximoContato()
@@ -1132,9 +1177,14 @@ class HomeActivity : AppCompatActivity() {
 
         historicoNotificacaoRepository
             .registrarTentativa(
-                alertaId = alertaId,
-                contatoId = contatoId,
-                status = status
+                alertaId =
+                    alertaId,
+
+                contatoId =
+                    contatoId,
+
+                status =
+                    status
             )
             .onFailure { erro ->
 
@@ -1444,6 +1494,11 @@ class HomeActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
 
+            /*
+             * Mantém o comportamento já existente:
+             * ao sair do aplicativo, o monitoramento
+             * atual é pausado.
+             */
             usuarioId
                 ?.let { id ->
 
@@ -1463,15 +1518,69 @@ class HomeActivity : AppCompatActivity() {
                         }
                 }
 
+            /*
+             * Remove o lembrete local de check-in.
+             */
             CheckInScheduler.cancel(
                 this@HomeActivity
             )
 
+            /*
+             * IMPORTANTE:
+             *
+             * A chamada ao backend acontece antes
+             * de removermos o access token do DataStore.
+             *
+             * Dessa forma, o ApiClient ainda consegue
+             * adicionar:
+             *
+             * Authorization: Bearer <token>
+             *
+             * à requisição POST /auth/logout.
+             */
+            usuarioRepository
+                .logout()
+                .onSuccess {
+
+                    Log.i(
+                        "HomeActivity",
+                        "Sessão revogada no backend com sucesso."
+                    )
+                }
+                .onFailure { erro ->
+
+                    /*
+                     * Uma falha de rede não deve impedir
+                     * o usuário de sair do aplicativo.
+                     *
+                     * Portanto registramos a falha e
+                     * continuamos com o logout local.
+                     */
+                    Log.w(
+                        "HomeActivity",
+                        "Não foi possível revogar a sessão no backend: ${erro.message}",
+                        erro
+                    )
+                }
+
+            /*
+             * Somente depois da tentativa de revogação
+             * removemos usuário e token do DataStore.
+             */
             sessionManager.logout()
+
+            usuarioId =
+                null
 
             irParaLogin()
         }
     }
+
+    /*
+     * ===================================================
+     * RETORNO AO LOGIN
+     * ===================================================
+     */
 
     private fun irParaLogin() {
 
@@ -1557,7 +1666,8 @@ class HomeActivity : AppCompatActivity() {
                 ) {
 
                     registrarLocalizacaoEmSegundoPlano(
-                        motivo = "PERMISSAO_CONCEDIDA"
+                        motivo =
+                            "PERMISSAO_CONCEDIDA"
                     )
 
                 } else {
