@@ -16,14 +16,17 @@ class HistoricoNotificacaoService(
 ) {
 
     companion object {
-        private val STATUS_PERMITIDOS = setOf(
-            "TENTATIVA",
-            "NAO_ATENDIDO",
-            "ATENDIDO"
-        )
+
+        private val STATUS_PERMITIDOS =
+            setOf(
+                "TENTATIVA",
+                "NAO_ATENDIDO",
+                "ATENDIDO"
+            )
     }
 
-    fun listar(): List<HistoricoNotificacao> =
+    fun listar():
+            List<HistoricoNotificacao> =
         repository.findAll()
 
     fun listarPorUsuario(
@@ -34,8 +37,12 @@ class HistoricoNotificacaoService(
                 usuarioId
             )
 
-    fun salvar(notificacao: HistoricoNotificacao): HistoricoNotificacao =
-        repository.save(notificacao)
+    fun salvar(
+        notificacao: HistoricoNotificacao
+    ): HistoricoNotificacao =
+        repository.save(
+            notificacao
+        )
 
     @Transactional
     fun registrarTentativa(
@@ -44,39 +51,97 @@ class HistoricoNotificacaoService(
         statusOriginal: String
     ): HistoricoNotificacao {
 
-        val status = statusOriginal
-            .trim()
-            .uppercase()
+        val status =
+            statusOriginal
+                .trim()
+                .uppercase()
 
-        if (status !in STATUS_PERMITIDOS) {
+        if (
+            status !in STATUS_PERMITIDOS
+        ) {
+
             throw IllegalArgumentException(
                 "Status inválido. Utilize TENTATIVA, NAO_ATENDIDO ou ATENDIDO."
             )
         }
 
-        val alerta = alertaRepository
-            .findById(alertaId)
-            .orElseThrow {
-                IllegalArgumentException(
-                    "Alerta com ID $alertaId não encontrado."
+        val alerta =
+            alertaRepository
+                .findById(
+                    alertaId
                 )
-            }
+                .orElseThrow {
 
-        val contato = contatoRepository
-            .findById(contatoId)
-            .orElseThrow {
-                IllegalArgumentException(
-                    "Contato com ID $contatoId não encontrado."
+                    IllegalArgumentException(
+                        "Alerta com ID $alertaId não encontrado."
+                    )
+                }
+
+        val contato =
+            contatoRepository
+                .findById(
+                    contatoId
                 )
-            }
+                .orElseThrow {
 
-        val historico = HistoricoNotificacao(
-            status = status,
-            dataHora = LocalDateTime.now(),
-            contato = contato,
-            alerta = alerta
-        )
+                    IllegalArgumentException(
+                        "Contato com ID $contatoId não encontrado."
+                    )
+                }
 
-        return repository.save(historico)
+        val historico =
+            HistoricoNotificacao(
+                status =
+                    status,
+
+                dataHora =
+                    LocalDateTime.now(),
+
+                contato =
+                    contato,
+
+                alerta =
+                    alerta
+            )
+
+        val historicoSalvo =
+            repository.save(
+                historico
+            )
+
+        /*
+         * ===================================================
+         * RESOLUÇÃO DO ALERTA DE PÂNICO
+         * ===================================================
+         *
+         * Quando um contato confirma atendimento durante
+         * a cascata do SOS, a emergência deixa de estar
+         * pendente.
+         *
+         * O histórico ATENDIDO e a alteração do alerta para
+         * RESOLVIDO acontecem dentro da mesma transação.
+         *
+         * Assim evitamos o cenário:
+         *
+         * historiconotificacao = ATENDIDO
+         * alerta = ATIVO
+         *
+         * que foi identificado durante o teste integrado.
+         */
+        if (
+            status == "ATENDIDO" &&
+            alerta.tipo == "PANICO" &&
+            alerta.status != "RESOLVIDO"
+        ) {
+
+            alerta.status =
+                "RESOLVIDO"
+
+            alertaRepository.save(
+                alerta
+            )
+        }
+
+        return historicoSalvo
     }
 }
