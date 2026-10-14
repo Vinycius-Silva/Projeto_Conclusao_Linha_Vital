@@ -6,8 +6,10 @@ import com.linhavital.backend.model.ConfiguracaoMonitoramento
 import com.linhavital.backend.model.Monitoramento
 import com.linhavital.backend.repository.ConfiguracaoMonitoramentoRepository
 import com.linhavital.backend.repository.MonitoramentoRepository
+import com.linhavital.backend.repository.UsuarioContatoRepository
 import com.linhavital.backend.repository.UsuarioRepository
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,15 +18,42 @@ import java.time.LocalDateTime
 
 @Service
 class MonitoramentoService(
-    private val monitoramentoRepository: MonitoramentoRepository,
-    private val configuracaoRepository: ConfiguracaoMonitoramentoRepository,
-    private val usuarioRepository: UsuarioRepository,
-    private val alertaService: AlertaService,
-    private val emailInatividadeService: EmailInatividadeService
+
+    private val monitoramentoRepository:
+    MonitoramentoRepository,
+
+    private val configuracaoRepository:
+    ConfiguracaoMonitoramentoRepository,
+
+    private val usuarioRepository:
+    UsuarioRepository,
+
+    private val usuarioContatoRepository:
+    UsuarioContatoRepository,
+
+    private val alertaService:
+    AlertaService,
+
+    private val emailInatividadeService:
+    EmailInatividadeService,
+
+    @Value(
+        "\${INATIVIDADE_TOLERANCIA_MINUTOS:5}"
+    )
+    private val toleranciaInatividadeMinutos:
+    Long
 ) {
 
     private val logger =
-        LoggerFactory.getLogger(MonitoramentoService::class.java)
+        LoggerFactory.getLogger(
+            MonitoramentoService::class.java
+        )
+
+    /*
+     * ===================================================
+     * STATUS
+     * ===================================================
+     */
 
     @Transactional
     fun obterStatus(
@@ -32,10 +61,20 @@ class MonitoramentoService(
     ): MonitoramentoStatusResponse {
 
         val configuracao =
-            obterOuCriar(usuarioId)
+            obterOuCriar(
+                usuarioId
+            )
 
-        return toStatus(configuracao)
+        return toStatus(
+            configuracao
+        )
     }
+
+    /*
+     * ===================================================
+     * CONFIGURAÇÃO
+     * ===================================================
+     */
 
     @Transactional
     fun atualizarConfiguracao(
@@ -50,7 +89,33 @@ class MonitoramentoService(
         }
 
         val configuracao =
-            obterOuCriar(usuarioId)
+            obterOuCriar(
+                usuarioId
+            )
+
+        /*
+         * O monitoramento só pode ser ativado
+         * quando existir pelo menos um contato
+         * de emergência.
+         *
+         * Isso corrige o cenário do CT03.
+         */
+        if (
+            request.ativo
+        ) {
+
+            val contatos =
+                usuarioContatoRepository
+                    .findContatosByUsuarioId(
+                        usuarioId
+                    )
+
+            require(
+                contatos.isNotEmpty()
+            ) {
+                "Cadastre pelo menos um contato de emergência antes de ativar o monitoramento"
+            }
+        }
 
         configuracao.ativo =
             request.ativo
@@ -68,18 +133,31 @@ class MonitoramentoService(
             configuracao
         )
 
+        /*
+         * Ao alterar/reiniciar o ciclo,
+         * alertas antigos de inatividade
+         * deixam de representar o estado atual.
+         */
         alertaService
             .resolverAlertasInatividade(
                 usuarioId
             )
 
         registrarEvento(
-            usuarioId,
-            if (request.ativo) {
-                "ATIVO"
-            } else {
-                "PAUSADO"
-            }
+            usuarioId =
+                usuarioId,
+
+            status =
+                if (
+                    request.ativo
+                ) {
+
+                    "ATIVO"
+
+                } else {
+
+                    "PAUSADO"
+                }
         )
 
         return toStatus(
@@ -87,14 +165,29 @@ class MonitoramentoService(
         )
     }
 
+    /*
+     * ===================================================
+     * CHECK-IN
+     * ===================================================
+     */
+
     @Transactional
     fun registrarCheckIn(
         usuarioId: Long
     ): MonitoramentoStatusResponse {
 
         val configuracao =
-            obterOuCriar(usuarioId)
+            obterOuCriar(
+                usuarioId
+            )
 
+        /*
+         * O check-in reinicia completamente
+         * o prazo.
+         *
+         * Se o usuário responder durante
+         * a tolerância, o e-mail nunca será enviado.
+         */
         configuracao.ultimaConfirmacao =
             LocalDateTime.now()
 
@@ -111,8 +204,11 @@ class MonitoramentoService(
             )
 
         registrarEvento(
-            usuarioId,
-            "CHECK_IN"
+            usuarioId =
+                usuarioId,
+
+            status =
+                "CHECK_IN"
         )
 
         return toStatus(
@@ -120,13 +216,26 @@ class MonitoramentoService(
         )
     }
 
+    /*
+     * Atualmente atividade possui o mesmo
+     * significado de confirmação de bem-estar.
+     */
     fun registrarAtividade(
         usuarioId: Long
     ): MonitoramentoStatusResponse =
-        registrarCheckIn(usuarioId)
+        registrarCheckIn(
+            usuarioId
+        )
+
+    /*
+     * ===================================================
+     * VERIFICAÇÃO DE INATIVIDADE
+     * ===================================================
+     */
 
     @Scheduled(
-        fixedDelayString = "\${MONITORAMENTO_SCHEDULER_MS:5000}"
+        fixedDelayString =
+            "\${MONITORAMENTO_SCHEDULER_MS:5000}"
     )
     @Transactional
     fun verificarInatividade() {
@@ -134,53 +243,122 @@ class MonitoramentoService(
         val agora =
             LocalDateTime.now()
 
+        val tolerancia =
+            toleranciaInatividadeMinutos
+                .coerceAtLeast(
+                    0
+                )
+
         configuracaoRepository
             .findAll()
             .asSequence()
             .filter {
+
                 it.ativo &&
                         !it.alertaInatividadeAberto
             }
-            .filter {
+            .filter { configuracao ->
 
-                val limite =
-                    it.ultimaConfirmacao
+                /*
+                 * Momento no qual o check-in
+                 * passa a aparecer como pendente.
+                 */
+                val limiteCheckIn =
+                    configuracao
+                        .ultimaConfirmacao
                         .plusMinutes(
-                            it.intervaloMinutos.toLong()
+                            configuracao
+                                .intervaloMinutos
+                                .toLong()
                         )
 
-                !agora.isBefore(limite)
+                /*
+                 * O contato só é acionado depois
+                 * da tolerância.
+                 *
+                 * Exemplo:
+                 *
+                 * intervalo = 1 minuto
+                 * tolerância = 1 minuto
+                 *
+                 * 12:01 -> check-in pendente
+                 * 12:02 -> e-mail aos contatos
+                 */
+                val limiteEscalonamento =
+                    limiteCheckIn
+                        .plusMinutes(
+                            tolerancia
+                        )
+
+                !agora.isBefore(
+                    limiteEscalonamento
+                )
             }
             .forEach { configuracao ->
 
                 val usuarioId =
-                    configuracao.usuario.id
+                    configuracao
+                        .usuario
+                        .id
+
+                val limiteCheckIn =
+                    configuracao
+                        .ultimaConfirmacao
+                        .plusMinutes(
+                            configuracao
+                                .intervaloMinutos
+                                .toLong()
+                        )
+
+                val limiteEscalonamento =
+                    limiteCheckIn
+                        .plusMinutes(
+                            tolerancia
+                        )
 
                 logger.warn(
-                    "Inatividade detectada para usuário {}. " +
-                            "Última confirmação: {}",
+                    "Inatividade confirmada após período de tolerância. " +
+                            "usuarioId={}, ultimaConfirmacao={}, " +
+                            "limiteCheckIn={}, limiteEscalonamento={}, " +
+                            "toleranciaMinutos={}",
                     usuarioId,
-                    configuracao.ultimaConfirmacao
+                    configuracao.ultimaConfirmacao,
+                    limiteCheckIn,
+                    limiteEscalonamento,
+                    tolerancia
                 )
 
+                /*
+                 * Somente agora a ocorrência real
+                 * de inatividade é aberta.
+                 */
                 val alerta =
                     alertaService
                         .criarAlertaInatividade(
                             usuarioId
                         )
 
-                configuracao.alertaInatividadeAberto =
+                configuracao
+                    .alertaInatividadeAberto =
                     true
 
-                configuracaoRepository.save(
-                    configuracao
-                )
+                configuracaoRepository
+                    .save(
+                        configuracao
+                    )
 
                 registrarEvento(
-                    usuarioId,
-                    "CHECK_IN_PENDENTE"
+                    usuarioId =
+                        usuarioId,
+
+                    status =
+                        "CHECK_IN_PENDENTE"
                 )
 
+                /*
+                 * O e-mail não bloqueia a criação
+                 * do alerta caso o SMTP falhe.
+                 */
                 runCatching {
 
                     emailInatividadeService
@@ -189,7 +367,8 @@ class MonitoramentoService(
                                 usuarioId,
 
                             dataUltimoMonitoramento =
-                                configuracao.ultimaConfirmacao,
+                                configuracao
+                                    .ultimaConfirmacao,
 
                             alerta =
                                 alerta
@@ -220,19 +399,30 @@ class MonitoramentoService(
             }
     }
 
+    /*
+     * ===================================================
+     * CONFIGURAÇÃO DO USUÁRIO
+     * ===================================================
+     */
+
     private fun obterOuCriar(
         usuarioId: Long
     ): ConfiguracaoMonitoramento {
 
         configuracaoRepository
-            .findByUsuarioId(usuarioId)
+            .findByUsuarioId(
+                usuarioId
+            )
             ?.let {
+
                 return it
             }
 
         val usuario =
             usuarioRepository
-                .findById(usuarioId)
+                .findById(
+                    usuarioId
+                )
                 .orElseThrow {
                     RuntimeException(
                         "Usuário não encontrado"
@@ -242,10 +432,17 @@ class MonitoramentoService(
         return configuracaoRepository
             .save(
                 ConfiguracaoMonitoramento(
-                    usuario = usuario
+                    usuario =
+                        usuario
                 )
             )
     }
+
+    /*
+     * ===================================================
+     * HISTÓRICO DO MONITORAMENTO
+     * ===================================================
+     */
 
     private fun registrarEvento(
         usuarioId: Long,
@@ -254,7 +451,9 @@ class MonitoramentoService(
 
         val usuario =
             usuarioRepository
-                .findById(usuarioId)
+                .findById(
+                    usuarioId
+                )
                 .orElseThrow {
                     RuntimeException(
                         "Usuário não encontrado"
@@ -264,11 +463,20 @@ class MonitoramentoService(
         monitoramentoRepository
             .save(
                 Monitoramento(
-                    status = status,
-                    usuario = usuario
+                    status =
+                        status,
+
+                    usuario =
+                        usuario
                 )
             )
     }
+
+    /*
+     * ===================================================
+     * CONVERSÃO PARA STATUS
+     * ===================================================
+     */
 
     private fun toStatus(
         configuracao: ConfiguracaoMonitoramento
@@ -277,6 +485,15 @@ class MonitoramentoService(
         val agora =
             LocalDateTime.now()
 
+        /*
+         * Esse prazo é propositalmente o prazo
+         * do usuário, SEM a tolerância.
+         *
+         * Assim o aplicativo pode informar que
+         * o check-in está pendente enquanto o
+         * backend ainda aguarda antes de contatar
+         * terceiros.
+         */
         val proximo =
             configuracao
                 .ultimaConfirmacao
@@ -288,7 +505,7 @@ class MonitoramentoService(
 
         val pendente =
             configuracao.ativo &&
-                    agora.isAfter(
+                    !agora.isBefore(
                         proximo
                     )
 
@@ -333,7 +550,8 @@ class MonitoramentoService(
                 pendente,
 
             alertaInatividadeAberto =
-                configuracao.alertaInatividadeAberto
+                configuracao
+                    .alertaInatividadeAberto
         )
     }
 }

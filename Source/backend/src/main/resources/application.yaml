@@ -1,21 +1,63 @@
 spring:
+
   datasource:
+
     url: ${DB_URL:jdbc:postgresql://localhost:5432/linhavital}
+
     username: ${DB_USER:linhavital}
+
     password: ${DB_PASSWORD:linhavital}
 
+
   jpa:
+
     hibernate:
+
       ddl-auto: ${JPA_DDL_AUTO:update}
+
     show-sql: ${JPA_SHOW_SQL:false}
 
+
+  mail:
+
+    host: ${MAIL_HOST:localhost}
+
+    port: ${MAIL_PORT:2525}
+
+    username: ${MAIL_USERNAME:}
+
+    password: ${MAIL_PASSWORD:}
+
+    properties:
+
+      mail:
+
+        smtp:
+
+          auth: ${MAIL_SMTP_AUTH:false}
+
+          starttls:
+
+            enable: ${MAIL_SMTP_STARTTLS:false}
+
+
 firebase:
+
   enabled: ${FIREBASE_ENABLED:false}
 
+
 oauth:
+
   google:
+
     client-id: ${GOOGLE_OAUTH_CLIENT_ID:}
 
+
 auth:
+
   session:
+
     ttl-hours: ${AUTH_SESSION_TTL_HOURS:720}
+
+
+LINHA_VITAL_EMAIL_REMETENTE: ${EMAIL_REMETENTE:teste@linhavital.local}

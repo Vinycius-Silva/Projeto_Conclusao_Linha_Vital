@@ -1,22 +1,39 @@
 plugins {
+
 	kotlin("jvm") version "1.9.25"
+
 	kotlin("plugin.spring") version "1.9.25"
+
 	kotlin("plugin.jpa") version "1.9.25"
 
-	id("org.springframework.boot") version "3.5.13"
-	id("io.spring.dependency-management") version "1.1.7"
+	id(
+		"org.springframework.boot"
+	) version "3.5.13"
+
+	id(
+		"io.spring.dependency-management"
+	) version "1.1.7"
 }
 
-group = "com.linhavital"
-version = "0.0.1-SNAPSHOT"
+group =
+	"com.linhavital"
+
+version =
+	"0.0.1-SNAPSHOT"
 
 java {
+
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+
+		languageVersion =
+			JavaLanguageVersion.of(
+				17
+			)
 	}
 }
 
 repositories {
+
 	mavenCentral()
 }
 
@@ -38,7 +55,9 @@ dependencies {
 		"org.springframework.boot:spring-boot-starter-security"
 	)
 
-	// Envio de e-mail via SMTP
+	/*
+     * Envio de e-mail via SMTP.
+     */
 	implementation(
 		"org.springframework.boot:spring-boot-starter-mail"
 	)
@@ -51,12 +70,16 @@ dependencies {
 		"org.jetbrains.kotlin:kotlin-reflect"
 	)
 
-	// Firebase continua sendo usado para notificações FCM
+	/*
+     * Firebase continua opcional.
+     */
 	implementation(
 		"com.google.firebase:firebase-admin:9.2.0"
 	)
 
-	// Validação server-side do Google ID Token
+	/*
+     * Validação server-side do Google ID Token.
+     */
 	implementation(
 		"com.google.api-client:google-api-client:2.9.1"
 	)
@@ -65,9 +88,18 @@ dependencies {
 		"org.springframework.boot:spring-boot-devtools"
 	)
 
+	/*
+     * Banco utilizado em produção.
+     */
 	runtimeOnly(
 		"org.postgresql:postgresql"
 	)
+
+	/*
+     * ===================================================
+     * TESTES
+     * ===================================================
+     */
 
 	testImplementation(
 		"org.springframework.boot:spring-boot-starter-test"
@@ -81,13 +113,26 @@ dependencies {
 		"org.jetbrains.kotlin:kotlin-test-junit5"
 	)
 
+	/*
+     * Banco temporário utilizado somente durante
+     * os testes automatizados.
+     *
+     * Assim os testes não dependem do PostgreSQL
+     * instalado ou iniciado na máquina.
+     */
+	testRuntimeOnly(
+		"com.h2database:h2"
+	)
+
 	testRuntimeOnly(
 		"org.junit.platform:junit-platform-launcher"
 	)
 }
 
 kotlin {
+
 	compilerOptions {
+
 		freeCompilerArgs.addAll(
 			"-Xjsr305=strict"
 		)
@@ -95,6 +140,7 @@ kotlin {
 }
 
 allOpen {
+
 	annotation(
 		"jakarta.persistence.Entity"
 	)
@@ -109,5 +155,6 @@ allOpen {
 }
 
 tasks.withType<Test> {
+
 	useJUnitPlatform()
 }
