@@ -1,38 +1,113 @@
 package com.linhavital.app.utils
 
 import com.linhavital.app.BuildConfig
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 object DemoAccess {
-
-    private val zoneId =
-        ZoneId.of(
-            "America/Sao_Paulo"
-        )
 
     const val BLOCK_MESSAGE =
         "Esta versão de demonstração está disponível somente em 21/10/2026."
 
-    fun isAvailableNow(): Boolean {
+    const val VALIDATION_ERROR_MESSAGE =
+        "Não foi possível validar o acesso à versão de demonstração. Verifique sua conexão com a internet e tente novamente."
+
+    suspend fun validarComServidor(): DemoValidationResult {
 
         if (!BuildConfig.DEMO_MODE) {
-            return true
+            return DemoValidationResult.Allowed
         }
 
-        val validDate =
-            runCatching {
-                LocalDate.parse(
-                    BuildConfig.DEMO_VALID_DATE
+        return withContext(
+            Dispatchers.IO
+        ) {
+
+            var connection:
+                    HttpURLConnection? =
+                null
+
+            try {
+
+                val baseUrl =
+                    BuildConfig.API_BASE_URL
+                        .trimEnd('/')
+
+                val url =
+                    URL(
+                        "$baseUrl/teste"
+                    )
+
+                connection =
+                    url.openConnection()
+                            as HttpURLConnection
+
+                connection.requestMethod =
+                    "GET"
+
+                connection.connectTimeout =
+                    10_000
+
+                connection.readTimeout =
+                    10_000
+
+                connection.useCaches =
+                    false
+
+                connection.setRequestProperty(
+                    BuildConfig.DEMO_HEADER_NAME,
+                    BuildConfig.DEMO_HEADER_VALUE
                 )
-            }.getOrNull()
-                ?: return false
 
-        val today =
-            LocalDate.now(
-                zoneId
-            )
+                when (
+                    connection.responseCode
+                ) {
 
-        return today == validDate
+                    HttpURLConnection.HTTP_OK -> {
+
+                        DemoValidationResult.Allowed
+                    }
+
+                    HttpURLConnection.HTTP_FORBIDDEN -> {
+
+                        DemoValidationResult.Blocked
+                    }
+
+                    else -> {
+
+                        DemoValidationResult.Error(
+                            VALIDATION_ERROR_MESSAGE
+                        )
+                    }
+                }
+
+            } catch (
+                _: Exception
+            ) {
+
+                DemoValidationResult.Error(
+                    VALIDATION_ERROR_MESSAGE
+                )
+
+            } finally {
+
+                connection
+                    ?.disconnect()
+            }
+        }
     }
+}
+
+sealed class DemoValidationResult {
+
+    object Allowed :
+        DemoValidationResult()
+
+    object Blocked :
+        DemoValidationResult()
+
+    data class Error(
+        val message: String
+    ) : DemoValidationResult()
 }
