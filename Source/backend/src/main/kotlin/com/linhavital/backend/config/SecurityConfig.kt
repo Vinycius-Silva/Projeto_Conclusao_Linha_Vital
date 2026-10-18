@@ -1,6 +1,7 @@
 package com.linhavital.backend.config
 
 import com.linhavital.backend.security.BearerTokenFilter
+import com.linhavital.backend.security.DemoAccessFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -11,7 +12,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 class SecurityConfig(
-    private val bearerTokenFilter: BearerTokenFilter
+    private val bearerTokenFilter: BearerTokenFilter,
+    private val demoAccessFilter: DemoAccessFilter
 ) {
 
     @Bean
@@ -107,6 +109,10 @@ class SecurityConfig(
             .addFilterBefore(
                 bearerTokenFilter,
                 UsernamePasswordAuthenticationFilter::class.java
+            )
+            .addFilterBefore(
+                demoAccessFilter,
+                BearerTokenFilter::class.java
             )
 
         return http.build()
