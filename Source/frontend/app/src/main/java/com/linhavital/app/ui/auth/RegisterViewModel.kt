@@ -9,6 +9,7 @@ import com.linhavital.app.data.model.Usuario
 import com.linhavital.app.data.repository.UsuarioRepository
 import com.linhavital.app.utils.DataNascimentoUtils
 import com.linhavital.app.utils.SessionManager
+import com.linhavital.app.utils.TelefoneUtils
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(
@@ -44,8 +45,8 @@ class RegisterViewModel(
             email.trim()
 
         val telefone =
-            phone.filter(
-                Char::isDigit
+            TelefoneUtils.normalizarBrasil(
+                phone
             )
 
         if (
@@ -83,12 +84,14 @@ class RegisterViewModel(
         }
 
         if (
-            telefone.length !in 10..13
+            !TelefoneUtils.validar(
+                telefone
+            )
         ) {
 
             _registerState.value =
                 RegisterState.Error(
-                    "Telefone inválido"
+                    "Informe um telefone brasileiro válido com DDD"
                 )
 
             return
@@ -187,17 +190,19 @@ class RegisterViewModel(
     ) {
 
         val telefone =
-            phone.filter(
-                Char::isDigit
+            TelefoneUtils.normalizarBrasil(
+                phone
             )
 
         if (
-            telefone.length !in 10..13
+            !TelefoneUtils.validar(
+                telefone
+            )
         ) {
 
             _registerState.value =
                 RegisterState.Error(
-                    "Telefone inválido"
+                    "Informe um telefone brasileiro válido com DDD"
                 )
 
             return

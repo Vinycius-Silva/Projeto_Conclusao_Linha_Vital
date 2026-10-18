@@ -2,6 +2,7 @@ package com.linhavital.app.data.api
 
 import android.content.Context
 import com.linhavital.app.BuildConfig
+import com.linhavital.app.utils.DemoAccess
 import com.linhavital.app.utils.SessionManager
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -9,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
@@ -23,6 +25,38 @@ object ApiClient {
         applicationContext =
             context.applicationContext
     }
+
+    private val demoInterceptor =
+        Interceptor { chain ->
+
+            if (
+                BuildConfig.DEMO_MODE &&
+                !DemoAccess.isAvailableNow()
+            ) {
+                throw IOException(
+                    DemoAccess.BLOCK_MESSAGE
+                )
+            }
+
+            val requestOriginal =
+                chain.request()
+
+            val requestBuilder =
+                requestOriginal
+                    .newBuilder()
+
+            if (BuildConfig.DEMO_MODE) {
+
+                requestBuilder.header(
+                    BuildConfig.DEMO_HEADER_NAME,
+                    BuildConfig.DEMO_HEADER_VALUE
+                )
+            }
+
+            chain.proceed(
+                requestBuilder.build()
+            )
+        }
 
     private val authInterceptor =
         Interceptor { chain ->
@@ -80,6 +114,9 @@ object ApiClient {
 
         OkHttpClient
             .Builder()
+            .addInterceptor(
+                demoInterceptor
+            )
             .addInterceptor(
                 authInterceptor
             )
