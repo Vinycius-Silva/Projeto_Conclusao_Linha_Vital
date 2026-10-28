@@ -1,0 +1,87 @@
+\changetocdepth {4}
+\babel@toc {brazil}{}\relax 
+\babel@toc {brazil}{}\relax 
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {1}\MakeTextUppercase []{Introdução}}{14}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Objetivos}{14}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Problema e Solução Proposta}{15}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Justificativa}{16}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Análise da Concorrência}{19}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Are You Dead?}{19}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Ok Alone}{19}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Senior Safety App}{19}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.4.4}Comparativo}{19}{subsection.1.4.4}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {2}\MakeTextUppercase []{Revisão da Literatura}}{21}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Histórico da Tecnologia no Monitoramento da Saúde}{21}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Atualidade da Tecnologia no Monitoramento da Saúde}{22}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Outros Contextos da Tecnologia no Monitoramento da Saúde}{22}{section.2.3}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {3}\MakeTextUppercase []{Gestão do Projeto}}{24}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Organização da Equipe}{24}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Responsabilidades e Papéis}{24}{subsection.3.1.1}%
+\contentsline {section}{\numberline {3.2}Metodologias de Gestão e Desenvolvimento}{25}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Scrum}{25}{subsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.1.1}Sprints}{25}{subsubsection.3.2.1.1}%
+\contentsline {section}{\numberline {3.3}Repositório da Aplicação}{26}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Definição do Repositório da Aplicação}{26}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Link do Repositório e Especificações para Acesso}{26}{subsection.3.3.2}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Desenvolvimento do Projeto}}{27}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Escopo do Projeto}{27}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Regras de negócio}{27}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Requisitos funcionais}{29}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Requisitos não funcionais}{31}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Histórias de Usuário}{33}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Descrição das histórias de usuário}{33}{subsection.4.2.1}%
+\contentsline {section}{\numberline {4.3}Definições da Arquitetura}{35}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Camada de Apresentação (Mobile)}{35}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Camada de Aplicação (Backend)}{35}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Camada de Dados (Banco de Dados)}{36}{subsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.3.4}Infraestrutura e Hospedagem}{36}{subsection.4.3.4}%
+\contentsline {section}{\numberline {4.4}Tecnologias}{36}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Front-end}{37}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Back-end}{37}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Banco de Dados}{37}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Infraestrutura}{38}{subsection.4.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.4.1}Oracle Cloud Infrastructure (OCI)}{38}{subsubsection.4.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.5}Análise estática}{38}{subsection.4.4.5}%
+\contentsline {section}{\numberline {4.5}Testes e Manutenibilidade}{39}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Plano de Testes}{39}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Análise Estática}{40}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Testes Funcionais}{40}{subsection.4.5.3}%
+\contentsline {subsubsection}{\numberline {4.5.3.1}Testes Unitários}{40}{subsubsection.4.5.3.1}%
+\contentsline {subsubsection}{\numberline {4.5.3.2}Testes de Componente}{40}{subsubsection.4.5.3.2}%
+\contentsline {subsubsection}{\numberline {4.5.3.3}Testes de Integração}{40}{subsubsection.4.5.3.3}%
+\contentsline {subsubsection}{\numberline {4.5.3.4}Testes End-to-End}{40}{subsubsection.4.5.3.4}%
+\contentsline {subsection}{\numberline {4.5.4}Testes Não Funcionais}{41}{subsection.4.5.4}%
+\contentsline {subsubsection}{\numberline {4.5.4.1}Testes de Performance}{41}{subsubsection.4.5.4.1}%
+\contentsline {subsubsection}{\numberline {4.5.4.2}Testes de Carga}{41}{subsubsection.4.5.4.2}%
+\contentsline {subsubsection}{\numberline {4.5.4.3}Testes de Configuração}{41}{subsubsection.4.5.4.3}%
+\contentsline {subsection}{\numberline {4.5.5}Testes Automatizados}{41}{subsection.4.5.5}%
+\contentsline {subsection}{\numberline {4.5.6}Logs}{41}{subsection.4.5.6}%
+\contentsline {subsection}{\numberline {4.5.7}Code Convention}{42}{subsection.4.5.7}%
+\contentsline {section}{\numberline {4.6}Segurança, Privacidade e Legislação}{42}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Critérios de Segurança e Privacidade}{42}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Observância à Legislação}{43}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Modelo de Banco de Dados}{43}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Dicionário de Dados}{47}{subsection.4.7.1}%
+\contentsline {section}{\numberline {4.8}Duração e Cronograma}{49}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Análise da duração do projeto}{49}{subsection.4.8.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Viabilidade Financeira}}{50}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Custos}{50}{section.5.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Considerações Finais}}{52}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Dificuldades, escolhas e descartes}{52}{section.6.1}%
+\vspace {\cftbeforechapterskip }
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{53}{section*.42}%
+\cftinsert {AAA}
+\renewcommand *{\cftappendixname }{ANEXO \space }
