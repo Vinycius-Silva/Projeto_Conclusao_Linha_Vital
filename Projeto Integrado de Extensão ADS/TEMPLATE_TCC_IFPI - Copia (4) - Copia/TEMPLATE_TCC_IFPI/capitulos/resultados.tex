@@ -238,6 +238,48 @@ RF27 & O sistema deve registrar e permitir consulta ao histórico de eventos de 
 \legend{Fonte: Elaborado pelos autores.}
 \end{table}
 
+\subsubsection{Matriz de rastreabilidade RN--RF}
+
+Para tornar explícita a origem de cada requisito funcional e os impactos cruzados entre regras de negócio, o Quadro~\ref{tab_rastreabilidade} consolida a rastreabilidade RN--RF. Uma mesma regra pode impactar mais de um requisito e, reciprocamente, um requisito pode depender de regras complementares.
+
+\begin{table}[H]
+\caption{Matriz de rastreabilidade entre regras de negócio e requisitos funcionais}
+\label{tab_rastreabilidade}
+\centering
+\scriptsize
+\begin{tabular}{p{2cm}p{11.5cm}}
+\hline
+\textbf{Regra} & \textbf{Requisitos funcionais relacionados} \\
+\hline
+RN01 & RF01, RF02, RF03 \\
+RN02 & RF02, RF04, RF13 \\
+RN03 & RF05, RF07, RF09, RF24, RF26 \\
+RN04 & RF06, RF08, RF10 \\
+RN05 & RF06, RF08, RF12, RF25 \\
+RN06 & RF07, RF09, RF10 \\
+RN07 & RF08, RF10, RF24 \\
+RN08 & RF09, RF10, RF24 \\
+RN09 & RF10, RF11, RF12 \\
+RN10 & RF10, RF11, RF14 \\
+RN11 & RF11, RF12, RF27 \\
+RN12 & RF13, RF14 \\
+RN13 & RF14, RF16 \\
+RN14 & RF15, RF20, RF27 \\
+RN15 & RF16, RF20 \\
+RN16 & RF17 \\
+RN17 & RF18, RF20 \\
+RN18 & RF19, RF20, RF27 \\
+RN19 & RF20, RF27 \\
+RN20 & RF21, RF26, RF27 \\
+RN21 & RF21, RF26 \\
+RN22 & RF11, RF22, RF23 \\
+RN23 & RF09, RF10, RF24, RF27 \\
+RN24 & RF01, RF02, RF25, RF27 \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelos autores.}
+\end{table}
+
 \subsection{Requisitos não funcionais}
 
 Os requisitos não funcionais definem os critérios de qualidade, desempenho, segurança, disponibilidade e usabilidade que devem ser atendidos pelo sistema Linha Vital. Diferentemente dos requisitos funcionais, esses requisitos não descrevem funcionalidades específicas, mas estabelecem características necessárias para garantir a confiabilidade, eficiência e experiência adequada de utilização da aplicação.
@@ -443,6 +485,23 @@ Como usuário do sistema, quero realizar autenticação segura no aplicativo, pa
 Como sistema, quero armazenar as informações dos usuários de forma segura, para garantir integridade, disponibilidade e recuperação das informações necessárias ao funcionamento da aplicação.
 
 
+\subsection{Critérios de aceitação das histórias}
+
+Para reduzir ambiguidades entre requisitos, histórias e testes, foram definidos critérios de aceitação no formato Dado--Quando--Então. Esses critérios representam condições observáveis e podem ser reutilizados como base para testes funcionais.
+
+\begin{enumerate}
+\item \textbf{Cadastro de contatos:} Dado um usuário autenticado, quando informar dados válidos e salvar um contato, então o contato deve aparecer em sua lista. Dado um contato existente, quando o usuário o editar ou remover, então a alteração deve ser refletida somente em sua própria conta.
+\item \textbf{Monitoramento de inatividade:} Dado o monitoramento ativo, quando o intervalo configurado for excedido sem novo check-in, então o backend deve registrar uma ocorrência de inatividade. Dado um alerta de inatividade já aberto, quando o processo periódico executar novamente, então não deve ser criado um alerta duplicado para o mesmo ciclo.
+\item \textbf{Confirmação de bem-estar:} Dado um usuário autenticado, quando selecionar a ação de check-in, então a última confirmação deve ser atualizada. Dado um alerta de inatividade aberto, quando houver nova confirmação válida, então o ciclo de monitoramento deve voltar a considerar o usuário ativo.
+\item \textbf{SOS manual:} Dado que existem contatos cadastrados, quando o usuário acionar o SOS, então uma ocorrência deve ser registrada e a tentativa de contato deve respeitar a prioridade definida. Dado que o usuário informe que o primeiro contato não atendeu, quando retornar ao aplicativo, então o próximo contato da cascata deve ser oferecido.
+\item \textbf{Escalonamento de contatos:} Dado mais de um contato válido, quando uma tentativa for registrada como não atendida, então o fluxo deve avançar para o contato seguinte. Dado que o atendimento seja confirmado pelo usuário, quando a cascata estiver em andamento, então novas ligações não devem ser iniciadas naquele fluxo local.
+\item \textbf{Localização emergencial:} Dado consentimento e permissão de localização, quando a aplicação solicitar uma posição pontual, então latitude, longitude e horário devem ser registrados. Dado que a permissão seja negada ou a posição esteja indisponível, quando um alerta for processado, então o fluxo deve continuar sem localização.
+\item \textbf{Configuração de monitoramento:} Dado um usuário autenticado, quando alterar o intervalo e salvar a configuração, então o backend deve persistir o novo valor. Dado o monitoramento pausado, quando o usuário reativá-lo, então o estado exibido deve refletir a alteração retornada pelo servidor.
+\item \textbf{Histórico de eventos:} Dado um evento persistido, quando os dados forem consultados por uma operação autorizada, então o registro deve manter data, tipo e status. Dado um usuário diferente, quando tentar acessar um recurso que não lhe pertence, então o backend deve negar a operação.
+\item \textbf{Autenticação:} Dado e-mail e senha válidos, quando o usuário realizar login, então o backend deve criar uma sessão e retornar token Bearer válido. Dado um token inválido ou expirado, quando um recurso protegido for solicitado, então o acesso deve ser recusado.
+\item \textbf{Persistência:} Dado um cadastro ou evento válido, quando a operação for concluída com sucesso, então os dados devem permanecer disponíveis após nova consulta. Dado erro de persistência, quando a transação falhar, então o sistema não deve apresentar a operação como concluída.
+\end{enumerate}
+
 \section{Definições da Arquitetura}
 
 A arquitetura do sistema Linha Vital foi definida com base em um modelo cliente-servidor, organizado em camadas, com o objetivo de garantir escalabilidade, manutenibilidade e separação de responsabilidades. Essa abordagem permite que os componentes sejam desenvolvidos e evoluídos de forma independente, além de facilitar a integração entre a aplicação mobile, o backend, o banco de dados e a infraestrutura de hospedagem.
@@ -535,69 +594,54 @@ A análise estática tem como objetivo identificar possíveis falhas de implemen
 
 Os procedimentos e ferramentas a serem utilizados nessa etapa serão definidos conforme a evolução do projeto e as necessidades identificadas pela equipe de desenvolvimento.
 
+\section{Protótipos de Interface}
+
+A avaliação do avanço visual do produto utiliza os protótipos de alta fidelidade desenvolvidos no Figma. As Figuras~\ref{fig_proto_home} a~\ref{fig_proto_contatos} documentam telas diretamente relacionadas aos requisitos de estado do monitoramento, confirmação de bem-estar, acionamento emergencial e gerenciamento de contatos. Os protótipos são apresentados como evidência de projeto de interface e não devem ser confundidos com comprovação de que todos os comportamentos ilustrados estejam implementados.
+
+\begin{figure}[H]\centering\includegraphics[width=0.32\textwidth]{imagens/prototipo_home.png}\caption{Protótipo da tela principal e estado do monitoramento.}\label{fig_proto_home}\legend{Fonte: Elaborado pelos autores.}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=0.32\textwidth]{imagens/prototipo_checkin.png}\caption{Protótipo da confirmação periódica de bem-estar.}\label{fig_proto_checkin}\legend{Fonte: Elaborado pelos autores.}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=0.32\textwidth]{imagens/prototipo_criterios.png}\caption{Protótipo da tela de critérios e acionamento emergencial.}\label{fig_proto_criterios}\legend{Fonte: Elaborado pelos autores.}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=0.32\textwidth]{imagens/prototipo_contatos.png}\caption{Protótipo da tela de gerenciamento de contatos.}\label{fig_proto_contatos}\legend{Fonte: Elaborado pelos autores.}\end{figure}
+
 \section{Testes e Manutenibilidade}
 
-A garantia da qualidade do sistema Linha Vital envolve a adoção de práticas voltadas à verificação, validação e manutenção da aplicação ao longo de seu ciclo de vida. Para isso, foram definidos procedimentos de testes capazes de avaliar o correto funcionamento das funcionalidades implementadas, bem como a confiabilidade, segurança e estabilidade da solução.
+A estratégia de qualidade foi dividida entre o \textbf{plano de testes}, que define verificações necessárias para concluir o produto, e os \textbf{resultados efetivamente obtidos} no estado atual do repositório. Essa separação evita apresentar atividades planejadas como evidências já executadas.
 
 \subsection{Plano de Testes}
 
-Para a realização dos testes automatizados do sistema Linha Vital, será utilizado o framework JUnit 5, amplamente adotado no ecossistema Java e Kotlin para execução de testes unitários e de integração. A ferramenta possibilita validar o comportamento das funcionalidades implementadas tanto no front-end quanto no back-end da aplicação, garantindo maior estabilidade, confiabilidade e redução de falhas durante o desenvolvimento.
+O plano prevê testes unitários para regras de negócio e serviços isolados; testes de integração entre API, persistência PostgreSQL e mecanismos de autenticação; testes instrumentados no Android para fluxos críticos de interface; e testes ponta a ponta para cadastro, login, check-in, inatividade, comunicação com contatos e SOS. Para requisitos não funcionais, devem ser medidos tempo de resposta dos endpoints críticos, consumo de bateria, comportamento em conectividade limitada e estabilidade sob carga. Os critérios de aceitação das histórias de usuário servem como referência para os cenários funcionais.
 
-A escolha do JUnit 5 ocorreu devido à sua integração nativa com projetos Kotlin, suporte a testes parametrizados, organização modular e facilidade de integração com ferramentas de integração contínua. Além disso, o framework permite validar regras de negócio, fluxos de autenticação, monitoramento por inatividade, envio de notificações e acionamento automático de contatos emergenciais.
+A adoção de JUnit 5 está consolidada no backend. Bibliotecas de mocking, testes de integração com banco isolado e ferramentas de carga somente serão declaradas como parte da execução quando estiverem adicionadas ao projeto e utilizadas em resultados reproduzíveis.
 
-Como complemento aos testes automatizados, será utilizada a biblioteca MockK, voltada especificamente para aplicações desenvolvidas em Kotlin. Essa ferramenta permite simular o comportamento de classes, serviços e dependências externas, possibilitando a execução de testes isolados sem necessidade de acesso direto ao banco de dados ou APIs externas.
+\subsection{Resultados de Testes Executados}
 
-O uso do MockK é importante para validar cenários críticos do sistema Linha Vital, como falhas de comunicação, ausência de resposta do usuário, envio de alertas e processamento de eventos de emergência, garantindo previsibilidade e controle durante os testes.
+No estado analisado do repositório, os testes automatizados efetivamente implementados concentram-se no serviço de senhas do backend. Foram localizados dois casos de teste em \texttt{PasswordServiceTests}: (i) verificação de que a senha derivada não é armazenada em texto puro e de que a comparação aceita a senha correta e rejeita senha incorreta; e (ii) validação temporária de senhas legadas em texto puro para permitir migração. O projeto também mantém testes de template de contexto Spring e exemplos padrão do Android, que não são contabilizados como cobertura funcional do Linha Vital.
 
-Os testes de integração relacionados à persistência de dados serão realizados utilizando o PostgreSQL, mesmo sistema gerenciador de banco de dados empregado no ambiente principal da aplicação. O banco encontra-se hospedado em uma máquina virtual da Oracle Cloud Infrastructure (OCI), sendo administrado por meio do PgAdmin 4.
+\begin{table}[H]
+\caption{Resultados automatizados existentes no repositório}
+\label{tab_resultados_testes}
+\centering
+\footnotesize
+\begin{tabular}{p{5cm}p{4cm}p{4cm}}
+\hline
+\textbf{Caso} & \textbf{Evidência} & \textbf{Situação} \\
+\hline
+Hash e validação de senha & serviço de senhas do backend & Implementado \\
+Compatibilidade para migração de senha legada & serviço de senhas do backend & Implementado \\
+Integração PostgreSQL & --- & Planejado \\
+Fluxos instrumentados Android & Testes padrão não específicos & Pendente \\
+Teste E2E do protocolo de emergência & --- & Pendente \\
+Performance, carga e bateria & --- & Pendente de medição \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelos autores a partir do repositório do projeto.}
+\end{table}
 
-A utilização do PostgreSQL nos testes permite validar operações reais de leitura, escrita, autenticação e integridade dos dados armazenados pelo sistema, assegurando compatibilidade entre o ambiente de desenvolvimento e o ambiente de execução da aplicação.
+Não foi apurado percentual de cobertura, pois o projeto ainda não possui relatório de cobertura versionado. Da mesma forma, métricas quantitativas dos requisitos não funcionais devem ser apresentadas somente após ensaios controlados. Assim, limites como tempo máximo de resposta, disponibilidade e consumo de bateria permanecem metas de validação e não resultados comprovados nesta versão.
 
-\subsection{Análise Estática}
+\subsection{Análise Estática e Manutenibilidade}
 
-A análise estática do código será utilizada como mecanismo complementar de verificação da qualidade do software. Essa abordagem permite identificar possíveis falhas de implementação, problemas de padronização, vulnerabilidades de segurança e inconsistências antes da execução da aplicação.
-
-A utilização desse tipo de análise contribui para a redução de erros durante o desenvolvimento e auxilia na manutenção da qualidade do código-fonte ao longo da evolução do sistema.
-
-\subsection{Testes Funcionais}
-
-Os testes funcionais têm como objetivo verificar se as funcionalidades implementadas atendem corretamente aos requisitos definidos para o sistema. Essa etapa busca validar o comportamento esperado da aplicação sob diferentes cenários de utilização.
-
-\subsubsection{Testes Unitários}
-
-Os testes unitários serão aplicados para validar componentes individuais do sistema, verificando se métodos e funções executam corretamente suas responsabilidades de forma isolada. Esses testes contribuem para a identificação precoce de falhas e para a manutenção da estabilidade do código.
-
-\subsubsection{Testes de Componente}
-
-Os testes de componente serão utilizados para avaliar módulos específicos da aplicação, verificando a interação entre elementos que compõem uma mesma funcionalidade. Essa abordagem permite identificar inconsistências antes da integração completa do sistema.
-
-\subsubsection{Testes de Integração}
-
-Os testes de integração serão realizados para validar a comunicação entre os diferentes componentes da aplicação, incluindo a interação entre o aplicativo mobile, o backend e o banco de dados PostgreSQL. Esses testes têm como finalidade garantir o correto fluxo das informações entre as camadas do sistema.
-
-\subsubsection{Testes End-to-End}
-
-Os testes end-to-end serão utilizados para simular cenários reais de utilização da aplicação, validando o fluxo completo das funcionalidades desde a interação do usuário até o processamento das informações pelo backend e armazenamento dos dados.
-
-\subsection{Testes Não Funcionais}
-
-Os testes não funcionais serão empregados para avaliar características relacionadas ao desempenho, confiabilidade, disponibilidade e comportamento operacional do sistema.
-
-\subsubsection{Testes de Performance}
-
-Os testes de performance serão realizados para avaliar o tempo de resposta das funcionalidades críticas da aplicação, verificando se o sistema atende aos requisitos estabelecidos para desempenho e usabilidade.
-
-\subsubsection{Testes de Carga}
-
-Os testes de carga serão utilizados para analisar o comportamento do sistema sob diferentes volumes de utilização, permitindo identificar possíveis limitações relacionadas ao processamento e ao consumo de recursos computacionais.
-
-\subsubsection{Testes de Configuração}
-
-Os testes de configuração serão empregados para validar o funcionamento da aplicação em diferentes ambientes e cenários de implantação, garantindo compatibilidade entre os componentes utilizados no desenvolvimento e na execução do sistema.
-
-\subsection{Testes Automatizados}
-
-Os testes automatizados serão incorporados ao processo de desenvolvimento com o objetivo de aumentar a confiabilidade da aplicação e reduzir a ocorrência de regressões. A automação permitirá validar funcionalidades críticas de forma recorrente e padronizada durante a evolução do sistema.
+A análise estática e as convenções de código são utilizadas como mecanismos complementares para identificar inconsistências, problemas de manutenção e riscos de segurança. A evolução desse processo deve incluir execução automatizada de lint, verificações de dependências e integração contínua, mantendo os resultados associados a uma versão específica do código.
 
 \subsection{Logs}
 
@@ -648,7 +692,7 @@ A Figura~\ref{fig_mer} apresenta o Modelo Entidade-Relacionamento (MER) desenvol
 \begin{figure}[H]
 \caption{\label{fig_mer}Modelo Entidade-Relacionamento do sistema Linha Vital.}
 \begin{center}
-\includegraphics[scale=0.5]{imagens/modelo_entidade_relacionamento.png}
+\includegraphics[height=0.76\textheight,keepaspectratio]{imagens/modelo_entidade_relacionamento_trim.png}
 \end{center}
 \legend{Fonte: Elaborado pelos autores.}
 \end{figure}
@@ -658,7 +702,7 @@ A Figura~\ref{fig_der} apresenta o Diagrama Entidade-Relacionamento (DER), evide
 \begin{figure}[H]
 \caption{\label{fig_der}Diagrama Entidade-Relacionamento do sistema Linha Vital.}
 \begin{center}
-\includegraphics[scale=0.5]{imagens/diagrama_entidade_relacionamento.png}
+\includegraphics[height=0.76\textheight,keepaspectratio]{imagens/diagrama_entidade_relacionamento_trim.png}
 \end{center}
 \legend{Fonte: Elaborado pelos autores.}
 \end{figure}
@@ -889,4 +933,24 @@ A estimativa de duração do projeto considerou a divisão das atividades em eta
 
 A utilização de ciclos curtos de desenvolvimento favoreceu a identificação antecipada de riscos e a validação constante das funcionalidades implementadas, reduzindo retrabalho e contribuindo para a qualidade do produto final.
 
-O detalhamento das atividades executadas, bem como sua distribuição ao longo das sprints, encontra-se representado no roadmap de desenvolvimento elaborado pela equipe, apresentado posteriormente neste trabalho.
+O Quadro~\ref{tab_roadmap} consolida as macroetapas verificáveis do desenvolvimento. Como as sprints não tiveram datas de início e fim registradas como artefatos formais no repositório, não são atribuídas datas retrospectivas sem evidência documental.
+
+\begin{table}[H]
+\caption{Roadmap consolidado de desenvolvimento}
+\label{tab_roadmap}
+\centering
+\footnotesize
+\begin{tabular}{p{2cm}p{5cm}p{6.5cm}}
+\hline
+\textbf{Ciclo} & \textbf{Foco} & \textbf{Entregas verificáveis} \\
+\hline
+1 & Descoberta e requisitos & Problema, regras de negócio, requisitos e histórias de usuário \\
+2 & Modelagem e prototipação & MER/DER e protótipo de alta fidelidade \\
+3 & Base mobile e backend & Projeto Android, API Spring Boot e persistência PostgreSQL \\
+4 & Fluxos centrais do MVP & Cadastro, autenticação, contatos, check-in e monitoramento \\
+5 & Emergência e comunicação & SOS, prioridade de contatos, localização pontual e e-mail de inatividade \\
+6 & Consolidação & Segurança de sessão, refinamentos de UI/UX, documentação e testes iniciais \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelos autores a partir dos artefatos versionados no repositório.}
+\end{table}

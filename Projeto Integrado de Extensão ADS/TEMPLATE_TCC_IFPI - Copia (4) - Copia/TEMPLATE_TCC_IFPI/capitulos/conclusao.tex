@@ -40,10 +40,10 @@ Open-Source &
 R\$ 0,00 \\
 \hline
 
-Infraestrutura (Mensal) &
-Gateway de Disparo de SMS (Média Estimada) &
+Comunicação (Mensal) &
+Serviço de e-mail/SMTP utilizado nos alertas automáticos &
 Variável Mensal &
-R\$ 30,00 \\
+Conforme provedor e volume \\
 \hline
 
 Licenciamento (Único) &
@@ -65,9 +65,9 @@ R\$ 130,00 \\
 \hline
 
 Total de Custo Fixo Operacional &
-Sustentação Mensal da Tecnologia &
+Infraestrutura mínima, sem custos variáveis de comunicação &
 Recorrente &
-R\$ 41,00/mês \\
+R\$ 11,00/mês + custos variáveis \\
 \hline
 
 \end{tabular}
@@ -77,4 +77,29 @@ R\$ 41,00/mês \\
 \legend{Fonte: Elaborado pelos autores (2026).}
 \end{table}
 
-Cabe destacar que os valores apresentados na Tabela~\ref{tab_custos} representam os custos mínimos necessários para operação da versão inicial da solução (MVP). Para fins de análise de viabilidade financeira e projeção de operação comercial, considera-se um custo operacional mensal estimado de R\$ 320,00, contemplando a expansão da infraestrutura computacional, aumento do volume de comunicações, serviços complementares de suporte e recursos necessários para atender uma base crescente de usuários e instituições parceiras.
+Cabe destacar que os valores apresentados na Tabela~\ref{tab_custos} representam uma estimativa inicial e dependem do provedor, volume de usuários e canal de comunicação adotado. No MVP atualmente implementado, o acionamento automático utiliza e-mail; por isso, o custo de SMS não é tratado como despesa fixa da versão entregue. O custo do serviço de e-mail/SMTP deve ser recalculado conforme o provedor e o volume efetivo de mensagens. O valor de R\$ 320,00/mês anteriormente utilizado como cenário escalado não possuía memória de cálculo suficiente e, por isso, deixa de ser apresentado como valor fechado. Em seu lugar, o Quadro~\ref{tab_cenario_escalado} explicita uma simulação parametrizada, que deve ser atualizada com cotações reais antes de uma implantação comercial.
+
+\begin{table}[H]
+\caption{Memória de cálculo para cenário de operação ampliada}
+\label{tab_cenario_escalado}
+\centering
+\footnotesize
+\begin{tabular}{p{4cm}p{4cm}p{5cm}}
+\hline
+\textbf{Componente} & \textbf{Premissa} & \textbf{Forma de cálculo} \\
+\hline
+Computação em nuvem & Instância superior ou múltiplas instâncias & preço mensal vigente do provedor \\
+Banco e armazenamento & Crescimento de registros e backups & armazenamento contratado + tráfego \\
+Comunicação & Volume de alertas por usuário & número de envios x preço unitário do canal \\
+Observabilidade e suporte & Logs, monitoramento e atendimento & plano contratado ou horas de suporte \\
+Publicação e manutenção & Distribuição e atualizações & taxas de loja + manutenção operacional \\
+\hline
+\end{tabular}
+\legend{Fonte: Elaborado pelos autores. Valores devem ser recalculados conforme cotações vigentes.}
+\end{table}
+
+\section{Modelo de sustentabilidade}
+
+Como o propósito do Linha Vital é reduzir barreiras de acesso para o usuário final, foram considerados dois modelos de sustentabilidade a serem validados em etapa posterior. No primeiro, instituições como prefeituras, operadoras de saúde, residenciais assistidos ou organizações de cuidado contratariam o licenciamento e a operação para grupos de usuários, mantendo o aplicativo gratuito para o beneficiário. No segundo, um modelo freemium manteria os recursos essenciais de check-in e SOS sem cobrança e concentraria funcionalidades avançadas de gestão, relatórios ou integração institucional em um plano pago.
+
+O ponto de equilíbrio deve ser calculado somente após a definição do custo mensal efetivo de infraestrutura e suporte. De forma geral, para um custo operacional mensal $C$ e receita média institucional por contrato $R$, o número mínimo de contratos necessários para cobertura dos custos é dado por $\lceil C/R \rceil$. Essa formulação evita apresentar uma projeção de receita sem premissas verificáveis e permite recalcular o cenário à medida que o projeto obtenha cotações e parceiros reais.
