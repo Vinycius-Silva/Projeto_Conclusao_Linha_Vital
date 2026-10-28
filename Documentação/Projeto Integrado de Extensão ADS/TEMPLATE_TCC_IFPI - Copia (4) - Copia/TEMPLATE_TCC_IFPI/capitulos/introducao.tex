@@ -72,19 +72,21 @@ A Figura~\ref{fig_acidentes} apresenta a evolução das mortes por acidentes dom
 
 \section{Análise da Concorrência}
 
-Após análise de mercado, foram identificados os seguintes serviços disponíveis no mercado.
+O benchmarking foi conduzido com o objetivo de comparar o Linha Vital com soluções que apresentam ao menos uma das seguintes características: check-in periódico de segurança, detecção de inatividade, botão de emergência, comunicação com contatos previamente cadastrados ou foco em pessoas que permanecem sozinhas. Foram priorizadas soluções com documentação pública ou página oficial acessível e com funcionalidades verificáveis por fonte primária. Produtos exclusivamente hospitalares, sistemas dependentes de infraestrutura proprietária não destinada ao usuário final e soluções sem documentação pública suficiente foram excluídos da comparação.
+
+A verificação foi realizada em outubro de 2026 a partir das páginas oficiais e listagens públicas das plataformas, sem autenticação em planos pagos. Assim, funcionalidades condicionadas a assinatura, região ou contratação institucional são identificadas como não verificadas ou contextualizadas na coluna de fonte. A tabela comparativa distingue funcionalidades verificadas das funcionalidades apenas previstas no escopo do Linha Vital, evitando tratar recursos futuros como já implementados.
 
 \subsection{Are You Dead?}
 
-O \textit{Are You Dead?}, também conhecido por Demumu, é um aplicativo chinês de chamadas de emergência desenvolvido originalmente para jovens que moram sozinhos. O sistema exige que o usuário realize check-ins periódicos e, em caso de ausência prolongada, envia notificações para contatos de emergência previamente cadastrados.
+O \textit{Are You Dead?}, também conhecido por Demumu, é um aplicativo voltado a pessoas que vivem sozinhas. A versão pública disponível na Google Play foi utilizada como fonte primária para esta análise \cite{demumu2026}.
 
 \subsection{Ok Alone}
 
-O \textit{Ok Alone} é um aplicativo canadense voltado principalmente para trabalhadores solitários e pessoas em situações de risco. O sistema oferece check-ins periódicos, monitoramento por inatividade prolongada, botão de emergência manual e geração de relatórios.
+O \textit{Ok Alone} é uma solução voltada principalmente para trabalhadores que atuam sozinhos. Sua documentação oficial descreve check-ins, monitoramento de inatividade, botão de pânico, geolocalização e escalonamento para monitores ou centrais de segurança \cite{okalone2026}. A comparação considera as funcionalidades publicamente documentadas, que podem variar conforme plano e região.
 
 \subsection{Senior Safety App}
 
-O \textit{Senior Safety App} é um aplicativo de segurança voltado para idosos. A solução oferece alertas automáticos para cuidadores, monitoramento de inatividade, detecção de quedas do dispositivo, geolocalização e sistema de chamadas em sequência para contatos de emergência.
+O \textit{Senior Safety App} é um aplicativo de segurança voltado para idosos. A solução oferece alertas automáticos para cuidadores, monitoramento de inatividade, detecção de quedas do dispositivo, geolocalização e sistema de chamadas em sequência para contatos de emergência \cite{seniorsafetyapp}.
 
 \subsection{Comparativo}
 
@@ -94,31 +96,22 @@ O Quadro~\ref{quad} apresenta uma comparação entre as funcionalidades da solu�
 \caption{Comparação de funcionalidades entre Linha Vital e concorrentes}
 \label{quad}
 \centering
-
-\begin{tabular}{p{6cm}cccc}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{4.1cm}ccccp{3.2cm}}
 \hline
-\textbf{Funcionalidade} &
-\textbf{Linha Vital} &
-\textbf{Demumu} &
-\textbf{Ok Alone} &
-\textbf{Senior Safety} \\
-
+\textbf{Funcionalidade} & \textbf{Linha Vital} & \textbf{Demumu} & \textbf{Ok Alone} & \textbf{Senior Safety} & \textbf{Fonte/data de verificação} \\
 \hline
-
-Check-in automático periódico & Sim & Sim & Sim & Sim \\
-Monitoramento por inatividade & Sim & Sim & Sim & Sim \\
-Acionamento automático de contatos & Sim & Sim & Sim & Sim \\
-Múltiplos contatos por categoria & Sim & Não & Sim & Sim \\
-Botão de emergência (SOS) & Sim & Não & Sim & Sim \\
-Acionamento por botão físico & Sim & Não & Não & Não \\
-Integração com órgãos públicos & Sim & Não & Sim & Não \\
-Foco em uso doméstico/social & Sim & Sim & Não & Sim \\
-Hardware único & Sim & Sim & Sim & Sim \\
-Modelo sem central paga & Sim & Sim & Não & Sim \\
-
+Check-in periódico & Sim & Sim & Sim & Sim & Sites oficiais / out. 2026 \\
+Monitoramento por inatividade & Sim & Sim & Sim & Sim & Sites oficiais / out. 2026 \\
+Acionamento automático de contatos & Sim, por e-mail & Sim & Sim & Sim & Implementação do MVP e sites oficiais \\
+Múltiplos contatos & Sim & --- & Sim & Sim & Implementação do MVP / out. 2026 \\
+Botão de emergência (SOS) & Sim & --- & Sim & Sim & Implementação do MVP e sites oficiais \\
+Acionamento por botão físico & Parcial & --- & Não verificado & Não verificado & Implementação do MVP / out. 2026 \\
+Integração direta com órgãos públicos & Previsto & Não verificado & Regional/serviço monitorado & Não verificado & Documentação oficial / out. 2026 \\
+Foco principal em uso doméstico/social & Sim & Sim & Não & Sim & Posicionamento dos produtos \\
 \hline
-\end{tabular}
-
-\fonte{Elaborado pelos autores.}
-
+\end{tabular}%
+}
+\fonte{Elaborado pelos autores a partir de fontes primárias consultadas em outubro de 2026.}
 \end{table}
