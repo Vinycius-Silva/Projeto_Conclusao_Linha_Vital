@@ -105,6 +105,10 @@ class ContatoEmergenciaService(
                 )
             )
 
+        /*
+         * Contato novo sempre entra no final
+         * da lista de prioridade.
+         */
         val prioridade =
             usuarioContatoRepository
                 .findMaxPrioridadeByUsuarioId(
@@ -180,6 +184,114 @@ class ContatoEmergenciaService(
         return repository.save(
             novo
         )
+    }
+
+    /*
+     * ===================================================
+     * REORDENAÇÃO DE CONTATOS
+     * ===================================================
+     *
+     * A posição na lista define a prioridade.
+     *
+     * Índice 0 -> prioridade 1
+     * Índice 1 -> prioridade 2
+     * Índice 2 -> prioridade 3
+     *
+     * O primeiro contato será, portanto,
+     * o contato prioritário utilizado pelo SOS.
+     */
+    @Transactional
+    fun reordenarContatos(
+        usuarioId: Long,
+        contatoIds: List<Long>
+    ): List<ContatoEmergencia> {
+
+        validarUsuario(
+            usuarioId
+        )
+
+        val contatosAtuais =
+            usuarioContatoRepository
+                .findContatosByUsuarioId(
+                    usuarioId
+                )
+
+        val idsAtuais =
+            contatosAtuais
+                .map {
+                    it.id
+                }
+
+        /*
+         * Não aceitamos IDs duplicados.
+         */
+        require(
+            contatoIds.distinct().size ==
+                    contatoIds.size
+        ) {
+            "A lista de contatos possui IDs duplicados"
+        }
+
+        /*
+         * A requisição precisa conter exatamente
+         * os contatos atualmente pertencentes ao usuário.
+         *
+         * Isso impede:
+         * - remover contato apenas pela reordenação;
+         * - inserir contato de outro usuário;
+         * - enviar uma lista incompleta.
+         */
+        require(
+            contatoIds.size ==
+                    idsAtuais.size &&
+                    contatoIds.toSet() ==
+                    idsAtuais.toSet()
+        ) {
+            "A lista de contatos informada é inválida"
+        }
+
+        contatoIds.forEachIndexed {
+                index,
+                contatoId ->
+
+            val prioridade =
+                index + 1
+
+            val atualizados =
+                usuarioContatoRepository
+                    .atualizarPrioridade(
+                        usuarioId =
+                            usuarioId,
+
+                        contatoId =
+                            contatoId,
+
+                        prioridade =
+                            prioridade
+                    )
+
+            if (
+                atualizados != 1
+            ) {
+
+                throw IllegalStateException(
+                    "Não foi possível atualizar a prioridade do contato $contatoId"
+                )
+            }
+        }
+
+        /*
+         * A consulta já possui:
+         *
+         * ORDER BY prioridade ASC
+         *
+         * Portanto devolvemos ao frontend a lista
+         * exatamente na ordem que foi persistida.
+         */
+        return usuarioContatoRepository
+            .findContatosByUsuarioId(
+                usuarioId
+            )
     }
 
     @Transactional

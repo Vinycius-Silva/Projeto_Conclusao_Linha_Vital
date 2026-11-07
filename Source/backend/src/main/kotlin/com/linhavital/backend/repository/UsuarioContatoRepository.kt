@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface UsuarioContatoRepository : JpaRepository<UsuarioContato, UsuarioContatoId> {
+interface UsuarioContatoRepository :
+    JpaRepository<UsuarioContato, UsuarioContatoId> {
 
     @Query(
         """
@@ -18,7 +19,10 @@ interface UsuarioContatoRepository : JpaRepository<UsuarioContato, UsuarioContat
         ORDER BY uc.prioridade ASC, uc.contato.id ASC
         """
     )
-    fun findContatosByUsuarioId(@Param("usuarioId") usuarioId: Long): List<ContatoEmergencia>
+    fun findContatosByUsuarioId(
+        @Param("usuarioId")
+        usuarioId: Long
+    ): List<ContatoEmergencia>
 
     @Query(
         """
@@ -27,37 +31,100 @@ interface UsuarioContatoRepository : JpaRepository<UsuarioContato, UsuarioContat
         WHERE uc.usuario.id = :usuarioId
         """
     )
-    fun findMaxPrioridadeByUsuarioId(@Param("usuarioId") usuarioId: Long): Int
+    fun findMaxPrioridadeByUsuarioId(
+        @Param("usuarioId")
+        usuarioId: Long
+    ): Int
 
     @Query(
-        value = "SELECT COUNT(*) FROM usuariocontato WHERE fk_contato_id_contato = :contatoId",
+        value =
+            """
+            SELECT COUNT(*)
+            FROM usuariocontato
+            WHERE fk_contato_id_contato = :contatoId
+            """,
         nativeQuery = true
     )
-    fun countByContatoId(@Param("contatoId") contatoId: Long): Long
+    fun countByContatoId(
+        @Param("contatoId")
+        contatoId: Long
+    ): Long
 
     @Query(
-        value = "SELECT COUNT(*) FROM usuariocontato WHERE fk_usuario_id_usuario = :usuarioId AND fk_contato_id_contato = :contatoId",
+        value =
+            """
+            SELECT COUNT(*)
+            FROM usuariocontato
+            WHERE fk_usuario_id_usuario = :usuarioId
+              AND fk_contato_id_contato = :contatoId
+            """,
         nativeQuery = true
     )
     fun countByUsuarioIdAndContatoId(
-        @Param("usuarioId") usuarioId: Long,
-        @Param("contatoId") contatoId: Long
+        @Param("usuarioId")
+        usuarioId: Long,
+
+        @Param("contatoId")
+        contatoId: Long
     ): Long
 
+    /*
+     * Atualiza somente a prioridade do vínculo
+     * entre usuário e contato.
+     *
+     * O contato em si não é alterado.
+     */
     @Modifying
     @Query(
-        value = "DELETE FROM usuariocontato WHERE fk_usuario_id_usuario = :usuarioId AND fk_contato_id_contato = :contatoId",
+        value =
+            """
+            UPDATE usuariocontato
+            SET prioridade = :prioridade
+            WHERE fk_usuario_id_usuario = :usuarioId
+              AND fk_contato_id_contato = :contatoId
+            """,
         nativeQuery = true
     )
-    fun deleteByUsuarioIdAndContatoId(
-        @Param("usuarioId") usuarioId: Long,
-        @Param("contatoId") contatoId: Long
+    fun atualizarPrioridade(
+        @Param("usuarioId")
+        usuarioId: Long,
+
+        @Param("contatoId")
+        contatoId: Long,
+
+        @Param("prioridade")
+        prioridade: Int
     ): Int
 
     @Modifying
     @Query(
-        value = "DELETE FROM usuariocontato WHERE fk_contato_id_contato = :contatoId",
+        value =
+            """
+            DELETE FROM usuariocontato
+            WHERE fk_usuario_id_usuario = :usuarioId
+              AND fk_contato_id_contato = :contatoId
+            """,
         nativeQuery = true
     )
-    fun deleteByContatoId(@Param("contatoId") contatoId: Long): Int
+    fun deleteByUsuarioIdAndContatoId(
+        @Param("usuarioId")
+        usuarioId: Long,
+
+        @Param("contatoId")
+        contatoId: Long
+    ): Int
+
+    @Modifying
+    @Query(
+        value =
+            """
+            DELETE FROM usuariocontato
+            WHERE fk_contato_id_contato = :contatoId
+            """,
+        nativeQuery = true
+    )
+    fun deleteByContatoId(
+        @Param("contatoId")
+        contatoId: Long
+    ): Int
 }
