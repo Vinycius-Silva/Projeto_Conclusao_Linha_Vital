@@ -31,6 +31,7 @@ class ContatoViewModel : ViewModel() {
     fun carregarContatos(
         usuarioId: Long
     ) {
+
         viewModelScope.launch {
 
             val result =
@@ -38,7 +39,9 @@ class ContatoViewModel : ViewModel() {
                     usuarioId
                 )
 
-            if (result.isSuccess) {
+            if (
+                result.isSuccess
+            ) {
 
                 _contatos.postValue(
                     result.getOrNull()
@@ -78,12 +81,19 @@ class ContatoViewModel : ViewModel() {
 
         val erro =
             validarContato(
-                nome = nomeNormalizado,
-                telefone = telefoneNormalizado,
-                email = emailNormalizado
+                nome =
+                    nomeNormalizado,
+
+                telefone =
+                    telefoneNormalizado,
+
+                email =
+                    emailNormalizado
             )
 
-        if (erro != null) {
+        if (
+            erro != null
+        ) {
 
             _estado.value =
                 ContatoEstado.Erro(
@@ -119,7 +129,9 @@ class ContatoViewModel : ViewModel() {
                     contato
                 )
 
-            if (result.isSuccess) {
+            if (
+                result.isSuccess
+            ) {
 
                 _estado.postValue(
                     ContatoEstado.Sucesso
@@ -163,12 +175,19 @@ class ContatoViewModel : ViewModel() {
 
         val erro =
             validarContato(
-                nome = nomeNormalizado,
-                telefone = telefoneNormalizado,
-                email = emailNormalizado
+                nome =
+                    nomeNormalizado,
+
+                telefone =
+                    telefoneNormalizado,
+
+                email =
+                    emailNormalizado
             )
 
-        if (erro != null) {
+        if (
+            erro != null
+        ) {
 
             _estado.value =
                 ContatoEstado.Erro(
@@ -208,7 +227,9 @@ class ContatoViewModel : ViewModel() {
                     contato
                 )
 
-            if (result.isSuccess) {
+            if (
+                result.isSuccess
+            ) {
 
                 _estado.postValue(
                     ContatoEstado.Atualizado
@@ -236,6 +257,7 @@ class ContatoViewModel : ViewModel() {
         usuarioId: Long,
         contatoId: Long
     ) {
+
         viewModelScope.launch {
 
             val result =
@@ -244,7 +266,9 @@ class ContatoViewModel : ViewModel() {
                     contatoId
                 )
 
-            if (result.isSuccess) {
+            if (
+                result.isSuccess
+            ) {
 
                 carregarContatos(
                     usuarioId
@@ -264,6 +288,98 @@ class ContatoViewModel : ViewModel() {
         }
     }
 
+    fun reordenarContatos(
+        usuarioId: Long,
+        contatosOrdenados:
+        List<ContatoEmergencia>
+    ) {
+
+        if (
+            contatosOrdenados.size < 2
+        ) {
+            return
+        }
+
+        val ids =
+            contatosOrdenados
+                .mapNotNull {
+                    it.id
+                }
+
+        /*
+         * Todos os contatos vindos do backend
+         * precisam possuir ID.
+         */
+        if (
+            ids.size != contatosOrdenados.size
+        ) {
+
+            _estado.value =
+                ContatoEstado.ErroReordenacao(
+                    "Não foi possível identificar todos os contatos."
+                )
+
+            carregarContatos(
+                usuarioId
+            )
+
+            return
+        }
+
+        /*
+         * Atualização otimista:
+         * a nova ordem aparece imediatamente
+         * na interface.
+         */
+        _contatos.value =
+            contatosOrdenados.toList()
+
+        viewModelScope.launch {
+
+            val result =
+                repository.reordenarContatos(
+                    usuarioId =
+                        usuarioId,
+
+                    contatoIds =
+                        ids
+                )
+
+            if (
+                result.isSuccess
+            ) {
+
+                val contatosConfirmados =
+                    result.getOrNull()
+                        ?: contatosOrdenados
+
+                _contatos.postValue(
+                    contatosConfirmados
+                )
+
+                _estado.postValue(
+                    ContatoEstado.OrdemAtualizada
+                )
+
+            } else {
+
+                _estado.postValue(
+                    ContatoEstado.ErroReordenacao(
+                        "Não foi possível salvar a nova prioridade."
+                    )
+                )
+
+                /*
+                 * Caso o backend rejeite a mudança,
+                 * recuperamos novamente a ordem persistida.
+                 */
+                carregarContatos(
+                    usuarioId
+                )
+            }
+        }
+    }
+
     private fun validarContato(
         nome: String,
         telefone: String,
@@ -275,6 +391,7 @@ class ContatoViewModel : ViewModel() {
             telefone.isBlank() ||
             email.isBlank()
         ) {
+
             return "Preencha nome, telefone e e-mail"
         }
 
@@ -288,15 +405,19 @@ class ContatoViewModel : ViewModel() {
         if (
             quantidadeDigitosTelefone !in 10..13
         ) {
+
             return "Informe um telefone válido"
         }
 
         if (
             !Patterns
                 .EMAIL_ADDRESS
-                .matcher(email)
+                .matcher(
+                    email
+                )
                 .matches()
         ) {
+
             return "Informe um e-mail válido"
         }
 
@@ -315,7 +436,14 @@ sealed class ContatoEstado {
     object Atualizado :
         ContatoEstado()
 
+    object OrdemAtualizada :
+        ContatoEstado()
+
     data class Erro(
+        val message: String
+    ) : ContatoEstado()
+
+    data class ErroReordenacao(
         val message: String
     ) : ContatoEstado()
 }
