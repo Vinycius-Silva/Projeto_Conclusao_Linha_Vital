@@ -1,5 +1,6 @@
 package com.linhavital.backend.controller
 
+import com.linhavital.backend.dto.ReordenarContatosRequest
 import com.linhavital.backend.model.ContatoEmergencia
 import com.linhavital.backend.service.AuthorizationService
 import com.linhavital.backend.service.ContatoEmergenciaService
@@ -8,8 +9,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/contatos")
 class ContatoEmergenciaController(
-    private val service: ContatoEmergenciaService,
-    private val authorizationService: AuthorizationService
+    private val service:
+    ContatoEmergenciaService,
+
+    private val authorizationService:
+    AuthorizationService
 ) {
 
     @GetMapping
@@ -20,7 +24,8 @@ class ContatoEmergenciaController(
 
     @GetMapping("/{id}")
     fun buscar(
-        @PathVariable id: Long
+        @PathVariable
+        id: Long
     ): ContatoEmergencia {
 
         authorizationService
@@ -35,7 +40,8 @@ class ContatoEmergenciaController(
 
     @PostMapping
     fun criar(
-        @RequestBody contato: ContatoEmergencia
+        @RequestBody
+        contato: ContatoEmergencia
     ): ContatoEmergencia =
         service.salvarParaUsuario(
             authorizationService.usuarioAtualId(),
@@ -44,7 +50,8 @@ class ContatoEmergenciaController(
 
     @DeleteMapping("/{id}")
     fun deletar(
-        @PathVariable id: Long
+        @PathVariable
+        id: Long
     ) {
 
         authorizationService
@@ -58,9 +65,12 @@ class ContatoEmergenciaController(
         )
     }
 
-    @GetMapping("/usuario/{usuarioId}")
+    @GetMapping(
+        "/usuario/{usuarioId}"
+    )
     fun listarPorUsuario(
-        @PathVariable usuarioId: Long
+        @PathVariable
+        usuarioId: Long
     ): List<ContatoEmergencia> {
 
         authorizationService
@@ -73,10 +83,15 @@ class ContatoEmergenciaController(
         )
     }
 
-    @PostMapping("/usuario/{usuarioId}")
+    @PostMapping(
+        "/usuario/{usuarioId}"
+    )
     fun criarParaUsuario(
-        @PathVariable usuarioId: Long,
-        @RequestBody contato: ContatoEmergencia
+        @PathVariable
+        usuarioId: Long,
+
+        @RequestBody
+        contato: ContatoEmergencia
     ): ContatoEmergencia {
 
         authorizationService
@@ -90,13 +105,62 @@ class ContatoEmergenciaController(
         )
     }
 
+    /*
+     * ===================================================
+     * REORDENAÇÃO
+     * ===================================================
+     *
+     * Exemplo:
+     *
+     * PUT /contatos/usuario/1/ordem
+     *
+     * {
+     *   "contatoIds": [8, 3, 5]
+     * }
+     *
+     * Resultado:
+     *
+     * contato 8 -> prioridade 1
+     * contato 3 -> prioridade 2
+     * contato 5 -> prioridade 3
+     */
+    @PutMapping(
+        "/usuario/{usuarioId}/ordem"
+    )
+    fun reordenarContatos(
+        @PathVariable
+        usuarioId: Long,
+
+        @RequestBody
+        request: ReordenarContatosRequest
+    ): List<ContatoEmergencia> {
+
+        authorizationService
+            .exigirUsuario(
+                usuarioId
+            )
+
+        return service.reordenarContatos(
+            usuarioId =
+                usuarioId,
+
+            contatoIds =
+                request.contatoIds
+        )
+    }
+
     @PutMapping(
         "/usuario/{usuarioId}/{contatoId}"
     )
     fun atualizarDoUsuario(
-        @PathVariable usuarioId: Long,
-        @PathVariable contatoId: Long,
-        @RequestBody contato: ContatoEmergencia
+        @PathVariable
+        usuarioId: Long,
+
+        @PathVariable
+        contatoId: Long,
+
+        @RequestBody
+        contato: ContatoEmergencia
     ): ContatoEmergencia {
 
         authorizationService
@@ -120,8 +184,11 @@ class ContatoEmergenciaController(
         "/usuario/{usuarioId}/{contatoId}"
     )
     fun deletarDoUsuario(
-        @PathVariable usuarioId: Long,
-        @PathVariable contatoId: Long
+        @PathVariable
+        usuarioId: Long,
+
+        @PathVariable
+        contatoId: Long
     ) {
 
         authorizationService

@@ -38,7 +38,7 @@ class MonitoramentoService(
     EmailInatividadeService,
 
     @Value(
-        "\${INATIVIDADE_TOLERANCIA_MINUTOS:5}"
+        "\${INATIVIDADE_TOLERANCIA_MINUTOS:15}"
     )
     private val toleranciaInatividadeMinutos:
     Long
@@ -97,8 +97,6 @@ class MonitoramentoService(
          * O monitoramento só pode ser ativado
          * quando existir pelo menos um contato
          * de emergência.
-         *
-         * Isso corrige o cenário do CT03.
          */
         if (
             request.ativo
@@ -134,7 +132,7 @@ class MonitoramentoService(
         )
 
         /*
-         * Ao alterar/reiniciar o ciclo,
+         * Ao alterar ou reiniciar o ciclo,
          * alertas antigos de inatividade
          * deixam de representar o estado atual.
          */
@@ -273,16 +271,17 @@ class MonitoramentoService(
                         )
 
                 /*
-                 * O contato só é acionado depois
-                 * da tolerância.
+                 * Os contatos só são acionados
+                 * depois do período de tolerância.
                  *
-                 * Exemplo:
+                 * Exemplo utilizado na apresentação:
                  *
                  * intervalo = 1 minuto
-                 * tolerância = 1 minuto
+                 * tolerância = 15 minutos
                  *
+                 * 12:00 -> ciclo iniciado
                  * 12:01 -> check-in pendente
-                 * 12:02 -> e-mail aos contatos
+                 * 12:16 -> contatos podem ser avisados
                  */
                 val limiteEscalonamento =
                     limiteCheckIn
