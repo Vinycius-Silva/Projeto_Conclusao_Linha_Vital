@@ -78,6 +78,12 @@ interface ApiService {
         @Path("contatoId") contatoId: Long
     )
 
+    @PUT("contatos/usuario/{usuarioId}/ordem")
+    suspend fun reordenarContatosDoUsuario(
+        @Path("usuarioId") usuarioId: Long,
+        @Body request: ReordenarContatosRequest
+    ): List<ContatoEmergencia>
+
     /*
      * =====================================================
      * ALERTAS

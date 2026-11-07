@@ -44,13 +44,6 @@ class ContatoFormActivity : AppCompatActivity() {
         "Outro"
     )
 
-    /*
-     * Abre o seletor nativo do Android.
-     *
-     * Não é necessário solicitar READ_CONTACTS porque
-     * o próprio usuário escolhe explicitamente qual
-     * telefone deseja compartilhar com o Linha Vital.
-     */
     private val seletorContato =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -206,11 +199,6 @@ class ContatoFormActivity : AppCompatActivity() {
                 salvar()
             }
 
-        /*
-         * Na edição de um contato já existente,
-         * escondemos a importação para evitar substituir
-         * acidentalmente nome e telefone.
-         */
         binding.btnImportarAgenda.visibility =
             if (contatoId == null) {
                 View.VISIBLE
@@ -287,6 +275,20 @@ class ContatoFormActivity : AppCompatActivity() {
                             .showFormError(
                                 estado.message
                             )
+                    }
+
+                    /*
+                     * Estados utilizados apenas pela tela de listagem
+                     * para reorganização dos contatos.
+                     *
+                     * O formulário não precisa reagir a eles.
+                     */
+                    ContatoEstado.OrdemAtualizada -> {
+                        // Sem ação nesta tela.
+                    }
+
+                    is ContatoEstado.ErroReordenacao -> {
+                        // Sem ação nesta tela.
                     }
                 }
             }

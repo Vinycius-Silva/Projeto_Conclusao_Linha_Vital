@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="activity_contatos_ordem_ajuda">
+        O primeiro contato é o prioritário. Arraste pelo ícone à direita para reorganizar.
+    </string>
+
+    <string name="item_contato_prioritario_text">
+        PRIORITÁRIO
+    </string>
+
+    <string name="item_contato_arrastar_contentdescription">
+        Reorganizar contato
+    </string>
+
+    <string name="lv_reorder_contact">
+        Reorganizar %1$s
+    </string>
+
+</resources>
