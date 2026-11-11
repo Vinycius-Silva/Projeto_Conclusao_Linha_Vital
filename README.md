@@ -2,7 +2,11 @@
 
 MVP Android + Spring Boot voltado a check-ins preventivos, detecção de inatividade, rede de contatos de emergência e acionamento manual de SOS.
 
+O Linha Vital é um projeto acadêmico desenvolvido no contexto do Trabalho de Conclusão de Curso (TCC) de Análise e Desenvolvimento de Sistemas do Instituto Federal de São Paulo (IFSP). Seu objetivo é oferecer um protótipo de acompanhamento preventivo que permita ao usuário confirmar periodicamente seu bem-estar e recorrer a contatos cadastrados em situações de inatividade ou no acionamento manual de SOS.
+
 O objetivo desta versão é manter um fluxo demonstrável e coerente para o TCC, separando claramente o que já funciona no produto do que permanece como evolução. O MVP atual combina autenticação, monitoramento por check-in, alertas automáticos por e-mail, localização pontual e uma cascata assistida de ligações no SOS manual.
+
+> **Limite de uso:** este MVP não substitui serviços de emergência, acompanhamento médico ou sistemas profissionais de proteção. O envio de alertas e as ligações dependem de conectividade, permissões e disponibilidade dos serviços envolvidos; não há garantias formais de disponibilidade ou tempo de resposta.
 
 ## Estado atual do MVP
 
@@ -26,9 +30,11 @@ Cadastro / Login (e-mail e senha ou Google)
         v
 Monitoramento de inatividade no backend
         |
-        +-> alerta de inatividade
-        +-> e-mail automático aos contatos
-        +-> última localização, quando disponível
+        +-> fim do intervalo: check-in fica pendente
+        +-> período de tolerância (padrão: 15 min)
+        +-> sem novo check-in: abre alerta de inatividade
+        +-> tenta enviar e-mail aos contatos
+        +-> inclui última localização, quando disponível
 
 SOS manual
    |
@@ -54,9 +60,12 @@ SOS manual
 - onboarding em quatro etapas antes do primeiro uso;
 - Home com estado do monitoramento, próximo check-in e ação `Estou bem`;
 - configuração do monitoramento preventivo (`ativo`/`pausado` + intervalo entre 1 e 240 minutos);
+- exigência de pelo menos um contato de emergência cadastrado para ativar o monitoramento;
 - lembrete local de check-in via `AlarmManager` + notificação Android;
 - registro de check-in no backend;
-- scheduler no backend para detectar o vencimento do intervalo de inatividade;
+- indicação de check-in pendente ao vencer o intervalo configurado;
+- tolerância adicional configurável no backend (padrão: 15 minutos) antes do alerta aos contatos;
+- scheduler no backend para identificar os ciclos que ultrapassaram intervalo e tolerância;
 - apenas um alerta de inatividade aberto por ciclo, evitando duplicação contínua;
 - resolução do alerta de inatividade após novo check-in ou alteração da configuração;
 - envio automático de e-mail aos contatos quando uma inatividade é detectada;
@@ -94,7 +103,7 @@ Os itens abaixo permanecem como evolução do projeto e não devem ser apresenta
 ## Arquitetura
 
 ```text
-Android (Kotlin + XML/ViewBinding)
+Android (Kotlin + XML/ViewBinding + componentes Compose)
         |
         | Retrofit / JSON
         | Authorization: Bearer <token>
@@ -111,6 +120,8 @@ Spring Boot (Kotlin + Spring Security)
 ```
 
 ### Android
+
+O aplicativo é responsável pelas telas, autenticação do usuário, lembretes locais, confirmação de check-in, coleta pontual de localização (com permissão) e orientação da cascata de ligações do SOS. A comunicação com a API usa Retrofit/OkHttp e JSON.
 
 Código principal:
 
@@ -144,6 +155,8 @@ Telas/estados principais:
 - Adicionar/editar contato.
 
 ### Backend
+
+A API concentra a autenticação e a autorização, as regras de negócio, a persistência no PostgreSQL, o processamento agendado de inatividade e as tentativas de notificação por e-mail. Spring Security protege as rotas autenticadas; Firebase Admin permanece como integração opcional.
 
 Código principal:
 
@@ -189,6 +202,7 @@ GET    /contatos/usuario/{usuarioId}
 POST   /contatos/usuario/{usuarioId}
 PUT    /contatos/usuario/{usuarioId}/{contatoId}
 DELETE /contatos/usuario/{usuarioId}/{contatoId}
+PUT    /contatos/usuario/{usuarioId}/ordem
 ```
 
 ### Monitoramento
@@ -199,6 +213,8 @@ PUT  /monitoramento/configuracao/{usuarioId}
 POST /monitoramento/check-in/{usuarioId}
 POST /monitoramento/atividade/{usuarioId}
 ```
+
+**Importante:** o endpoint `POST /monitoramento/atividade/{usuarioId}` atualmente utiliza a mesma lógica de um check-in manual. Ele **não** indica detecção passiva de movimento, desbloqueio ou uso do smartphone.
 
 ### Alertas
 
@@ -215,38 +231,62 @@ GET  /localizacoes/ultima
 POST /localizacoes
 ```
 
-Há ainda endpoints de histórico de notificações e módulos auxiliares usados pelo backend.
+### Histórico de notificações
+
+```text
+GET  /notificacoes
+POST /notificacoes
+POST /notificacoes/alerta/{alertaId}/tentativa
+```
+
+Há ainda endpoints de dispositivos e módulos auxiliares usados pelo backend. As rotas protegidas exigem token Bearer válido e, quando aplicável, a verificação de acesso ao recurso do usuário.
 
 ## Pré-requisitos
 
 ### Backend
 
-- JDK 17;
-- PostgreSQL;
+- JDK 17 (versão definida no toolchain Java do backend);
+- PostgreSQL instalado e acessível;
 - servidor SMTP válido para o envio automático de e-mails de inatividade;
 - credenciais OAuth do Google se o login Google for utilizado;
 - acesso às dependências Gradle/Maven na primeira execução.
 
 ### Android
 
-- Android Studio compatível com o Android Gradle Plugin utilizado no projeto;
-- SDK Android configurado;
+- Android Studio compatível com o Android Gradle Plugin e Gradle Wrapper do projeto;
+- SDK Android configurado (o projeto usa `compileSdk` 36.1, `targetSdk` 36 e `minSdk` 26);
 - emulador ou dispositivo Android com API 26+;
 - Google Play Services para login Google e localização;
 - Web Client ID do Google se o login Google for utilizado.
+
+## Preparação e execução local
+
+1. Clone ou extraia o repositório e abra um terminal **na pasta raiz**, onde ficam `Source/backend` e `Source/frontend`.
+2. Instale o JDK 17 e o PostgreSQL. O projeto já inclui os Gradle Wrappers, portanto não é obrigatório instalar o Gradle globalmente.
+3. Crie um banco e um usuário próprios para o projeto. Por exemplo, conectado ao PostgreSQL com uma conta administradora:
+
+   ```sql
+   CREATE USER linhavital WITH PASSWORD 'SENHA_FORTE_AQUI';
+   CREATE DATABASE linhavital OWNER linhavital;
+   ```
+
+   Se já houver usuário ou banco com esses nomes, adapte as instruções em vez de recriá-los. Os exemplos de senha neste documento **não** devem ser usados literalmente em uma implantação.
+
+4. Defina as variáveis de ambiente do backend conforme as seções seguintes e execute `Source/backend/gradlew.bat bootRun` a partir da pasta `Source/backend` (exemplo completo em PowerShell abaixo).
+5. Configure o endereço da API no Android, abra `Source/frontend` no Android Studio e instale o aplicativo em um emulador ou dispositivo compatível.
 
 ## Configuração do backend
 
 O backend não deve conter credenciais reais versionadas. As propriedades principais do banco e da aplicação são obtidas do ambiente.
 
-`Source/backend/.env.example` contém apenas a configuração básica. Como este ajuste atualiza somente a documentação, use também a lista abaixo como referência para as variáveis atualmente lidas pelo código.
+`Source/backend/.env.example` contém apenas a configuração básica. **O Spring Boot não importa automaticamente um arquivo `.env` apenas por ele existir na pasta.** Para execução local, defina as variáveis na sessão do terminal ou use outro mecanismo de carregamento configurado explicitamente. Como esta alteração modifica somente a documentação, nenhuma configuração do backend foi alterada.
 
 ### Banco e JPA
 
 ```text
 DB_URL=jdbc:postgresql://localhost:5432/linhavital
 DB_USER=linhavital
-DB_PASSWORD=troque_esta_senha
+DB_PASSWORD=SENHA_FORTE_AQUI
 JPA_DDL_AUTO=update
 JPA_SHOW_SQL=false
 ```
@@ -263,28 +303,33 @@ AUTH_SESSION_CLEANUP_CRON=0 0 4 * * *
 
 ### Monitoramento
 
-```text
+```dotenv
+INATIVIDADE_TOLERANCIA_MINUTOS=15
 MONITORAMENTO_SCHEDULER_MS=5000
 ```
 
-Esse valor controla o intervalo entre as verificações do scheduler do backend e não deve ser confundido com o intervalo de check-in configurado pelo usuário.
+- `INATIVIDADE_TOLERANCIA_MINUTOS`: número de minutos adicionais após o vencimento do check-in antes de o backend poder abrir um alerta de inatividade. Padrão do código: **15 minutos**; valores negativos são tratados como zero.
+- `MONITORAMENTO_SCHEDULER_MS`: atraso entre verificações agendadas do backend, em milissegundos. Padrão do código: **5.000 ms**.
+
+Essas variáveis são independentes do intervalo de check-in escolhido pelo usuário (de 1 a 240 minutos). O scheduler não transforma o intervalo configurado em um limite garantido de processamento em tempo real.
 
 ### E-mail de inatividade
 
-O serviço usa Spring Mail. Configure um servidor SMTP compatível, por exemplo por meio das propriedades de ambiente do Spring Boot:
+O serviço usa Spring Mail. Os nomes abaixo correspondem diretamente às variáveis referenciadas em `Source/backend/src/main/resources/application.yaml`:
 
-```text
-SPRING_MAIL_HOST=smtp.exemplo.com
-SPRING_MAIL_PORT=587
-SPRING_MAIL_USERNAME=<usuario-smtp>
-SPRING_MAIL_PASSWORD=<senha-smtp>
-SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
-SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
-
-LINHA_VITAL_EMAIL_REMETENTE=<email-remetente>
+```dotenv
+MAIL_HOST=smtp.exemplo.com
+MAIL_PORT=587
+MAIL_USERNAME=<usuario-smtp>
+MAIL_PASSWORD=<senha-smtp>
+MAIL_SMTP_AUTH=true
+MAIL_SMTP_STARTTLS=true
+EMAIL_REMETENTE=<email-remetente>
 EMAIL_MAX_TENTATIVAS=3
 EMAIL_INTERVALO_TENTATIVAS_MS=2000
 ```
+
+No `application.yaml`, `EMAIL_REMETENTE` alimenta a propriedade `LINHA_VITAL_EMAIL_REMETENTE`, consumida pelo serviço de e-mail. Também é possível sobrescrever diretamente as propriedades nativas do Spring Boot (por exemplo, `SPRING_MAIL_HOST`), mas o exemplo acima segue os placeholders usados neste repositório.
 
 O e-mail do contato precisa estar preenchido para que ele receba o alerta automático de inatividade.
 
@@ -302,17 +347,20 @@ Se habilitado, o arquivo de credenciais não deve ser colocado em `src/main/reso
 ```powershell
 $env:DB_URL="jdbc:postgresql://localhost:5432/linhavital"
 $env:DB_USER="linhavital"
-$env:DB_PASSWORD="sua_senha"
+$env:DB_PASSWORD="SENHA_FORTE_AQUI"
 
 $env:GOOGLE_OAUTH_CLIENT_ID="seu-web-client-id"
 
-$env:SPRING_MAIL_HOST="smtp.exemplo.com"
-$env:SPRING_MAIL_PORT="587"
-$env:SPRING_MAIL_USERNAME="usuario"
-$env:SPRING_MAIL_PASSWORD="senha"
-$env:SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH="true"
-$env:SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE="true"
-$env:LINHA_VITAL_EMAIL_REMETENTE="linha-vital@exemplo.com"
+$env:MAIL_HOST="smtp.exemplo.com"
+$env:MAIL_PORT="587"
+$env:MAIL_USERNAME="usuario"
+$env:MAIL_PASSWORD="senha"
+$env:MAIL_SMTP_AUTH="true"
+$env:MAIL_SMTP_STARTTLS="true"
+$env:EMAIL_REMETENTE="linha-vital@exemplo.com"
+
+$env:INATIVIDADE_TOLERANCIA_MINUTOS="15"
+$env:MONITORAMENTO_SCHEDULER_MS="5000"
 
 cd Source\backend
 .\gradlew.bat bootRun
@@ -327,7 +375,7 @@ API_BASE_URL
 GOOGLE_WEB_CLIENT_ID
 ```
 
-O `app/build.gradle.kts` utiliza `http://10.0.2.2:8080/` como fallback para `API_BASE_URL`, mas um valor definido em `Source/frontend/gradle.properties` ou pela linha de comando sobrescreve esse padrão.
+O `Source/frontend/app/build.gradle.kts` utiliza `http://10.0.2.2:8080/` como fallback para `API_BASE_URL`, mas um valor definido em `Source/frontend/gradle.properties` ou pela linha de comando sobrescreve esse padrão. No arquivo `gradle.properties` incluído nesta versão, a propriedade `API_BASE_URL` aponta para uma VM por **HTTP**, uma configuração de protótipo que deve ser revista antes de qualquer distribuição pública.
 
 Exemplo para emulador local:
 
@@ -338,9 +386,20 @@ cd Source\frontend
   -PGOOGLE_WEB_CLIENT_ID=seu-web-client-id
 ```
 
-Para dispositivo físico, use um endereço acessível pelo aparelho.
+Para dispositivo físico, use um endereço acessível pelo aparelho. O endereço `10.0.2.2` é específico do emulador Android e não aponta para o computador de desenvolvimento quando usado em um telefone físico.
 
-A configuração atual permite HTTP apenas em contextos explicitamente liberados para desenvolvimento/homologação. Uma distribuição pública deve utilizar HTTPS e remover exceções de cleartext que não sejam necessárias.
+### Compilação e APK
+
+Os comandos a seguir partem da pasta raiz do repositório e geram um APK de depuração:
+
+```powershell
+cd Source\frontend
+.\gradlew.bat clean assembleDebug
+```
+
+O APK resultante é gerado em `Source/frontend/app/build/outputs/apk/debug/app-debug.apk`. Para testar a API local no emulador, ajuste `API_BASE_URL` antes da compilação (por parâmetro `-P` ou nas propriedades Gradle). Um APK `debug` **não** equivale a uma versão final de produção assinada e validada.
+
+A configuração de rede em `Source/frontend/app/src/main/res/xml/network_security_config.xml` bloqueia cleartext por padrão e libera HTTP para destinos específicos de desenvolvimento/VM. **A VM atualmente configurada utiliza HTTP**, portanto a comunicação com esse destino ainda não dispõe da proteção de transporte oferecida pelo HTTPS. Antes de distribuição pública, configure TLS/HTTPS no servidor, atualize `API_BASE_URL` e elimine exceções desnecessárias de cleartext; a autenticação Bearer, isoladamente, não substitui a criptografia de transporte.
 
 ## Autenticação e sessão
 
@@ -387,25 +446,32 @@ O Client ID utilizado pelo Android e o Client ID validado pelo backend devem cor
 
 ## Monitoramento e check-in
 
-Ao consultar o status pela primeira vez, o backend cria uma configuração padrão de monitoramento para o usuário.
+Ao consultar o status pela primeira vez, o backend cria uma configuração padrão de monitoramento para o usuário. A ativação exige **pelo menos um contato de emergência** vinculado à conta.
 
-O ciclo básico é:
+O ciclo distingue duas situações: **check-in pendente**, quando termina o intervalo configurado pelo usuário, e **inatividade escalonada**, quando também termina o período adicional de tolerância definido no backend.
 
 ```text
-monitoramento ativo
+monitoramento ativo e pelo menos um contato cadastrado
         |
         v
-intervalo configurado vence
+último check-in + intervalo configurado
         |
+        +-> check-in passa a aparecer como PENDENTE na API/Home
+        |   (ainda não há alerta nem e-mail)
         v
-backend detecta inatividade
+intervalo adicional de tolerância (padrão: 15 min)
         |
-        +-> cria um alerta de INATIVIDADE
-        +-> marca a ocorrência como aberta
-        +-> registra o evento
-        +-> envia e-mail aos contatos
-        +-> inclui a última localização, quando disponível
+        +-> se houver novo check-in: reinicia o ciclo sem alertar
+        v
+se ainda não houve check-in, o scheduler pode:
+        +-> criar um alerta de INATIVIDADE
+        +-> marcar a ocorrência como aberta
+        +-> registrar o evento no histórico
+        +-> tentar enviar e-mail aos contatos
+        +-> incluir a última localização, quando disponível
 ```
+
+**Exemplo:** com check-in às 12h00, intervalo de 30 minutos e tolerância de 15 minutos, o check-in fica pendente às 12h30; se não houver confirmação, o processamento do alerta pode ocorrer **a partir de 12h45**, na execução seguinte do scheduler. Um novo check-in durante a tolerância cancela o escalonamento desse ciclo.
 
 Cada check-in:
 
@@ -414,7 +480,9 @@ Cada check-in:
 3. reinicia o ciclo preventivo;
 4. permite ao Android agendar o próximo lembrete local.
 
-Enquanto `alertaInatividadeAberto` estiver ativo, o scheduler não cria uma nova ocorrência para o mesmo ciclo.
+Enquanto `alertaInatividadeAberto` estiver ativo, o scheduler não cria uma nova ocorrência para o mesmo ciclo. Ao pausar ou reconfigurar o monitoramento, o backend também reinicia o ciclo e resolve alertas antigos de inatividade.
+
+O campo `checkInPendente` do status é calculado assim que o prazo do usuário termina, **antes da tolerância**; isso não equivale à confirmação de envio de e-mail. Falhas no SMTP não impedem o registro do alerta no backend, mas podem impedir o recebimento da notificação pelos contatos.
 
 ## Localização
 
@@ -468,7 +536,8 @@ A versão atual incorpora as seguintes medidas:
 
 ### Limitações de segurança ainda relevantes
 
-- a infraestrutura de desenvolvimento/homologação ainda pode utilizar HTTP em hosts explicitamente liberados; produção deve usar HTTPS;
+- a configuração versionada do Android utiliza uma URL de backend em VM via **HTTP**, com liberação explícita no `network_security_config.xml`; a comunicação desse ambiente ainda não é protegida por TLS/HTTPS;
+- antes de qualquer uso público, o backend deve disponibilizar HTTPS e o aplicativo deve apontar para esse endereço seguro, removendo exceções de cleartext desnecessárias;
 - a autorização deve continuar sendo revisada à medida que módulos auxiliares forem incorporados ao fluxo principal;
 - nenhuma chave OAuth, senha SMTP, credencial Firebase ou segredo de banco deve ser versionado.
 
@@ -499,9 +568,9 @@ Execute o roteiro abaixo em um ambiente limpo:
 9. cadastrar pelo menos dois contatos com e-mail válido;
 10. editar e excluir um contato;
 11. verificar a ordem/prioridade dos contatos;
-12. configurar o check-in para um intervalo curto de demonstração;
+12. configurar o check-in para um intervalo curto de demonstração e verificar o valor de `INATIVIDADE_TOLERANCIA_MINUTOS` utilizado no ambiente;
 13. confirmar `Estou bem` e verificar atualização do ciclo;
-14. aguardar uma inatividade e confirmar a criação de apenas um alerta aberto;
+14. conferir que o check-in fica pendente ao terminar o intervalo sem notificar os contatos, e que o alerta é aberto somente após a tolerância; confirmar que não há alertas duplicados;
 15. validar o envio de e-mail aos contatos;
 16. conceder localização e verificar que a última posição é persistida;
 17. repetir o fluxo sem permissão de localização e confirmar que o restante continua funcionando;
@@ -511,7 +580,66 @@ Execute o roteiro abaixo em um ambiente limpo:
 
 ## Testes automatizados
 
-A cobertura automatizada ainda é limitada. O backend possui testes do serviço de senhas e teste de contexto; o Android mantém cobertura mínima. Antes de tratar requisitos de desempenho, disponibilidade, bateria e confiabilidade como comprovados, é necessário executar e registrar testes específicos para esses critérios.
+O repositório contém testes automatizados locais e um teste instrumentado de exemplo. **As contagens abaixo representam métodos de teste declarados no código; não significam que a suíte foi executada ou aprovada nesta revisão.**
+
+| Módulo | Arquivo de teste | Casos | Principais verificações |
+| --- | --- | ---: | --- |
+| Backend | `BackendApplicationTests.kt` | 1 | Inicialização do contexto Spring Boot. |
+| Backend | `MonitoramentoServiceTests.kt` | 8 | Pré-requisito de contato, check-in pendente, tolerância, abertura de alertas, prevenção de duplicidade e monitoramento pausado. |
+| Backend | `PasswordServiceTests.kt` | 2 | Derivação e validação de senha; compatibilidade com migração de senha legada. |
+| Backend | `UsuarioServiceTests.kt` | 5 | Validações de nome, e-mail, telefone, senha e data de nascimento no cadastro. |
+| Android (unitários locais) | `DataNascimentoUtilsTest.kt` | 8 | Conversão e validação de datas, incluindo bissextos e datas inválidas/futuras. |
+| Android (unitários locais) | `SosInteractionTrackerTest.kt` | 7 | Três interações do SOS, janela de tempo, reinício e repetição da sequência. |
+| Android (unitários locais) | `ExampleUnitTest.kt` | 1 | Teste básico de exemplo. |
+| Android (instrumentado) | `ExampleInstrumentedTest.kt` | 1 | Contexto do aplicativo em dispositivo/emulador. |
+| **Total** | | **33** | **16 backend + 16 Android locais + 1 Android instrumentado.** |
+
+### Como executar os testes
+
+Na pasta raiz do repositório, use um terminal PowerShell:
+
+**Backend (JUnit + Spring Boot):**
+
+```powershell
+cd Source\backend
+.\gradlew.bat clean test
+```
+
+O backend inclui o perfil de testes `Source/backend/src/test/resources/application-test.yaml`, com banco H2 em memória para os testes de contexto. Os relatórios Gradle são gerados em `Source/backend/build/reports/tests/test/index.html`, quando a tarefa é executada.
+
+**Android — testes unitários locais:**
+
+```powershell
+cd Source\frontend
+.\gradlew.bat testDebugUnitTest
+```
+
+**Android — teste instrumentado:**
+
+```powershell
+cd Source\frontend
+.\gradlew.bat connectedDebugAndroidTest
+```
+
+O teste instrumentado requer emulador ou dispositivo Android conectado e configurado. Execute cada bloco a partir da **pasta raiz** (os exemplos mudam de diretório); se já estiver em `Source/backend` ou `Source/frontend`, use apenas o comando Gradle apropriado.
+
+### Testes manuais e integrados
+
+O roteiro da seção **Validação recomendada antes da banca** é um **checklist de verificação manual**, não uma declaração automática de aprovação. Ao registrar resultados no TCC, diferencie os cenários de cadastro/login, contatos, check-in, SOS, localização, envio de e-mail e falhas de conexão dos testes automatizados; inclua data, ambiente, resultado esperado/observado e evidências (capturas de tela e logs) quando disponíveis.
+
+A existência desses testes **não comprova**, por si só, desempenho, disponibilidade, consumo de bateria, qualidade do serviço SMTP ou tempo de resposta em emergências. Esses aspectos exigem medições e critérios específicos.
+
+## Documentação acadêmica
+
+O repositório contém documentação do projeto e os fontes do TCC em LaTeX. Para evitar divergências, este README referencia a árvore localizada em `Documentação/`; como existem outras cópias da estrutura LaTeX no ZIP, recomenda-se eleger uma única versão como fonte de edição antes das próximas revisões.
+
+- [PDF da documentação acadêmica](Documenta%C3%A7%C3%A3o/Projeto%20Integrado%20de%20Extens%C3%A3o%20ADS/TEMPLATE_TCC_IFPI%20-%20Copia%20%284%29%20-%20Copia/TEMPLATE_TCC_IFPI/documento.pdf)
+- [Arquivo principal LaTeX (`documento.tex`)](Documenta%C3%A7%C3%A3o/Projeto%20Integrado%20de%20Extens%C3%A3o%20ADS/TEMPLATE_TCC_IFPI%20-%20Copia%20%284%29%20-%20Copia/TEMPLATE_TCC_IFPI/documento.tex)
+- [Apresentação/proposta em PDF](Projeto/Linha%20Vital.pdf)
+- [Relatório de correções da documentação](Correcoes_TCC/linha-vital-correcoes-documentacao.md)
+- [Relatório de correções e feedback](Correcoes_TCC/Linha-Vital-relatorio-correcoes-feedback.md)
+
+Ao descrever o MVP no TCC, mantenha coerência com as seções **Implementado nesta versão**, **Fora do MVP atual**, **Monitoramento e check-in** e **Limitações de segurança** deste README. Recursos planejados não devem ser apresentados como concluídos, e resultados de testes devem refletir as evidências efetivamente obtidas.
 
 ## Observação sobre credenciais
 
