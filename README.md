@@ -1,6 +1,6 @@
-# Linha Vital — projeto completo consolidado
+# Linha Vital — Trabalho de Conclusão de Curso
 
-Trabalho de Conclusão de Curso de Tecnologia em Análise e Desenvolvimento de Sistemas — **IFSP, Campus São Paulo (Canindé)**. Versão de consolidação documental: 12/11/2026.
+Trabalho de Conclusão de Curso de Tecnologia em Análise e Desenvolvimento de Sistemas — **Instituto Federal de Educação, Ciência e Tecnologia de São Paulo (IFSP), Campus São Paulo**. Apresentação prevista para 13/11/2026.
 
 ## Onde está cada material?
 
@@ -15,7 +15,6 @@ Trabalho de Conclusão de Curso de Tecnologia em Análise e Desenvolvimento de S
 | `Documentacao/Evidencias/` | Relatório único dos testes funcionais e 111 evidências |
 | `Documentacao/Fontes_de_Projeto/` | Documentos históricos/fontes editáveis dos requisitos, personas, testes planejados e roadmap |
 | `Documentacao/Normas_IFSP/` | Portarias de entrega e guia da Biblioteca Francisco Montojos |
-| `RELATORIO_CONSOLIDACAO.md` | Alterações, itens retirados, verificação e pendências |
 
 ## Execução e manutenção
 
@@ -23,14 +22,13 @@ O [guia técnico](Documentacao/GUIA_TECNICO.md) descreve a preparação do Postg
 variáveis de ambiente, execução do backend e do Android, endpoints REST,
 autenticação, SOS e comandos para testes automatizados.
 
-Para publicar alterações no GitHub, consulte o [guia de commit](GUIA_PUBLICACAO_GITHUB.md).
-Não faça upload do próprio ZIP para dentro do repositório: **extraia e versione os arquivos**.
+As alterações são versionadas no GitHub; os documentos acadêmicos estão concentrados em `Documentacao/`.
 
 ## Compilação da monografia
 Abra `Documentacao/TCC_LaTeX/README.md` para o comando e as dependências. O estilo local veio de uma adaptação anterior baseada no abnTeX2; não é um template oficial do IFSP. Arquivos de outros campi e cópias legadas foram eliminados.
 
 ## Interpretação dos resultados
-O relatório de 14/10/2026 registra 19 cenários funcionais (17 aprovados e 2 aprovados com observações). A execução refere-se à branch e ao ambiente registrados naquele documento. O código-fonte de `Source/` não foi alterado nesta consolidação; não houve novo teste em produção.
+A bateria de validação funcional executada pela equipe foi concluída em 14/10/2026, com 19 cenários documentados: 17 aprovados e 2 aprovados com observações não bloqueantes. O planejamento original incluía 36 casos, mas o relatório não demonstra execução individual de todos eles. Os resultados correspondem ao ambiente e à revisão de código identificados no relatório, sem representar certificação para operação em emergências reais.
 
 ## Antes da publicação
-Revisar dados pessoais nas evidências e configurar segredos operacionais via variáveis de ambiente; não distribuir chaves privadas SSH. A versão final a ser depositada depende de correções da banca, ficha catalográfica solicitada à biblioteca e termo de autorização preenchido/assinado. O Linha Vital é um MVP demonstrativo, não um serviço garantido de resposta a emergências.
+Revisar dados pessoais nas evidências e configurar segredos operacionais via variáveis de ambiente; não distribuir chaves privadas SSH. Após a apresentação, verificar com a coordenação e com a biblioteca as exigências de depósito, ficha catalográfica e documentos de autorização aplicáveis. O Linha Vital é um MVP demonstrativo, não um serviço garantido de resposta a emergências.

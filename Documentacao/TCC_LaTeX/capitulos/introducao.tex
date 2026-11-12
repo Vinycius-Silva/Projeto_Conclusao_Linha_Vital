@@ -11,15 +11,15 @@ No Brasil, dados da PNAD/IBGE revelam que mais de 4,3 milhões de pessoas com ma
 
 Apesar da gravidade do cenário, observa-se uma lacuna significativa na oferta de soluções acessíveis e não invasivas voltadas ao monitoramento contínuo dessas pessoas. Relatórios do Australian Institute of Family Studies apontam que o isolamento residencial está relacionado a impactos negativos no bem-estar físico e psicológico \cite{aifs2014}.
 
-Diante desse panorama, surge o projeto Linha Vital, que propõe o desenvolvimento de um sistema mobile capaz de monitorar períodos de inatividade, enviar notificações periódicas e acionar automaticamente contatos de confiança e serviços de emergência. A solução busca integrar tecnologia e cuidado de forma equilibrada, promovendo maior autonomia sem comprometer a segurança dos usuários.
+Diante desse panorama, o projeto Linha Vital resultou no desenvolvimento de um aplicativo Android para acompanhamento preventivo de pessoas que vivem sozinhas. O sistema permite configurar períodos de confirmação de bem-estar, emitir lembretes de check-in e gerar alertas de inatividade encaminhados aos contatos cadastrados por e-mail. Também dispõe de acionamento manual de emergência voltado aos contatos de confiança. A versão acadêmica não possui integração automática direta com serviços públicos de emergência nem representa um serviço certificado de resposta a emergências.
 
 \section{Objetivos}
 
-O propósito central do sistema de cuidados e chamadas emergenciais Linha Vital é desenvolver uma solução tecnológica acessível e não invasiva, capaz de monitorar a inatividade de indivíduos que vivem sozinhos e possuem necessidades especiais. A proposta busca oferecer um mecanismo confiável de suporte, acionando automaticamente contatos de confiança e serviços de emergência em situações de risco, de modo a reduzir o tempo de resposta em eventos críticos e aumentar a segurança sem comprometer a autonomia dos usuários.
+O objetivo geral do Linha Vital foi desenvolver e validar funcionalmente um aplicativo Android de acompanhamento preventivo para pessoas que vivem sozinhas. A solução utiliza confirmações periódicas de bem-estar e identificação de inatividade para apoiar a comunicação com contatos previamente cadastrados, sem substituir assistência profissional ou serviços públicos de emergência.
 
-Para alcançar esse objetivo geral, o projeto contempla um conjunto de metas específicas que orientam sua implementação e funcionamento. Entre elas, destaca-se o desenvolvimento de funcionalidades voltadas ao monitoramento contínuo da inatividade, permitindo a identificação de padrões que indiquem situações atípicas. Além disso, pretende-se implementar mecanismos de envio de notificações periódicas, com o intuito de confirmar o estado de bem-estar do indivíduo e garantir uma interação mínima necessária para validação de sua condição.
+Para alcançar esse objetivo geral, a equipe implementou cadastro e autenticação de usuários, gerenciamento e priorização de contatos, configuração do monitoramento, lembretes de check-in, registro de inatividade e envio de alertas por e-mail. Essas funcionalidades compuseram o escopo do MVP submetido à bateria funcional documentada.
 
-Complementarmente, o sistema deve ser capaz de gerar alertas automáticos em casos de ausência de resposta, acionando previamente contatos cadastrados ou serviços de emergência conforme o nível de criticidade identificado. Também se propõe a disponibilização de recursos de acionamento manual, como botões de pânico, bem como funcionalidades voltadas à acessibilidade, assegurando que usuários com diferentes limitações possam utilizar o sistema de forma eficiente.
+Como mecanismo complementar, foi implementado um fluxo manual de SOS com sequência assistida de contatos priorizados. Recursos visuais e interações de interface foram incluídos para facilitar o uso, sem que isso represente comprovação de conformidade com padrões formais de acessibilidade.
 
 Por fim, o projeto tem como diretriz oferecer suporte direcionado a idosos e pessoas com necessidades especiais, promovendo maior autonomia no cotidiano sem comprometer sua segurança. Ao integrar tecnologia e cuidado de forma equilibrada, o Linha Vital busca contribuir para a melhoria da qualidade de vida e para a construção de um ambiente doméstico mais seguro e inclusivo.
 
@@ -35,9 +35,9 @@ Nesse contexto, identifica-se uma lacuna relevante: a ausência de mecanismos ac
 
 Como consequência, emergências como quedas, mal súbito ou crises emocionais podem permanecer sem resposta por períodos críticos, elevando significativamente o risco de agravamento clínico ou até mesmo de óbito evitável.
 
-Diante desse cenário, o sistema Linha Vital propõe uma solução baseada em monitoramento inteligente e acionamento automatizado de emergências por meio de um aplicativo mobile. A proposta fundamenta-se na detecção de padrões de ausência de atividade, utilizando esse comportamento como indicador indireto de risco.
+Diante desse cenário, o Linha Vital foi desenvolvido como aplicativo de acompanhamento preventivo, com identificação de períodos sem confirmação de bem-estar e geração de alertas por e-mail aos contatos cadastrados. A ausência de check-in é tratada como indicador indireto de possível risco, não como diagnóstico de emergência.
 
-O sistema permite o cadastro de contatos de confiança e de emergência, que podem ser acionados automaticamente quando determinadas condições forem atendidas, como períodos prolongados sem resposta. Como mecanismo complementar de segurança, o usuário também pode realizar o acionamento manual por meio de recursos de acessibilidade do próprio dispositivo, garantindo resposta imediata em situações conscientes de risco.
+O sistema permite cadastrar contatos de confiança, destinatários dos alertas por e-mail diante de períodos prolongados sem resposta. No acionamento manual de SOS, o aplicativo orienta uma sequência de ligações aos contatos priorizados. A efetiva resposta depende da disponibilidade da comunicação e da atuação dos destinatários.
 
 A solução opera em múltiplas camadas de proteção, buscando reduzir o tempo de resposta em emergências e aumentar a segurança sem comprometer a autonomia do usuário: preventiva (monitoramento), reativa automática (inatividade) e reativa manual (acionamento direto).
 

@@ -1,12 +1,12 @@
 \chapter{Desenvolvimento do Projeto}
 
-Nesta seção são detalhadas as tecnologias, ferramentas e práticas adotadas para o desenvolvimento do aplicativo Linha Vital, contemplando desde a definição das regras de negócio até o inventário de testes disponível, sem pressupor validação integral do sistema.
+Neste capítulo são apresentadas as tecnologias, as decisões de projeto e as funcionalidades implementadas no Linha Vital, bem como a bateria de validação funcional concluída pela equipe e suas limitações documentadas.
 
 O capítulo apresenta os elementos que nortearam a construção do sistema, incluindo o escopo do projeto, requisitos, histórias de usuário, arquitetura da solução, tecnologias empregadas, estratégias de testes, aspectos de segurança da informação e a modelagem do banco de dados.
 
 \section{Escopo do Projeto}
 
-O objetivo central do projeto é desenvolver um aplicativo mobile voltado ao auxílio emergencial e à verificação de atividade de pessoas idosas, indivíduos com necessidades especiais e pessoas que vivem sozinhas.
+O projeto resultou no desenvolvimento de um aplicativo Android voltado à verificação preventiva de bem-estar e ao apoio à comunicação com contatos de confiança de pessoas idosas, pessoas com necessidades especiais e indivíduos que vivem sozinhos.
 
 O sistema foi concebido para observar intervalos sem confirmação explícita de bem-estar, com lembretes locais e verificações periódicas da configuração no backend, além de oferecer recursos de acionamento emergencial integrados às funcionalidades de acessibilidade do dispositivo móvel.
 
@@ -864,11 +864,11 @@ Localização & Captura sob demanda, com permissão & Não é rastreamento cont�
 
 \section{Testes e Manutenibilidade}
 
-A estratégia de qualidade foi dividida entre o \textbf{plano de testes}, que define verificações necessárias para concluir o produto, e os \textbf{resultados efetivamente obtidos} no estado atual do repositório. Essa separação evita apresentar atividades planejadas como evidências já executadas.
+A etapa de testes funcionais da versão acadêmica foi concluída e documentada pela equipe. A apresentação dos resultados distingue o \textbf{planejamento original} da \textbf{bateria efetivamente executada}, evitando atribuir execução aos casos que aparecem apenas no plano.
 
 \subsection{Plano de Testes}
 
-O plano prevê testes unitários para regras de negócio e serviços isolados; testes de integração entre API, persistência PostgreSQL e mecanismos de autenticação; testes instrumentados no Android para fluxos críticos de interface; e testes ponta a ponta para cadastro, login, check-in, inatividade, comunicação com contatos e SOS. Para requisitos não funcionais, devem ser medidos tempo de resposta dos endpoints críticos, consumo de bateria, comportamento em conectividade limitada e estabilidade sob carga. Os critérios de aceitação das histórias de usuário servem como referência para os cenários funcionais.
+O planejamento original contemplou testes unitários, verificações de integração da API com PostgreSQL e autenticação, testes de interface Android e cenários ponta a ponta para cadastro, login, check-in, inatividade, comunicação com contatos e SOS. Também previa medições não funcionais de latência, bateria, conectividade e carga. A bateria funcional efetivamente concluída e comprovada é descrita nas seções seguintes; as medições não documentadas não são apresentadas como resultados realizados.
 
 A adoção de JUnit 5 está consolidada no backend. Bibliotecas de mocking, testes de integração com banco isolado e ferramentas de carga somente serão declaradas como parte da execução quando estiverem adicionadas ao projeto e utilizadas em resultados reproduzíveis.
 
@@ -882,7 +882,7 @@ O documento \emph{Plano de Testes Linha Vital -- Reformulado}, de 04/09/2026, de
 
 Para evitar ambiguidade, designam-se os casos do plano como \textbf{PL-CT01 a PL-CT36}, enquanto os \textbf{EX-CT01 a EX-CT17} (com EX-CT14A, B e C) identificam os 19 cenários da bateria executada em 14/10/2026. Os códigos usados originalmente nos dois documentos coincidem, mas \emph{não estabelecem equivalência automática entre os cenários}. Por exemplo, o caso planejado CT03 exige duas categorias distintas de contato, enquanto a versão implementada e o EX-CT03 verificam a presença de pelo menos um contato vinculado.
 
-A bateria realizada oferece evidências para os fluxos críticos descritos abaixo, mas \textbf{não demonstra a execução integral dos 36 casos do plano}, nem comprova metas quantitativas de desempenho, acessibilidade com usuários reais, segurança ofensiva ou alta disponibilidade. Não existe assinatura de aceite formal do parceiro anexada a esta versão.
+A equipe concluiu a bateria funcional registrada, que oferece evidências para os fluxos críticos descritos abaixo. O relatório, entretanto, \textbf{não demonstra a execução individual dos 36 casos previstos no plano original}, nem comprova metas quantitativas de desempenho, acessibilidade com usuários reais, segurança ofensiva ou alta disponibilidade. Não existe assinatura de aceite formal do parceiro anexada a esta versão.
 
 \subsection{Ambiente e versão da bateria funcional}
 
@@ -890,7 +890,7 @@ Conforme o relatório da equipe, os testes utilizaram o \textbf{emulador Pixel 6
 
 \subsection{Resultados da bateria funcional pré-deploy}
 
-A matriz do relatório registra \textbf{19 cenários} (EX-CT01 a EX-CT17, com EX-CT14 subdividido em A, B e C; na coluna ID da tabela, o prefixo EX- é omitido para facilitar a leitura): \textbf{17 aprovados} e \textbf{2 aprovados com observações} (CT14B e CT15). Os resultados correspondem à classificação original dos executores, não a uma auditoria independente de funcionamento em produção. As evidências são identificadas pelos códigos \texttt{E001--E111} no Apêndice A do relatório de testes, preservado integralmente no repositório revisado, em \emph{Documentacao/Evidencias/}.
+A bateria funcional concluída pela equipe registra \textbf{19 cenários} (EX-CT01 a EX-CT17, com EX-CT14 subdividido em A, B e C; na coluna ID da tabela, o prefixo EX- é omitido para facilitar a leitura): \textbf{17 aprovados} e \textbf{2 aprovados com observações} (CT14B e CT15). Os resultados correspondem à classificação original dos executores, não a uma auditoria independente de funcionamento em produção. As evidências são identificadas pelos códigos \texttt{E001--E111} no Apêndice A do relatório de testes, preservado integralmente no repositório revisado, em \emph{Documentacao/Evidencias/}.
 
 \begingroup
 \footnotesize
@@ -975,7 +975,7 @@ A inspeção estática do código em 12/11/2026 identificou classes de testes Ko
 \legend{Fonte: Inspeção dos arquivos de teste Kotlin do repositório, em 12/11/2026. Quantidades representam métodos localizados, não execuções.}
 \end{table}
 
-A etapa de documentação realizada em novembro não executou novos testes JUnit/Android ou verificações em ambiente de produção. A bateria de 14/10/2026 comprova os \textit{resultados relatados} para os cenários funcionais exercitados naquela versão; não substitui ensaios formais de consumo de bateria, carga, latência, disponibilidade prolongada, segurança e acessibilidade. O relatório registra \texttt{BUILD SUCCESSFUL} após o merge da branch de testes, mas não apresenta um log completo e auditável da suíte automatizada.
+A etapa de documentação realizada em novembro não correspondeu a uma nova execução de testes JUnit/Android ou de verificações em ambiente de produção. A bateria funcional realizada em 14/10/2026 foi concluída e registra os \textit{resultados observados pela equipe} nos cenários exercitados naquela versão; não substitui ensaios formais de consumo de bateria, carga, latência, disponibilidade prolongada, segurança e acessibilidade. O relatório registra \texttt{BUILD SUCCESSFUL} após o merge da branch de testes, mas não apresenta um log completo e auditável da suíte automatizada.
 
 \subsection{Análise Estática e Manutenibilidade}
 
