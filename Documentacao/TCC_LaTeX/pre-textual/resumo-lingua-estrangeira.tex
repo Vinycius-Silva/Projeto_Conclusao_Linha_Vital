@@ -1,0 +1,11 @@
+%% Abstract atualizado em 12/11/2026
+\begin{resumo}[Abstract]
+\begin{otherlanguage*}{english}
+
+The increasing number of people living alone motivates the development of tools for periodic well-being checks. This paper presents Linha Vital, an academic Android application prototype integrated with a Kotlin/Spring Boot API and a PostgreSQL database. The application supports user registration and authentication, prioritized emergency contacts, and configurable monitoring intervals. Preventive monitoring relies on explicit user check-ins. When the configured interval and a server-side grace period expire without confirmation, the backend records the event and attempts to send email alerts to registered contacts. For emergencies recognized by the user, the application provides a manual SOS workflow with an assisted sequence of phone calls; call outcomes are reported by the user. Location is collected on demand with permission and may be included when available. The project involved requirements analysis, prototyping, implementation, and functional validation. On October 14, 2026, a pre-deployment test report documented 19 functional scenarios: 17 approved and two approved with observations, supported by 111 screenshots. An email was received in the test environment; this does not guarantee delivery in production. Automated test classes were also identified in the repository, but measured code coverage, long-term availability, and load performance remain unverified. The result is a demonstrable academic minimum viable product, not a certified or production-ready emergency response service. Public deployment requires further security, usability, reliability, and legal-compliance assessments.
+
+\vspace{\onelineskip}
+\noindent
+\textbf{Keywords}: check-in; inactivity monitoring; Android application; emergency contacts; support system.
+\end{otherlanguage*}
+\end{resumo}

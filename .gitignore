@@ -29,3 +29,46 @@
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Credenciais e chaves locais (não versionar)
+**/google-services.json
+**/firebase-service-account.json
+**/*.keystore
+**/*.jks
+**/*.p12
+**/*.pfx
+**/*.pem
+**/*.key
+**/id_rsa
+**/id_ed25519
+**/credentials.json
+**/secrets.json
+
+# Ferramentas de edição e arquivos transitórios
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+*.synctex
+*.nav
+*.snm
+*.vrb
+*.run.xml
+*.bcf
+*.blg
+*.bbl
+*.brf
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+*.lol
+*.ilg
+*.ind
+*.idx
+*.xdv
+**/_minted-*/

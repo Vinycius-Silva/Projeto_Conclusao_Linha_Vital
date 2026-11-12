@@ -1,0 +1,25 @@
+digraph LV {
+graph [bgcolor="white", rankdir=LR, nodesep=.5, ranksep=1.1, splines=polyline, pad="0.2", fontname="DejaVu Sans"];
+edge [color="#66788a", arrowsize=.55, penwidth=1.15, fontname="DejaVu Sans", fontsize=11];
+node [shape=plain, fontname="DejaVu Sans"];
+"Usuario" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>Usuario</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">usuario</FONT></TD></TR></TABLE>>];
+"ContatoEmergencia" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>ContatoEmergencia</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">contatoemergencia</FONT></TD></TR></TABLE>>];
+"UsuarioContato" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>UsuarioContato</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">usuariocontato</FONT></TD></TR></TABLE>>];
+"Monitoramento" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>Monitoramento</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">monitoramento</FONT></TD></TR></TABLE>>];
+"ConfiguracaoMonitoramento" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>ConfiguracaoMonitoramento</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">configuracaomonitoramento</FONT></TD></TR></TABLE>>];
+"Alerta" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>Alerta</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">alerta</FONT></TD></TR></TABLE>>];
+"HistoricoNotificacao" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>HistoricoNotificacao</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">historiconotificacao</FONT></TD></TR></TABLE>>];
+"Localizacao" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>Localizacao</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">localizacao</FONT></TD></TR></TABLE>>];
+"Dispositivo" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>Dispositivo</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">dispostivo</FONT></TD></TR></TABLE>>];
+"AuthSession" [label=<<TABLE BORDER="1" COLOR="#adbdca" CELLBORDER="1" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#1f4567"><FONT COLOR="white" POINT-SIZE="14"><B>AuthSession</B></FONT></TD></TR><TR><TD BGCOLOR="#eaf1f7"><FONT POINT-SIZE="10">auth_session</FONT></TD></TR></TABLE>>];
+"UsuarioContato" -> "Usuario" [label="N:1"];
+"UsuarioContato" -> "ContatoEmergencia" [label="N:1"];
+"Monitoramento" -> "Usuario" [label="N:1"];
+"ConfiguracaoMonitoramento" -> "Usuario" [label="1:1"];
+"Alerta" -> "Usuario" [label="N:1"];
+"HistoricoNotificacao" -> "ContatoEmergencia" [label="N:1"];
+"HistoricoNotificacao" -> "Alerta" [label="N:1"];
+"Localizacao" -> "Usuario" [label="N:1"];
+"Dispositivo" -> "Usuario" [label="N:1"];
+"AuthSession" -> "Usuario" [label="N:1"];
+}
